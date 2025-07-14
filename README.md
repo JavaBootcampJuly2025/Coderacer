@@ -56,3 +56,5 @@ A “TypeRacer” for code - practice writing code as fast and as accurately as 
 ---
 
 ## Data Models
+
+![UML class diagram](assets/docs/uml_class_diagram.png "UML class diagram")
