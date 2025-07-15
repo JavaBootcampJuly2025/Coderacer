@@ -1,0 +1,117 @@
+package com.coderacer.controller;
+
+import com.coderacer.model.LevelSession;
+import com.coderacer.service.LevelSessionService;
+import com.coderacer.dto.LevelSessionCreateDto;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.UUID;
+
+
+@RestController
+@RequestMapping("/api/v1/level-sessions")
+public class LevelSessionController {
+
+    private final LevelSessionService levelSessionService;
+
+    @Autowired
+    public LevelSessionController(LevelSessionService levelSessionService) {
+        this.levelSessionService = levelSessionService;
+    }
+
+    /**
+     * Creates a new LevelSession using data from a DTO.
+     *
+     * @param createDto The DTO containing the data for the new session, sent in the request body.
+     * @return ResponseEntity with the created LevelSession and HTTP status 201 (Created).
+     */
+    @PostMapping
+    public ResponseEntity<LevelSession> createLevelSession(@RequestBody LevelSessionCreateDto createDto) {
+        try {
+            LevelSession newSession = levelSessionService.createLevelSession(createDto);
+            return new ResponseEntity<>(newSession, HttpStatus.CREATED);
+        } catch (EntityNotFoundException e) {
+            // Return a 400 Bad Request if a referenced Level or Account is not found.
+            // In a production application, you might return a custom error response DTO
+            // with more details about what went wrong.
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Retrieves a LevelSession by its ID.
+     *
+     * @param id The UUID of the LevelSession.
+     * @return ResponseEntity with the LevelSession if found, or HTTP status 404 (Not Found).
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<LevelSession> getLevelSessionById(@PathVariable UUID id) {
+        return levelSessionService.getLevelSessionById(id)
+                .map(session -> new ResponseEntity<>(session, HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    /**
+     * Retrieves all LevelSessions for a specific account.
+     *
+     * @param accountId The UUID of the account.
+     * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
+     */
+    @GetMapping("/by-account/{accountId}")
+    public ResponseEntity<List<LevelSession>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
+        List<LevelSession> sessions = levelSessionService.getLevelSessionsByAccount(accountId);
+        return new ResponseEntity<>(sessions, HttpStatus.OK);
+    }
+
+    /**
+     * Retrieves all LevelSessions for a specific level.
+     *
+     * @param levelId The UUID of the level.
+     * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
+     */
+    @GetMapping("/by-level/{levelId}")
+    public ResponseEntity<List<LevelSession>> getLevelSessionsByLevel(@PathVariable UUID levelId) {
+        List<LevelSession> sessions = levelSessionService.getLevelSessionsByLevel(levelId);
+        return new ResponseEntity<>(sessions, HttpStatus.OK);
+    }
+
+    /**
+     * Updates an existing LevelSession.
+     *
+     * @param id The UUID of the LevelSession to update.
+     * @param updatedSession The LevelSession object containing the updated data.
+     * @return ResponseEntity with the updated LevelSession and HTTP status 200 (OK),
+     * or HTTP status 404 (Not Found) if the session does not exist.
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<LevelSession> updateLevelSession(@PathVariable UUID id, @RequestBody LevelSession updatedSession) {
+        try {
+            LevelSession result = levelSessionService.updateLevelSession(id, updatedSession);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Deletes a LevelSession by its ID.
+     *
+     * @param id The UUID of the LevelSession to delete.
+     * @return ResponseEntity with HTTP status 204 (No Content) on successful deletion,
+     * or HTTP status 404 (Not Found) if the session does not exist.
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLevelSession(@PathVariable UUID id) {
+        try {
+            levelSessionService.deleteLevelSession(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (EntityNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
