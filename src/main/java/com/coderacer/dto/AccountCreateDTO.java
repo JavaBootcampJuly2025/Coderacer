@@ -1,7 +1,5 @@
 package com.coderacer.dto;
 
-import java.util.UUID;
-
 public record AccountCreateDTO (
         String username,
         String email,

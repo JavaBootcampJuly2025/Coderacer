@@ -1,15 +1,13 @@
-//package com.coderacer.dto;
-//
-//import com.coderacer.model.Account;
-//
-//public record AccountUpdateDTO(
-//        /// enums and models
-//        /// NOT SURE IF THIS IS EVEN NEEDED TBH
-//) {
-//    public static AccountUpdateDTO fromEntity(Account account){
-//        return new AccountUpdateDTO(
-//                account.getUsername(),
-//                account.getEmail()
-//        );
-//    }
-//}
+package com.coderacer.dto;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+public record AccountUpdateDTO(
+        @NotBlank @Size(min = 3, max = 50) String username,
+        @Email String email,
+        @Size(min = 8, max = 100) String hashedPassword,
+        Integer rating,
+        Boolean verified
+) {}
