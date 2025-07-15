@@ -1,10 +1,9 @@
 package com.coderacer.service;
 
-import com.coderacer.dto.AccountMetricsDTO;
-import com.coderacer.models.AccountMetrics;
+import com.coderacer.dto.AccountMetricsResponseDTO;
 
 import java.util.UUID;
 
 public interface AccountMetricsService {
-    AccountMetricsDTO getAccountMetricsByAccountId(UUID id);
+    AccountMetricsResponseDTO getAccountMetricsByAccountId(UUID id);
 }
