@@ -17,6 +17,7 @@ import java.util.UUID;
 //@Subselect() finish later
 public class AccountMetrics {
     @Id
+    @Column(unique = true)
     private UUID id;
 
 //    @OneToOne
