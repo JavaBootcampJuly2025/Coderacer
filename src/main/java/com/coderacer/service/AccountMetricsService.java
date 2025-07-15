@@ -1,7 +1,5 @@
 package com.coderacer.service;
 
-package com.coderacer.service;
-
 import com.coderacer.dto.GameplayMetricsDTO;
 import com.coderacer.dto.SessionLookupParametersDTO;
 import com.coderacer.repository.LevelSessionRepository;
