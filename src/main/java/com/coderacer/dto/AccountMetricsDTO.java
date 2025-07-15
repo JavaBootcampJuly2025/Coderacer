@@ -1,10 +1,12 @@
 package com.coderacer.dto;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
 
+@Data
 @Setter
 @Getter
 public class AccountMetricsDTO {
