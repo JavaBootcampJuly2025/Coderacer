@@ -7,10 +7,10 @@ import java.util.UUID;
 
 @Setter
 @Getter
-public class AccountMetrics {
-    private UUID id;
+public class AccountMetricsDTO {
 //    private Account account;
     private double avgCpm;
     private double avgAccuracy;
     private double avgCpmWeekly;
+    private double avgAccuracyWeekly;
 }

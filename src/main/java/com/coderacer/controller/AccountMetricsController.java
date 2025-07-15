@@ -1,5 +1,6 @@
 package com.coderacer.controller;
 
+import com.coderacer.dto.AccountMetricsDTO;
 import com.coderacer.models.AccountMetrics;
 import com.coderacer.service.AccountMetricsService;
 import com.coderacer.service.AccountMetricsServiceImpl;
@@ -17,7 +18,7 @@ public class AccountMetricsController {
     private AccountMetricsService accountMetricsService = new AccountMetricsServiceImpl();
 
     @GetMapping("/get/{id}")
-    public ResponseEntity<AccountMetrics> getAccountMetricsById(@PathVariable("id") UUID id) {
+    public ResponseEntity<AccountMetricsDTO> getAccountMetricsById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(accountMetricsService.getAccountMetricsById(id));
     }
 }
