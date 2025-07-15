@@ -4,6 +4,8 @@ import com.coderacer.model.Account;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.nio.channels.FileChannel;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -14,4 +16,10 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     boolean existsByAccountNumber(String accountNumber);
     List<Account> findByOwnerId(UUID ownerId);
     long countByOwnerId(UUID ownerId);
+
+    Account findByUsername(String username);
+
+    FileChannel findByEmail(String email);
+
+    Collection<Object> findByRank(String rank);
 }

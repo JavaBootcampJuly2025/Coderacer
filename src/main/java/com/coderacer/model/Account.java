@@ -1,5 +1,6 @@
 package com.coderacer.model;
 
+import com.coderacer.dto.AccountDTO;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
