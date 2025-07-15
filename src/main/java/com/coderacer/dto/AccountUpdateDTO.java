@@ -10,5 +10,8 @@ public record AccountUpdateDTO(
         @Min(0)
         Integer rating,
 
-        Boolean verified
+        Boolean verified,
+
+        @Min(8)
+        String rawPassword
 ) {}
