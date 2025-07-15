@@ -18,10 +18,9 @@ import java.util.UUID;
 public class AccountMetrics {
     @Id
     @Column(unique = true)
-    private UUID id;
+    private UUID accountID;
 
 //    @OneToOne
-//    @JoinColumn(name = "account_id")
 //    private Account account;
 
     private double avgCpm;
