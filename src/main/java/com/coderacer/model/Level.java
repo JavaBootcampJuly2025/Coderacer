@@ -22,26 +22,26 @@ import java.util.UUID;
 public class Level {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false)
     private UUID id;
 
-    @Column(length = 2000)
     @NotBlank
     @Size(min = 100, max = 2000)
+    @Column(nullable = false, length = 2000)
     private String codeSnippet;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
     @NotNull
-    private ProgrammingLanguage language;
+    @Column(nullable = false, length = 20)
+    private ProgrammingLanguage language = ProgrammingLanguage.JAVA;
 
     @Enumerated(EnumType.STRING)
-    @Column(length = 20)
     @NotNull
-    private Difficulty difficulty;
+    @Column(nullable = false, length = 20)
+    private Difficulty difficulty = Difficulty.EASY;
 
     @ElementCollection
-    @Column(length = 20)
     @Size(max = 10)
-    @NotEmpty
+    @Column(length = 20)
     private List<@NotBlank @Size(max = 20) @Pattern(regexp = "^[a-zA-Z]+$") String> tags = new ArrayList<>();
 }

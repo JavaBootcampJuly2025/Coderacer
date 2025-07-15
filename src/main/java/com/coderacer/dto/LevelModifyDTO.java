@@ -13,5 +13,5 @@ public record LevelModifyDTO(
         @NotBlank @Size(min = 100, max = 2000) String codeSnippet,
         @NotNull ProgrammingLanguage language,
         @NotNull Difficulty difficulty,
-        @NotEmpty List<@NotBlank @Size(max = 20) String> tags
+        List<@NotBlank @Size(max = 20) String> tags
 ) {}
