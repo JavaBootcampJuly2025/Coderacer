@@ -2,6 +2,8 @@ package com.coderacer.service;
 
 import com.coderacer.models.AccountMetrics;
 
+import java.util.UUID;
+
 public interface AccountMetricsService {
-    AccountMetrics getAccountMetricsById(Long id);
+    AccountMetrics getAccountMetricsById(UUID id);
 }
