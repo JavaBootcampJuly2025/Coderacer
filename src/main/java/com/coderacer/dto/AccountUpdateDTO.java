@@ -1,13 +1,14 @@
+// AccountUpdateDTO.java
 package com.coderacer.dto;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 
 public record AccountUpdateDTO(
-        @NotBlank @Size(min = 3, max = 50) String username,
-        @Email String email,
-        @Size(min = 8, max = 100) String hashedPassword,
+        @Email
+        String email,
+
+        @Min(0)
         Integer rating,
+
         Boolean verified
 ) {}

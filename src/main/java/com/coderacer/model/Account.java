@@ -50,8 +50,6 @@ public class Account {
     private String email;
 
     @NotBlank(message = "Password hash cannot be empty")
-
-
     @NotNull
     @Column(length = BCRYPT_HASH_LENGTH, nullable = false)
     @NotBlank(message = "Password hash cannot be empty")
