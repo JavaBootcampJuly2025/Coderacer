@@ -6,7 +6,7 @@ import com.coderacer.model.LeaderboardEntry;
 import com.coderacer.repository.LeaderboardEntryRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
-
+//git being weird ong
 
 @Service
 public class LeaderboardEntryServiceImpl implements LeaderboardEntryService {
