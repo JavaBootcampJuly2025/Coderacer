@@ -18,10 +18,7 @@ public class AccountMetricsService {
     }
 
     public GameplayMetricsDTO getAccountMetrics(UUID id, SessionLookupParametersDTO parameters) {
-        if (parameters.getTime() == LocalDateTime.MIN) {
-            parameters.setTime(LocalDateTime.MIN);
-        }
-        else {
+        if (!(parameters.getTime() == LocalDateTime.MIN)) {
             Duration difference = Duration.between(parameters.getTime(), LocalDateTime.now());
             parameters.setTime(parameters.getTime().minus(difference));
         }
