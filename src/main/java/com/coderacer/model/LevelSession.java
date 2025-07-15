@@ -38,4 +38,13 @@ public class LevelSession {
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+
+    public LevelSession(Level level, Account account, double cpm, double accuracy, LocalDateTime startTime, LocalDateTime endTime) {
+        this.level = level;
+        this.account = account;
+        this.cpm = cpm;
+        this.accuracy = accuracy;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
 }
