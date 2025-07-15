@@ -18,7 +18,7 @@ import java.util.UUID;
 public class AccountMetrics {
     @Id
     @Column(unique = true)
-    private UUID accountID;
+    private UUID accountId;
 
 //    @OneToOne
 //    private Account account;

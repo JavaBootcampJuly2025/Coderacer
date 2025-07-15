@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class AccountMetricsServiceImpl implements AccountMetricsService {
     @Override
-    public AccountMetricsDTO getAccountMetricsById(UUID id) {
+    public AccountMetricsDTO getAccountMetricsByAccountId(UUID id) {
         return null;
         // implement later
     }

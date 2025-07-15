@@ -7,6 +7,6 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AccountMetricsRepository extends JpaRepository<AccountMetrics, UUID> {
-    AccountMetrics findAccountMetricsById(UUID id);
+    AccountMetrics findAccountMetricsByAccountId(UUID id);
 }
 

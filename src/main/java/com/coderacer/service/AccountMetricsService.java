@@ -6,5 +6,5 @@ import com.coderacer.models.AccountMetrics;
 import java.util.UUID;
 
 public interface AccountMetricsService {
-    AccountMetricsDTO getAccountMetricsById(UUID id);
+    AccountMetricsDTO getAccountMetricsByAccountId(UUID id);
 }

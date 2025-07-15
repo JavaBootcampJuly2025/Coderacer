@@ -19,6 +19,6 @@ public class AccountMetricsController {
 
     @GetMapping("/get/{id}")
     public ResponseEntity<AccountMetricsDTO> getAccountMetricsById(@PathVariable("id") UUID id) {
-        return ResponseEntity.ok(accountMetricsService.getAccountMetricsById(id));
+        return ResponseEntity.ok(accountMetricsService.getAccountMetricsByAccountId(id));
     }
 }
