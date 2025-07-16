@@ -69,9 +69,8 @@ public class AccountController {
         accountService.changePassword(id, passwordChangeDTO);
     }
 
-    @PutMapping("/{id}/verify")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void verifyAccount(@PathVariable UUID id) {
-        accountService.verifyAccount(id);
+    @GetMapping("/verify")
+    public ResponseEntity<String> verifyAccount(@RequestParam String token) {
+        return accountService.verifyAccount(token);
     }
 }

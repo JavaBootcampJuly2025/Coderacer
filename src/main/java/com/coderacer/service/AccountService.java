@@ -7,10 +7,16 @@ import com.coderacer.model.Account;
 import com.coderacer.model.Level;
 import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
+import com.coderacer.model.EmailVerificationToken;
+import com.coderacer.repository.AccountRepository;
+import com.coderacer.repository.EmailVerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -21,6 +27,9 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final LevelRepository levelRepository; // for rating calc only
     private final RatingAlgorithm ratingAlgo; // for rating calc only
+    private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    @Autowired
+    private EmailService emailService;
 
     @Transactional(readOnly = true)
     public AccountDTO getAccount(UUID id) {
@@ -61,6 +70,13 @@ public class AccountService {
         account.setVerified(false);
 
         Account saved = accountRepository.save(account);
+
+        String token = UUID.randomUUID().toString();
+        EmailVerificationToken verificationToken = new EmailVerificationToken(token, account, LocalDateTime.now().plusHours(24));
+        emailVerificationTokenRepository.save(verificationToken);
+
+        emailService.sendVerificationEmail(account, token);
+
         return AccountDTO.fromEntity(saved);
     }
 
@@ -114,13 +130,18 @@ public class AccountService {
         accountRepository.save(account);
     }
 
-    // TODO TEMPORARY. WILL IDEALLY VERIFY BY EMAIL
     @Transactional
-    public void verifyAccount(UUID id) {
-        Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new AccountNotFoundException(id));
+    public ResponseEntity<String> verifyAccount(String token) {
+        EmailVerificationToken verificationToken = emailVerificationTokenRepository.findByToken(token);
+        if (verificationToken == null || verificationToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+            return ResponseEntity.badRequest().body("Invalid or expired token.");
+        }
+
+        Account account = verificationToken.getAccount();
         account.setVerified(true);
         accountRepository.save(account);
+
+        return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
 
     /**
