@@ -1,0 +1,45 @@
+body {
+    background: linear-gradient(0.25turn, purple,aqua) no-repeat;
+    position: relative;
+    background-size:100% 100vh;
+}
+
+.header {
+    font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+}
+
+.content {
+    margin: auto;
+    border: 8px solid black;
+    padding-left: 10rem;
+    padding-right: 10rem;
+    padding-bottom: 2rem;
+    border-radius: 15px;
+    background: white;
+    text-align: center;
+}
+
+.action {
+    font-size: 25px;
+    width: 200px;
+    border: 5px solid black;
+    padding: 0.5rem;
+    border-radius: 2px;
+    margin-top: 10px;
+}
+
+.label {
+    margin-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.inputForm {
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.message {
+    font-size: 35px;
+    font-weight: bold;
+}
