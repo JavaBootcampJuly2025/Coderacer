@@ -1,7 +1,7 @@
 import { createAccount } from './services/apiService';
 
 function Register() {
-  const submit = async e => {
+  const submit = async (e) => {
     e.preventDefault();
 
     const form = e.target;
@@ -14,25 +14,43 @@ function Register() {
     try {
       const result = await createAccount(accountData);
     } catch (error) {
-
+      // Handle error appropriately (e.g., display error message)
     }
   };
 
   return (
-    <>
-      <div className="content">
-        <h1 className="header">Register</h1>
-        <form onSubmit={submit}>
-          <label className="label" htmlFor="email">Enter Email</label><br></br>
-          <input className="inputForm" type="text" id="email" name="email" placeholder="Email" /><br/>
-          <label className="label" htmlFor="username">Enter Username</label><br></br>
-          <input className="inputForm" type="text" id="username" name="username" placeholder="Username" /><br/>
-          <label className="label" htmlFor="password">Enter Password</label><br></br>
-          <input className="inputForm" type="password" id="password" name="password" placeholder="Password" /><br/>
-          <input className="action" type="submit" value="Register" />
-        </form> 
+      <div className="home-wrapper">
+        <div className="content-glass">
+          <h1 className="header">Register</h1>
+          <form onSubmit={submit}>
+            <input
+                className="inputForm"
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                required
+            />
+            <input
+                className="inputForm"
+                type="text"
+                id="username"
+                name="username"
+                placeholder="Enter your username"
+                required
+            />
+            <input
+                className="inputForm"
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                required
+            />
+            <input className="action" type="submit" value="Register" />
+          </form>
+        </div>
       </div>
-    </>
   );
 }
 
