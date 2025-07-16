@@ -1,12 +1,12 @@
 package com.coderacer.service;
 
+import com.coderacer.algo.RatingAlgorithm;
 import com.coderacer.dto.*;
-import com.coderacer.exception.AccountNotFoundException;
-import com.coderacer.exception.EmailConflictException;
-import com.coderacer.exception.PasswordVerificationException;
-import com.coderacer.exception.UsernameConflictException;
+import com.coderacer.exception.*;
 import com.coderacer.model.Account;
+import com.coderacer.model.Level;
 import com.coderacer.repository.AccountRepository;
+import com.coderacer.repository.LevelRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +19,8 @@ import java.util.UUID;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final LevelRepository levelRepository; // for rating calc only
+    private final RatingAlgorithm ratingAlgo; // for rating calc only
 
     @Transactional(readOnly = true)
     public AccountDTO getAccount(UUID id) {
@@ -118,6 +120,27 @@ public class AccountService {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));
         account.setVerified(true);
+        accountRepository.save(account);
+    }
+
+    @Transactional
+    public void updateRating(LevelSessionCreateDto dto) {
+        UUID accountId = dto.getAccountId();
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+
+        Level level = levelRepository.findById(dto.getLevelId())
+                .orElseThrow(() -> new LevelNotFoundException(dto.getLevelId()));
+
+        double diffMul = level.getDifficulty().getMultiplier();
+        int perfScore = (int) (dto.getCpm() * (dto.getAccuracy() / 100.0) * diffMul);
+
+        // calculate how much to add/subtract
+        int delta = ratingAlgo.calculateDelta(account.getRating(), perfScore);
+
+        // apply and persist
+        account.setRating(account.getRating() + delta);
         accountRepository.save(account);
     }
 }
