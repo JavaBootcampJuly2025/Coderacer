@@ -9,22 +9,15 @@ import java.util.List;
 
 @Service
 public class LeaderboardEntryService {
-    private static final double EASY_MULTIPLIER = 0.5;
-    private static final double MEDIUM_MULTIPLIER = 1.0;
-    private static final double HARD_MULTIPLIER = 1.5;
-
 
     private final LeaderboardEntryRepository repository;
-
 
     public LeaderboardEntryService(LeaderboardEntryRepository repository) {
         this.repository = repository;
     }
 
-
     public List<LeaderboardEntry> getLeaderboardEntries() {
         List<LeaderboardEntry> entries = repository.findAll();
-
 
         for (LeaderboardEntry entry : entries) {
             double multiplier = getDifficultyMultiplier(entry.getDifficulty());
@@ -32,10 +25,8 @@ public class LeaderboardEntryService {
             entry.setMatchmakingRating(rating);
         }
 
-
         return entries;
     }
-
 
     private double getDifficultyMultiplier(Difficulty difficulty) {
         switch (difficulty) {
