@@ -1,11 +1,12 @@
 package com.coderacer.service;
 
+import com.coderacer.algo.RatingAlgorithm;
 import com.coderacer.dto.*;
-import com.coderacer.exception.AccountNotFoundException;
-import com.coderacer.exception.EmailConflictException;
-import com.coderacer.exception.PasswordVerificationException;
-import com.coderacer.exception.UsernameConflictException;
+import com.coderacer.exception.*;
 import com.coderacer.model.Account;
+import com.coderacer.model.Level;
+import com.coderacer.repository.AccountRepository;
+import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
 import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.EmailVerificationTokenRepository;
@@ -24,6 +25,8 @@ import java.util.UUID;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final LevelRepository levelRepository; // for rating calc only
+    private final RatingAlgorithm ratingAlgo; // for rating calc only
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
     @Autowired
     private EmailService emailService;
@@ -139,5 +142,33 @@ public class AccountService {
         accountRepository.save(account);
 
         return ResponseEntity.ok("Email verified successfully. You can now log in.");
+    }
+
+    /**
+     * Updates the account's rating based on new level session - a recently completed game by said player.
+     *
+     * @param dto we need accountId, levelId (for difficulty), cpm, and accuracy from this
+     * @throws AccountNotFoundException if the account doesn't exist
+     * @throws LevelNotFoundException if the level doesn't exist
+     */
+    @Transactional
+    public void updateRating(LevelSessionCreateDto dto) {
+        UUID accountId = dto.getAccountId();
+
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new AccountNotFoundException(accountId));
+
+        Level level = levelRepository.findById(dto.getLevelId())
+                .orElseThrow(() -> new LevelNotFoundException(dto.getLevelId()));
+
+        double diffMultiplier = level.getDifficulty().getMultiplier();
+        int performanceScore = (int) Math.round(dto.getCpm() * dto.getAccuracy() * diffMultiplier);
+
+        // calculate how much to add/subtract
+        int delta = ratingAlgo.calculateDelta(account.getRating(), performanceScore);
+
+        // apply and persist
+        account.setRating(account.getRating() + delta);
+        accountRepository.save(account);
     }
 }
