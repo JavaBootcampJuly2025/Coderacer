@@ -28,7 +28,7 @@ public class KFactorRatingAlgorithm implements RatingAlgorithm {
 
         // simple scaled delta: higher perfScore yields larger fraction of K
         // e.g. perfScore=1000 => delta ~= K (but capped at K)
-        double rawDelta = perfScore / 1000.0 * k;
+        double rawDelta = Math.round(perfScore / 1000.0 * k);
 
         // cap so nobody gains more than K
         return (int) Math.min(rawDelta, k);
