@@ -141,7 +141,7 @@ public class AccountService {
                 .orElseThrow(() -> new LevelNotFoundException(dto.getLevelId()));
 
         double diffMultiplier = level.getDifficulty().getMultiplier();
-        int performanceScore = (int) (dto.getCpm() * (dto.getAccuracy() / 100.0) * diffMultiplier);
+        int performanceScore = (int) (dto.getCpm() * dto.getAccuracy() * diffMultiplier);
 
         // calculate how much to add/subtract
         int delta = ratingAlgo.calculateDelta(account.getRating(), performanceScore);
