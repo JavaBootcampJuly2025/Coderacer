@@ -1,6 +1,7 @@
 package com.coderacer.controller;
 
 import com.coderacer.model.LevelSession;
+import com.coderacer.service.AccountService;
 import com.coderacer.service.LevelSessionService;
 import com.coderacer.dto.LevelSessionCreateDto;
 import jakarta.persistence.EntityNotFoundException;
@@ -18,14 +19,17 @@ import java.util.UUID;
 public class LevelSessionController {
 
     private final LevelSessionService levelSessionService;
+    private final AccountService accountService;
 
     @Autowired
-    public LevelSessionController(LevelSessionService levelSessionService) {
+    public LevelSessionController(LevelSessionService levelSessionService, AccountService accountService) {
         this.levelSessionService = levelSessionService;
+        this.accountService = accountService;
     }
 
     /**
      * Creates a new LevelSession using data from a DTO.
+     * Also, since this implies a finished game, the method updates player matchmaking rating as well.
      *
      * @param createDto The DTO containing the data for the new session, sent in the request body.
      * @return ResponseEntity with the created LevelSession and HTTP status 201 (Created).
@@ -34,6 +38,7 @@ public class LevelSessionController {
     public ResponseEntity<LevelSession> createLevelSession(@RequestBody LevelSessionCreateDto createDto) {
         try {
             LevelSession newSession = levelSessionService.createLevelSession(createDto);
+            accountService.updateRating(createDto);
             return new ResponseEntity<>(newSession, HttpStatus.CREATED);
         } catch (EntityNotFoundException e) {
             // Return a 400 Bad Request if a referenced Level or Account is not found.

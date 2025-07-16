@@ -8,5 +8,5 @@ public interface RatingAlgorithm {
      * @param perfScore      game performance (avgCpm * accuracyPct / 100 * difficultyMultiplier)
      * @return               delta to apply to MMR
      */
-    double calculateDelta(double currentRating, double perfScore);
+     int calculateDelta(int currentRating, int perfScore);
 }

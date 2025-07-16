@@ -20,7 +20,7 @@ public class KFactorRatingAlgorithm implements RatingAlgorithm {
      * @return               delta to apply to MMR
      */
     @Override
-    public double calculateDelta(double currentRating, double perfScore) {
+    public int calculateDelta(int currentRating, int perfScore) {
         // pick K based on current rating
         double k = currentRating < 1000
                 ? K_LOW
@@ -31,6 +31,6 @@ public class KFactorRatingAlgorithm implements RatingAlgorithm {
         double rawDelta = perfScore / 1000.0 * k;
 
         // cap so nobody gains more than K
-        return Math.min(rawDelta, k);
+        return (int) Math.min(rawDelta, k);
     }
 }
