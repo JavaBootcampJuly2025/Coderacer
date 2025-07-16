@@ -123,6 +123,13 @@ public class AccountService {
         accountRepository.save(account);
     }
 
+    /**
+     * Updates the account's rating based on new level session - a recently completed game by said player.
+     *
+     * @param dto we need accountId, levelId (for difficulty), cpm, and accuracy from this
+     * @throws AccountNotFoundException if the account doesn't exist
+     * @throws LevelNotFoundException if the level doesn't exist
+     */
     @Transactional
     public void updateRating(LevelSessionCreateDto dto) {
         UUID accountId = dto.getAccountId();
@@ -133,11 +140,11 @@ public class AccountService {
         Level level = levelRepository.findById(dto.getLevelId())
                 .orElseThrow(() -> new LevelNotFoundException(dto.getLevelId()));
 
-        double diffMul = level.getDifficulty().getMultiplier();
-        int perfScore = (int) (dto.getCpm() * (dto.getAccuracy() / 100.0) * diffMul);
+        double diffMultiplier = level.getDifficulty().getMultiplier();
+        int performanceScore = (int) (dto.getCpm() * (dto.getAccuracy() / 100.0) * diffMultiplier);
 
         // calculate how much to add/subtract
-        int delta = ratingAlgo.calculateDelta(account.getRating(), perfScore);
+        int delta = ratingAlgo.calculateDelta(account.getRating(), performanceScore);
 
         // apply and persist
         account.setRating(account.getRating() + delta);
