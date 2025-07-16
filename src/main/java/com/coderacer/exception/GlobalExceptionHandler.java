@@ -3,10 +3,13 @@ package com.coderacer.exception;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -31,6 +34,40 @@ public class GlobalExceptionHandler {
             PasswordVerificationException ex,
             HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
+    }
+
+    // Other exceptions
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleAllExceptions(
+            Exception ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.INTERNAL_SERVER_ERROR, request);
+    }
+
+    // Validation errors (related to @Valid annotation if I understand correctly)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ErrorResponse> handleValidationErrors(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request) {
+
+        List<ErrorResponse.FieldError> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(fieldError -> new ErrorResponse.FieldError(
+                        fieldError.getField(),
+                        fieldError.getDefaultMessage()))
+                .collect(Collectors.toList());
+
+        ErrorResponse response = new ErrorResponse(
+                Instant.now(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Validation Error",
+                "Invalid request content",
+                request.getRequestURI(),
+                fieldErrors
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 
     // Helper method
