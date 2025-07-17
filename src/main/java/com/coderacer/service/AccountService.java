@@ -8,7 +8,6 @@ import com.coderacer.model.Level;
 import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
-import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.EmailVerificationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;

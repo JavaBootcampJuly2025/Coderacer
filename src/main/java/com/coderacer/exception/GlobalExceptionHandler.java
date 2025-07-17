@@ -39,6 +39,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.UNAUTHORIZED, request);
     }
 
+    @ExceptionHandler(LevelNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleLevelNotFound(
+            LevelNotFoundException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
     // Other exceptions
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(

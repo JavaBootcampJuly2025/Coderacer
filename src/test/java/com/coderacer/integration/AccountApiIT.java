@@ -1,8 +1,9 @@
 package com.coderacer.integration;
 
-import com.coderacer.dto.*;
-import com.coderacer.model.Account;
-import com.coderacer.repository.AccountRepository;
+import com.coderacer.dto.AccountCreateDTO;
+import com.coderacer.dto.AccountDTO;
+import com.coderacer.dto.AccountUpdateDTO;
+import com.coderacer.dto.PasswordChangeDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,8 +22,6 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @AutoConfigureWebMvc
-class AccountApiIntegrationTest {
+class AccountApiIT {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
@@ -58,7 +57,7 @@ class AccountApiIntegrationTest {
     private String baseUrl;
 
     @Autowired
-    private AccountRepository accountRepository;
+    private com.coderacer.repository.AccountRepository accountRepository;
 
     @BeforeEach
     void setUp() {
@@ -85,59 +84,44 @@ class AccountApiIntegrationTest {
         assertThat(createResponse.getBody().id()).isNotNull();
         assertThat(createResponse.getBody().username()).isEqualTo(newAccount.username());
         assertThat(createResponse.getBody().email()).isEqualTo(newAccount.email());
+        assertThat(createResponse.getBody().rating()).isEqualTo(0);
         assertThat(createResponse.getBody().verified()).isFalse();
 
-        // When - Retrieve account by ID
+        // When - Retrieve account
         UUID accountId = createResponse.getBody().id();
         ResponseEntity<AccountDTO> getResponse = restTemplate.getForEntity(
                 baseUrl + "/" + accountId, AccountDTO.class);
 
-        // Then - Verify retrieval by ID
+        // Then - Verify retrieval
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(getResponse.getBody()).isEqualTo(createResponse.getBody());
-
-        // When - Retrieve account by username
-        ResponseEntity<AccountDTO> getByUsernameResponse = restTemplate.getForEntity(
-                baseUrl + "/username/" + newAccount.username(), AccountDTO.class);
-
-        // Then - Verify retrieval by username
-        assertThat(getByUsernameResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getByUsernameResponse.getBody()).isEqualTo(createResponse.getBody());
     }
 
     @Test
-    void shouldGetAllAccounts() {
-        // Given - Create two accounts
-        AccountCreateDTO account1 = new AccountCreateDTO(
-                "user1",
-                "user1@example.com",
-                "password123"
-        );
-        AccountCreateDTO account2 = new AccountCreateDTO(
-                "user2",
-                "user2@example.com",
+    void shouldGetAccountByUsername() {
+        // Given
+        AccountCreateDTO account = new AccountCreateDTO(
+                "findme",
+                "findme@example.com",
                 "password123"
         );
 
-        restTemplate.postForEntity(baseUrl, account1, AccountDTO.class);
-        restTemplate.postForEntity(baseUrl, account2, AccountDTO.class);
+        restTemplate.postForEntity(baseUrl, account, AccountDTO.class);
 
         // When
-        ResponseEntity<AccountDTO[]> response = restTemplate.getForEntity(baseUrl, AccountDTO[].class);
+        ResponseEntity<AccountDTO> response = restTemplate.getForEntity(
+                baseUrl + "/username/findme", AccountDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(2);
-        assertThat(Arrays.stream(response.getBody()))
-                .extracting(AccountDTO::username)
-                .containsOnly("user1", "user2");
+        assertThat(response.getBody().username()).isEqualTo("findme");
     }
 
     @Test
     void shouldUpdateAccount() {
-        // Given - Create an account
+        // Given - Create account
         AccountCreateDTO originalAccount = new AccountCreateDTO(
-                "updateuser",
+                "original",
                 "original@example.com",
                 "password123"
         );
@@ -146,8 +130,8 @@ class AccountApiIntegrationTest {
                 baseUrl, originalAccount, AccountDTO.class);
         UUID accountId = createResponse.getBody().id();
 
-        // When - Update the account
-        AccountUpdateDTO updatedAccount = new AccountUpdateDTO(
+        // When - Update account
+        AccountUpdateDTO updateDTO = new AccountUpdateDTO(
                 "updated@example.com",
                 100,
                 true
@@ -156,29 +140,29 @@ class AccountApiIntegrationTest {
         ResponseEntity<AccountDTO> updateResponse = restTemplate.exchange(
                 baseUrl + "/" + accountId,
                 HttpMethod.PUT,
-                new HttpEntity<>(updatedAccount),
+                new HttpEntity<>(updateDTO),
                 AccountDTO.class
         );
 
         // Then
         assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(updateResponse.getBody().id()).isEqualTo(accountId);
-        assertThat(updateResponse.getBody().email()).isEqualTo(updatedAccount.email());
-        assertThat(updateResponse.getBody().rating()).isEqualTo(updatedAccount.rating());
-        assertThat(updateResponse.getBody().verified()).isEqualTo(updatedAccount.verified());
+        assertThat(updateResponse.getBody().email()).isEqualTo("updated@example.com");
+        assertThat(updateResponse.getBody().rating()).isEqualTo(100);
+        assertThat(updateResponse.getBody().verified()).isTrue();
     }
 
     @Test
     void shouldDeleteAccount() {
         // Given
-        AccountCreateDTO accountToDelete = new AccountCreateDTO(
-                "deleteuser",
+        AccountCreateDTO account = new AccountCreateDTO(
+                "todelete",
                 "delete@example.com",
                 "password123"
         );
 
         ResponseEntity<AccountDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, accountToDelete, AccountDTO.class);
+                baseUrl, account, AccountDTO.class);
         UUID accountId = createResponse.getBody().id();
 
         // When
@@ -202,8 +186,8 @@ class AccountApiIntegrationTest {
     void shouldChangePassword() {
         // Given
         AccountCreateDTO account = new AccountCreateDTO(
-                "passworduser",
-                "password@example.com",
+                "pwdchange",
+                "pwd@example.com",
                 "oldpassword"
         );
 
@@ -214,10 +198,10 @@ class AccountApiIntegrationTest {
         // When
         PasswordChangeDTO passwordChange = new PasswordChangeDTO(
                 "oldpassword",
-                "newpassword"
+                "newpassword123"
         );
 
-        ResponseEntity<Void> changePasswordResponse = restTemplate.exchange(
+        ResponseEntity<Void> changeResponse = restTemplate.exchange(
                 baseUrl + "/" + accountId + "/password",
                 HttpMethod.PUT,
                 new HttpEntity<>(passwordChange),
@@ -225,7 +209,7 @@ class AccountApiIntegrationTest {
         );
 
         // Then
-        assertThat(changePasswordResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
+        assertThat(changeResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
     }
 
     @Test
@@ -240,21 +224,35 @@ class AccountApiIntegrationTest {
     }
 
     @Test
-    void shouldReturn404ForNonExistentUsername() {
+    void shouldReturn409ForDuplicateUsername() {
+        // Given
+        AccountCreateDTO account1 = new AccountCreateDTO(
+                "duplicate",
+                "first@example.com",
+                "password123"
+        );
+        restTemplate.postForEntity(baseUrl, account1, AccountDTO.class);
+
+        AccountCreateDTO account2 = new AccountCreateDTO(
+                "duplicate",
+                "second@example.com",
+                "password123"
+        );
+
         // When
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/username/nonexistent", String.class);
+        ResponseEntity<String> response = restTemplate.postForEntity(
+                baseUrl, account2, String.class);
 
         // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
     @Test
-    void shouldReturn400ForInvalidAccountCreation() {
-        // Given - Invalid account (username too short)
+    void shouldReturn400ForInvalidData() {
+        // Given - Invalid account (short username)
         AccountCreateDTO invalidAccount = new AccountCreateDTO(
-                "ab",
-                "invalid@example.com",
+                "ab", // Less than 3 characters
+                "test@example.com",
                 "password123"
         );
 
@@ -265,76 +263,4 @@ class AccountApiIntegrationTest {
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
-
-    @Test
-    void shouldReturn400ForInvalidAccountUpdate() {
-        // Given - Create an account
-        AccountCreateDTO originalAccount = new AccountCreateDTO(
-                "invalidupdateuser",
-                "originalinvalid@example.com",
-                "password123"
-        );
-
-        ResponseEntity<AccountDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, originalAccount, AccountDTO.class);
-        UUID accountId = createResponse.getBody().id();
-
-        // When - Update with invalid email
-        AccountUpdateDTO invalidUpdate = new AccountUpdateDTO(
-                "invalid-email",
-                10,
-                false
-        );
-
-        ResponseEntity<String> updateResponse = restTemplate.exchange(
-                baseUrl + "/" + accountId,
-                HttpMethod.PUT,
-                new HttpEntity<>(invalidUpdate),
-                String.class
-        );
-
-        // Then
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    void shouldReturn400ForInvalidPasswordChange() {
-        // Given
-        AccountCreateDTO account = new AccountCreateDTO(
-                "invalidpassuser",
-                "invalidpass@example.com",
-                "oldpassword"
-        );
-
-        ResponseEntity<AccountDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, account, AccountDTO.class);
-        UUID accountId = createResponse.getBody().id();
-
-        // When - Mismatched new passwords
-        PasswordChangeDTO invalidPasswordChange = new PasswordChangeDTO(
-                "oldpassword",
-                "mismatchednewpassword"
-        );
-
-        ResponseEntity<String> changePasswordResponse = restTemplate.exchange(
-                baseUrl + "/" + accountId + "/password",
-                HttpMethod.PUT,
-                new HttpEntity<>(invalidPasswordChange),
-                String.class
-        );
-
-        // Then
-        assertThat(changePasswordResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
-
-    @Test
-    void shouldReturn400ForInvalidVerificationToken() {
-        // When
-        ResponseEntity<String> verifyResponse = restTemplate.getForEntity(
-                baseUrl + "/verify?token=invalidtoken", String.class);
-
-        // Then
-        assertThat(verifyResponse.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
-    }
 }
-

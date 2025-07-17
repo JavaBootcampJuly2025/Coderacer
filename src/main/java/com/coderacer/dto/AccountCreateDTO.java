@@ -3,7 +3,7 @@ package com.coderacer.dto;
 import jakarta.validation.constraints.*;
 
 public record AccountCreateDTO(
-        @NotBlank @Size(min = 3, max = 25)
+        @NotBlank @Size(min = 4, max = 25)
         @Pattern(regexp = "^[a-zA-Z0-9_]+$")
         String username,
 
