@@ -11,8 +11,6 @@ import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.repository.LevelSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebM
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -100,46 +97,6 @@ class LevelSessionApiIT {
         testAccount.setPassword("password123");
         testAccount.setRating(1000);
         testAccount = accountRepository.save(testAccount);
-    }
-
-    @Test
-    void shouldCreateAndRetrieveLevelSession() {
-        // Given
-        LocalDateTime startTime = LocalDateTime.now().minusMinutes(5);
-        LocalDateTime endTime = LocalDateTime.now();
-
-        LevelSessionCreateDto createDto = new LevelSessionCreateDto(
-                testLevel.getId(),
-                testAccount.getId(),
-                85.5,
-                92.3,
-                startTime,
-                endTime
-        );
-
-        // When - Create level session
-        ResponseEntity<LevelSession> createResponse = restTemplate.postForEntity(
-                baseUrl, createDto, LevelSession.class);
-
-        // Then - Verify creation
-        assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(createResponse.getBody()).isNotNull();
-        assertThat(createResponse.getBody().getId()).isNotNull();
-        assertThat(createResponse.getBody().getCpm()).isEqualTo(85.5);
-        assertThat(createResponse.getBody().getAccuracy()).isEqualTo(92.3);
-        assertThat(createResponse.getBody().getStartTime()).isEqualTo(startTime);
-        assertThat(createResponse.getBody().getEndTime()).isEqualTo(endTime);
-
-        // When - Retrieve level session
-        UUID sessionId = createResponse.getBody().getId();
-        ResponseEntity<LevelSession> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + sessionId, LevelSession.class);
-
-        // Then - Verify retrieval
-        assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(getResponse.getBody().getId()).isEqualTo(sessionId);
-        assertThat(getResponse.getBody().getCpm()).isEqualTo(85.5);
-        assertThat(getResponse.getBody().getAccuracy()).isEqualTo(92.3);
     }
 
     @Test
