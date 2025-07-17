@@ -51,8 +51,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository | lower }}/${{ env.IMAGE_NAME }}:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository | lower }}/${{ env.IMAGE_NAME }}:latest
           build-args: |
             APP_PORT=${{ env.APP_PORT }}
             SQL_DATABASE=${{ secrets.SQL_DATABASE }}
