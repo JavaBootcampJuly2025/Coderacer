@@ -4,6 +4,7 @@ import com.coderacer.dto.AccountCreateDTO;
 import com.coderacer.dto.AccountDTO;
 import com.coderacer.dto.AccountUpdateDTO;
 import com.coderacer.dto.PasswordChangeDTO;
+import com.coderacer.model.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -226,6 +227,14 @@ class AccountApiIT {
     @Test
     void shouldReturn409ForDuplicateUsername() {
         // Given
+        Account existingAccount = new Account();
+        existingAccount.setUsername("duplicate");
+        existingAccount.setEmail("first@example.com");
+        existingAccount.setPassword("password123");
+        existingAccount.setRating(0);
+        existingAccount.setVerified(false);
+        accountRepository.saveAndFlush(existingAccount);
+
         AccountCreateDTO account1 = new AccountCreateDTO(
                 "duplicate",
                 "first@example.com",
