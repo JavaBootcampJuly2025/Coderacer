@@ -2,6 +2,7 @@ package com.coderacer.service;
 
 import com.coderacer.algo.RatingAlgorithm;
 import com.coderacer.dto.*;
+import com.coderacer.enums.Role;
 import com.coderacer.exception.*;
 import com.coderacer.model.Account;
 import com.coderacer.model.Level;
@@ -72,6 +73,7 @@ public class AccountService {
         account.setPassword(dto.password()); // BCrypt encryption
         account.setRating(0);
         account.setVerified(false);
+        account.setRole(Role.USER);
 
         Account saved = accountRepository.save(account);
 

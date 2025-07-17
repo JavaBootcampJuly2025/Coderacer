@@ -22,7 +22,7 @@ public class AccountController {
     private final AccountService accountService;
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     public ResponseEntity<AccountDTO> getAccount(@PathVariable UUID id) {
         return ResponseEntity.ok(accountService.getAccount(id));
     }
@@ -66,14 +66,14 @@ public class AccountController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteAccount(@PathVariable UUID id) {
         accountService.deleteAccount(id);
     }
 
     @PutMapping("/{id}/password")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changePassword(
             @PathVariable UUID id,

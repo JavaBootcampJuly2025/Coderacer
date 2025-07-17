@@ -49,12 +49,13 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         }
 
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            Optional<Account> account = accountRepository.findByUsername(username);
-            if (account.isPresent()) {
+            Optional<Account> temp = accountRepository.findByUsername(username);
+            if (temp.isPresent()) {
+                Account account = temp.get();
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                username,
-                                role,
+                                account.getId(),
+                                null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

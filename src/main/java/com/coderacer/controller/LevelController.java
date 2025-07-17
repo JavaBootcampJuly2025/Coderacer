@@ -8,6 +8,7 @@ import com.coderacer.service.LevelService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -21,27 +22,31 @@ import java.util.UUID;
 public class LevelController {
 
     private final LevelService levelService;
-
+    @PreAuthorize("permitAll()")
     @GetMapping("/{id}")
     public ResponseEntity<LevelDTO> getLevel(@PathVariable UUID id) {
         return ResponseEntity.ok(levelService.getLevel(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<LevelDTO>> getAllLevels() {
         return ResponseEntity.ok(levelService.getAllLevels());
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/language/{language}")
     public ResponseEntity<List<LevelDTO>> getByLanguage(@PathVariable ProgrammingLanguage language) {
         return ResponseEntity.ok(levelService.getLevelsByLanguage(language));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/difficulty/{difficulty}")
     public ResponseEntity<List<LevelDTO>> getByDifficulty(@PathVariable Difficulty difficulty) {
         return ResponseEntity.ok(levelService.getLevelsByDifficulty(difficulty));
     }
 
+    @PreAuthorize("permitAll()")
     @GetMapping("/random")
     public ResponseEntity<LevelDTO> getRandomLevel(
             @RequestParam ProgrammingLanguage language,
@@ -49,6 +54,7 @@ public class LevelController {
         return ResponseEntity.ok(levelService.getRandomLevel(language, difficulty));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<LevelDTO> createLevel(@RequestBody @Valid LevelModifyDTO dto) {
         LevelDTO created = levelService.createLevel(dto);
@@ -59,6 +65,7 @@ public class LevelController {
         return ResponseEntity.created(location).body(created);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<LevelDTO> updateLevel(
             @PathVariable UUID id,
@@ -66,6 +73,7 @@ public class LevelController {
         return ResponseEntity.ok(levelService.updateLevel(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLevel(@PathVariable UUID id) {
         levelService.deleteLevel(id);
