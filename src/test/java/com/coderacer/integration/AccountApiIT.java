@@ -11,8 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -44,6 +47,26 @@ class AccountApiIT {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        // disable real email
+        registry.add("spring.mail.host", () -> "localhost");
+        registry.add("spring.mail.port", () -> 3025);
+    }
+
+    /**
+     * Test config that provides a no-op EmailService bean, replacing the real one.
+     */
+    @TestConfiguration
+    static class NoOpEmailConfig {
+        @Bean
+        @Primary
+        public com.coderacer.service.EmailService emailService() {
+            return new com.coderacer.service.EmailService() {
+                @Override
+                public void sendVerificationEmail(com.coderacer.model.Account account, String token) {
+                    // nothing :)
+                }
+            };
+        }
     }
 
     @Autowired
@@ -58,11 +81,15 @@ class AccountApiIT {
     private String baseUrl;
 
     @Autowired
+    private com.coderacer.repository.EmailVerificationTokenRepository tokenRepository;
+
+    @Autowired
     private com.coderacer.repository.AccountRepository accountRepository;
 
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/accounts";
+        tokenRepository.deleteAll();
         accountRepository.deleteAll();
     }
 
