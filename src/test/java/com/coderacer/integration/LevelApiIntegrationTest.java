@@ -57,9 +57,13 @@ class LevelApiIntegrationTest {
 
     private String baseUrl;
 
+    @Autowired
+    private com.coderacer.repository.LevelRepository levelRepository;
+
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/levels";
+        levelRepository.deleteAll();
     }
 
     @Test
