@@ -1,15 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  ResponsiveContainer,
-  ReferenceDot,
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceDot, } from "recharts";
 
 function Level() {
   const { state } = useLocation();
@@ -42,7 +33,6 @@ function Level() {
       const elapsedSec = startTime ? (now - startTime) / 1000 : 0;
       let newInput = userInput;
 
-      // Start timer
       if (!startTime && userInput.length === 0) {
         setStartTime(now);
       }
@@ -58,10 +48,6 @@ function Level() {
           newInput = userInput + e.key;
         }
 
-        const charsTyped = newInput.length;
-        const cpm = elapsedSec > 0 ? Math.round((charsTyped / elapsedSec) * 60) : 0;
-
-        setSpeedLog((prev) => [...prev, { time: (elapsedSec).toFixed(1), cpm }]);
         setTotalTyped((prev) => prev + (e.key === "Tab" ? 2 : 1));
 
         const expectedChar = codeSnippet[userInput.length];
@@ -71,6 +57,12 @@ function Level() {
         if (isMistake) {
           setMistakes((prev) => prev + 1);
           setMistakeIndices((prev) => [...prev, (elapsedSec).toFixed(1)]);
+        }
+        else {
+          const charsTyped = newInput.length;
+          const cpm = elapsedSec > 0 ? Math.round((charsTyped / elapsedSec) * 60) : 0;
+
+          setSpeedLog((prev) => [...prev, { time: (elapsedSec).toFixed(1), cpm }]);
         }
       }
 
@@ -153,17 +145,15 @@ function Level() {
 
       {endTime && (
         <div style={{ marginTop: "1rem", fontWeight: "bold" }}>
-          ✅ Test Complete! <br />
-          🚀 <strong>CPM:</strong> {calculateCPM()} <br />
-          🎯 <strong>Accuracy:</strong> {calculateAccuracy()}%<br />
-          ✏️ <strong>Keystrokes:</strong> {totalTyped} | ❌ Mistakes: {mistakes}
+          Test Complete! <br />
+          <strong>CPM:</strong> {calculateCPM()} <br />
+          <strong>Accuracy:</strong> {calculateAccuracy()}%<br />
+          <strong>Keystrokes:</strong> {totalTyped} | Mistakes: {mistakes}
         </div>
       )}
-
-      {/* Graph */}
       {endTime && speedLog.length > 1 && (
         <div style={{ marginTop: "2rem" }}>
-          <h3>📈 Typing Speed Over Time</h3>
+          <h3>Typing Speed Over Time</h3>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={speedLog}>
               <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
