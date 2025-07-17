@@ -11,7 +11,6 @@ function Level() {
   const [endTime, setEndTime] = useState(null);
   const [totalTyped, setTotalTyped] = useState(0);
   const [mistakes, setMistakes] = useState(0);
-  const [mistakeIndices, setMistakeIndices] = useState([]);
   const [speedLog, setSpeedLog] = useState([]);
   const containerRef = useRef(null);
 
@@ -56,11 +55,10 @@ function Level() {
 
         if (isMistake) {
           setMistakes((prev) => prev + 1);
-          setMistakeIndices((prev) => [...prev, (elapsedSec).toFixed(1)]);
         }
         else {
-          const charsTyped = newInput.length;
-          const cpm = elapsedSec > 0 ? Math.round((charsTyped / elapsedSec) * 60) : 0;
+          const correctChars = [...newInput].filter((ch, i) => ch === codeSnippet[i]).length;
+          const cpm = elapsedSec > 0 ? Math.round((correctChars / elapsedSec) * 60) : 0;
 
           setSpeedLog((prev) => [...prev, { time: (elapsedSec).toFixed(1), cpm }]);
         }
@@ -161,10 +159,6 @@ function Level() {
               <YAxis label={{ value: "CPM", angle: -90, position: "insideLeft" }} />
               <Tooltip />
               <Line type="monotone" dataKey="cpm" stroke="#8884d8" strokeWidth={2} dot={false} />
-
-              {mistakeIndices.map((t, i) => (
-                <ReferenceDot key={i} x={t} y={null} r={5} fill="red" stroke="none" label="" />
-              ))}
             </LineChart>
           </ResponsiveContainer>
         </div>
