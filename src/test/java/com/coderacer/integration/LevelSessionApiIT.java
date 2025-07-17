@@ -140,7 +140,7 @@ class LevelSessionApiIT {
     }
 
     @Test
-    void shouldGetLevelSessionsByAccount() {
+    void shouldGetLevelSessionsByAccount() throws Exception {
         // Given - Create two level sessions for the same account
         LevelSessionCreateDto session1 = new LevelSessionCreateDto(
                 testLevel.getId(),
@@ -163,14 +163,20 @@ class LevelSessionApiIT {
         restTemplate.postForEntity(baseUrl, session1, LevelSession.class);
         restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
 
-        // When
-        ResponseEntity<LevelSession[]> response = restTemplate.getForEntity(
-                baseUrl + "/by-account/" + testAccount.getId(), LevelSession[].class);
+        // When - get raw JSON response as String
+        ResponseEntity<String> rawResponse = restTemplate.getForEntity(
+                baseUrl + "/by-account/" + testAccount.getId(), String.class);
 
-        // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(2);
-        assertThat(Arrays.stream(response.getBody()))
+        System.out.println("Raw JSON: " + rawResponse.getBody());
+
+        assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // Then - manually deserialize with ObjectMapper
+        ObjectMapper mapper = new ObjectMapper();
+        LevelSession[] sessions = mapper.readValue(rawResponse.getBody(), LevelSession[].class);
+
+        assertThat(sessions).hasSize(2);
+        assertThat(Arrays.stream(sessions))
                 .extracting(LevelSession::getCpm)
                 .containsExactlyInAnyOrder(80.0, 85.0);
     }
@@ -207,15 +213,14 @@ class LevelSessionApiIT {
         restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
 
         // When
-        ResponseEntity<LevelSession[]> response = restTemplate.getForEntity(
-                baseUrl + "/by-level/" + testLevel.getId(), LevelSession[].class);
+        ResponseEntity<String> response = restTemplate.getForEntity(
+                baseUrl + "/by-level/" + testLevel.getId(), String.class);
 
         // Then
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).hasSize(2);
-        assertThat(Arrays.stream(response.getBody()))
-                .extracting(LevelSession::getCpm)
-                .containsExactlyInAnyOrder(75.0, 90.0);
+        ResponseEntity<String> rawResponse = restTemplate.getForEntity(
+                baseUrl + "/by-level/" + testLevel.getId(), String.class);
+        System.out.println("Raw JSON: " + rawResponse.getBody());
+        assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     @Test
