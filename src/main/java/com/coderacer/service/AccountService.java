@@ -164,7 +164,7 @@ public class AccountService {
             throw new PasswordVerificationException();
         }
 
-        return jwtUtil.generateToken(account.getUsername());
+        return jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
     }
 
 

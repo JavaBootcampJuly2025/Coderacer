@@ -1,5 +1,7 @@
 package com.coderacer.model;
 
+import com.coderacer.enums.Difficulty;
+import com.coderacer.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -48,6 +50,10 @@ public class Account {
     @NotBlank(message = "Email cannot be empty")
     @Email(message = "Email must be valid", regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull
+    private Role role;
 
     @NotBlank(message = "Password hash cannot be empty")
     @NotNull
