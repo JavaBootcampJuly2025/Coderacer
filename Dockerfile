@@ -18,10 +18,14 @@ FROM eclipse-temurin:21-jdk-jammy AS build
 
 WORKDIR /app
 
+
 # Copy the Maven wrapper and pom.xml to leverage Docker caching
 COPY mvnw .
 COPY .mvn .mvn
 COPY pom.xml .
+
+# Grant execute permissions to mvnw
+RUN chmod +x mvnw
 
 # Download dependencies (only if pom.xml changes)
 RUN ./mvnw dependency:go-offline -B
