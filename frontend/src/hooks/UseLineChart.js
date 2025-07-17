@@ -1,12 +1,17 @@
 import { useEffect, useRef } from 'react';
 import Chart from 'chart.js/auto';
+import { useTheme } from '../styles/ThemeContext';
+import themes from '../styles/colors';
 
 const useLineChart = (canvasId) => {
     const chartRef = useRef(null);
+    const { theme } = useTheme(); // Access the current theme
 
     useEffect(() => {
         const ctx = document.getElementById(canvasId)?.getContext('2d');
         if (ctx) {
+            const selectedTheme = themes[theme]; // Get colors for the current theme
+
             const chart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -14,10 +19,10 @@ const useLineChart = (canvasId) => {
                     datasets: [{
                         label: 'Progress',
                         data: [40, 70, 50, 80, 60, 90, 55],
-                        borderColor: '#FFC124',
+                        borderColor: selectedTheme.accent, // Use --accent from theme
                         borderWidth: 2,
                         fill: true,
-                        backgroundColor: 'rgba(0, 0, 0, 0.29)',
+                        backgroundColor: selectedTheme.leaderboardBg, // Use --leaderboard-bg from theme
                         tension: 0.4,
                         pointRadius: 0,
                     }],
@@ -29,13 +34,13 @@ const useLineChart = (canvasId) => {
                     scales: {
                         x: {
                             display: true,
-                            ticks: { color: '#ccc' },
+                            ticks: { color: selectedTheme.text }, // Use --text for ticks
                             grid: { display: false },
                         },
                         y: {
                             display: true,
-                            ticks: { color: '#ccc' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                            ticks: { color: selectedTheme.text }, // Use --text for ticks
+                            grid: { color: selectedTheme.border.replace('1)', '0.1)') }, // Use --border with reduced opacity
                         },
                     },
                     maintainAspectRatio: false,
@@ -50,7 +55,7 @@ const useLineChart = (canvasId) => {
                 chartRef.current.destroy();
             }
         };
-    }, [canvasId]);
+    }, [canvasId, theme]); // Add theme to dependencies to update chart on theme change
 
     return chartRef;
 };

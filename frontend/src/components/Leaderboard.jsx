@@ -1,14 +1,12 @@
+// src/components/Leaderboard.jsx
 import React from 'react';
 import '../App.css';
+import colors from '../styles/colors'; // Import colors
 
 const Leaderboard = ({ type }) => {
-    // Hardcoded array of valid leaderboard types
     const leaderboardTypes = ['easy', 'medium', 'hard'];
-
-    // Validate the type prop, default to 'easy' if invalid
     const selectedType = leaderboardTypes.includes(type) ? type : 'easy';
 
-    // Placeholder data for the dynamic list
     const leaderboardData = [
         { rank: 1, name: 'Player1', score: 100 },
         { rank: 2, name: 'Player2', score: 85 },
@@ -18,20 +16,20 @@ const Leaderboard = ({ type }) => {
     ];
 
     return (
-        <div className="w-[300px] h-[350px] bg-black bg-opacity-25 rounded-3xl flex flex-col">
+        <div className="w-[300px] h-[350px] bg-[var(--leaderboard-bg)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
-        <span className="text-[#24E5B7] text-5xl font-montserrat font-light">
-          {selectedType}
-        </span>
+                <span className="text-[var(--accent)] text-5xl font-montserrat font-light">
+                    {selectedType}
+                </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">
                 {leaderboardData.map((entry) => (
                     <div
                         key={entry.rank}
-                        className="flex justify-between items-center py-2 border-b border-gray-700"
+                        className="flex justify-between items-center py-2 border-b border-[var(--border-gray)]"
                     >
-                        <span className="text-white text-sm font-montserrat">{entry.rank}. {entry.name}</span>
-                        <span className="text-white text-sm font-montserrat">{entry.score}</span>
+                        <span className="text-[var(--text)] text-sm font-montserrat">{entry.rank}. {entry.name}</span>
+                        <span className="text-[var(--text)] text-sm font-montserrat">{entry.score}</span>
                     </div>
                 ))}
             </div>

@@ -1,7 +1,10 @@
 import React from 'react';
 import styles from './TypingArea.module.css';
+import colors from '../styles/colors'; // Import colors
+import { useTheme } from '../styles/ThemeContext'
 
 const TypingArea = ({ codeSnippet, userInput, containerRef, handleKeyDown, focusContainer }) => {
+    const { theme } = useTheme();
     return (
         <div
             tabIndex={0}
@@ -11,9 +14,9 @@ const TypingArea = ({ codeSnippet, userInput, containerRef, handleKeyDown, focus
             className={styles.container}
         >
             {codeSnippet.split('').map((char, idx) => {
-                let color = '#888';
+                let color = colors[theme].unwrittenChar; // Default to unwritten text color
                 if (idx < userInput.length) {
-                    color = userInput[idx] === char ? 'gold' : 'red';
+                    color = userInput[idx] === char ? colors[theme].correctChar : colors[theme].incorrectChar;
                 }
 
                 // Replace special characters for display

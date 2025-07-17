@@ -1,0 +1,17 @@
+/* src/styles/global.css */
+:root {
+    --default-char: #888;
+    --correct-char: #24E5B7;
+    --incorrect-char: #cd0b0b;
+    --unwritten-char: #2a6a9f; /* Added for unwritten text */
+    --caret: #ffbe26;
+    --primary-button: #174065;
+    --primary-button-hover: #1a4971;
+    --background: #13223A;
+    --text: #fff;
+    --accent: #24E5B7;
+    --leaderboard-bg: rgba(0, 0, 0, 0.25);
+    --border: rgba(255, 255, 255, 1);
+    --footer-text: #ccc;
+    --border-gray: #1a4971;
+}

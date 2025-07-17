@@ -16,12 +16,12 @@
     font-size: 32px;
 }
 .caret {
-    background: gold;
+    background: var(--caret); /* Updated */
     width: 2px;
     height: 32px;
     display: inline-block;
-    vertical-align: super;
-    /*animation: blink 1s step-start 0s infinite;*/
+    vertical-align: 10px;
+    /*animation: blink 1s step-start 0s infinite;/*/
 }
 @keyframes blink {
     50% { background: transparent; }

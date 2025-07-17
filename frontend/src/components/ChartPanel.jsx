@@ -1,5 +1,7 @@
+// src/components/ChartPanel.jsx
 import React from 'react';
 import useLineChart from '../hooks/UseLineChart';
+import colors from '../styles/colors'; // Import colors if needed
 
 const ChartPanel = () => {
     const canvasId = 'lineChart';

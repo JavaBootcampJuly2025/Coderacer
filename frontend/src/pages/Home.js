@@ -6,6 +6,7 @@ import RightPanel from '../components/RightPanel';
 import Footer from '../components/Footer';
 import Leaderboard from '../components/Leaderboard';
 import '../App.css';
+import SpeedChart from "../components/SpeedChart";
 
 const Home = () => {
     const navigate = useNavigate();

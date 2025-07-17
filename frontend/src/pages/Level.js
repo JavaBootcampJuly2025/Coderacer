@@ -4,6 +4,7 @@ import TypingArea from '../components/TypingArea';
 import Results from '../components/Results';
 import SpeedChart from '../components/SpeedChart';
 import '../App.css';
+import Header from "../components/Header";
 
 const Level = () => {
     const {
@@ -22,7 +23,7 @@ const Level = () => {
 
     return (
         <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat">
-            <h2>Typing Speed Test</h2>
+            <Header />
             <div className={"main-body content-center"}>
             <TypingArea
                 codeSnippet={codeSnippet}
