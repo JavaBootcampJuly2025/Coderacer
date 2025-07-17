@@ -1,4 +1,4 @@
-package com.coderacer;
+package com.coderacer.unit;
 
 import org.junit.jupiter.api.Test;
 
