@@ -1,0 +1,69 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap');
+
+body {
+    background: #1a4971;
+    position: relative;
+    background-size: 100% 100vh;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Ensure the wrapper takes full viewport height and uses the dark background */
+.home-wrapper {
+    min-height: 100vh;
+    background-color: #13223A;
+    font-family: 'Montserrat', sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Glassmorphism effect for the content container, centered with max-width */
+.content-glass {
+    width: 100%;
+    max-width: 99%; /* Matches max-w-6xl (6xl = 1280px in Tailwind) */
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 1px;
+    padding: 1rem;
+    border-width: 0.01rem;
+}
+
+/* Styling for buttons to match Flutter's rounded, dark blue buttons */
+.action {
+    width: 96px;
+    height: 48px;
+    background-color: #174065;
+    color: #ffffff;
+    border-radius: 24px;
+    border: none;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for buttons */
+.action:hover {
+    background-color: #1a4971;
+}
+
+/* Ensure canvas container is properly sized for the chart */
+canvas#lineChart {
+    width: 370px !important;
+    height: 230px !important;
+}
+
+/* Style for footer */
+footer {
+    text-align: center;
+    font-size: 0.9rem;
+    color: #ccc;
+    margin-top: 2rem;
+    font-family: 'Montserrat', sans-serif;
+}
