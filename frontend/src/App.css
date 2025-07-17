@@ -29,14 +29,14 @@
     margin-top: 1rem;
 }
 
-.home-wrapper {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /*background: linear-gradient(0.4turn, darkviolet, darkcyan);*/
-    font-family: 'Roboto', sans-serif;
-}
+/*.home-wrapper {*/
+/*    height: 100vh;*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: start;;*/
+/*    !*background: linear-gradient(0.4turn, darkviolet, darkcyan);*!*/
+/*    font-family: 'Roboto', sans-serif;*/
+/*}*/
 
 .content-glass {
     background: rgba(19, 19, 19, 0.76);
