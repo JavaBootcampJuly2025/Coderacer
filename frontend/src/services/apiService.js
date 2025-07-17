@@ -29,6 +29,12 @@ export const getAllLevels = async () => {
     return response.data;
 };
 
+// Get level by id
+export const getLevelByid = async id => {
+    const response = await api.get(`/api/levels/${id}`);
+    return response.data;
+};
+
 // Create a new level session
 export const createLevelSession = async sessionData => {
     const response = await api.post('/api/v1/level-sessions', sessionData);
