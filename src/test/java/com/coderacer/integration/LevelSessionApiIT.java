@@ -1,6 +1,7 @@
 package com.coderacer.integration;
 
 import com.coderacer.dto.LevelSessionCreateDto;
+import com.coderacer.dto.LevelSessionDto;
 import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.ProgrammingLanguage;
 import com.coderacer.model.Account;
@@ -10,6 +11,8 @@ import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.repository.LevelSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -163,26 +166,24 @@ class LevelSessionApiIT {
         restTemplate.postForEntity(baseUrl, session1, LevelSession.class);
         restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
 
-        // When - get raw JSON response as String
+        // When - get raw JSON response as String from GET endpoint
         ResponseEntity<String> rawResponse = restTemplate.getForEntity(
                 baseUrl + "/by-account/" + testAccount.getId(), String.class);
 
-        System.out.println("Raw JSON: " + rawResponse.getBody());
-
         assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-        // Then - manually deserialize with ObjectMapper
+        // Then - manually deserialize with ObjectMapper into DTO array (no timestamps here)
         ObjectMapper mapper = new ObjectMapper();
-        LevelSession[] sessions = mapper.readValue(rawResponse.getBody(), LevelSession[].class);
+        LevelSessionDto[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDto[].class);
 
-        assertThat(sessions).hasSize(2);
-        assertThat(Arrays.stream(sessions))
-                .extracting(LevelSession::getCpm)
+        // Assert size and values
+        assertThat(dtos).hasSize(2);
+        assertThat(Arrays.stream(dtos))
+                .extracting(LevelSessionDto::getCpm)
                 .containsExactlyInAnyOrder(80.0, 85.0);
     }
-
     @Test
-    void shouldGetLevelSessionsByLevel() {
+    void shouldGetLevelSessionsByLevel() throws Exception {
         // Given - Create another account and level sessions
         Account anotherAccount = new Account();
         anotherAccount.setUsername("anotheruser");
@@ -212,15 +213,22 @@ class LevelSessionApiIT {
         restTemplate.postForEntity(baseUrl, session1, LevelSession.class);
         restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
 
-        // When
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/by-level/" + testLevel.getId(), String.class);
-
-        // Then
+        // When - get raw JSON response as String from GET endpoint
         ResponseEntity<String> rawResponse = restTemplate.getForEntity(
                 baseUrl + "/by-level/" + testLevel.getId(), String.class);
-        System.out.println("Raw JSON: " + rawResponse.getBody());
+
+        // Then - assert HTTP status is OK
         assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        // Deserialize to DTO array
+        ObjectMapper mapper = new ObjectMapper();
+        LevelSessionDto[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDto[].class);
+
+        // Assert size and CPM values for created sessions
+        assertThat(dtos).hasSize(2);
+        assertThat(Arrays.stream(dtos))
+                .extracting(LevelSessionDto::getCpm)
+                .containsExactlyInAnyOrder(75.0, 90.0);
     }
 
     @Test
