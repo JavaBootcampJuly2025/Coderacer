@@ -1,11 +1,11 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceDot, } from "recharts";
-
+let Lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
 function Level() {
     const { state } = useLocation();
     const navigate = useNavigate();
-    const [codeSnippet, setCodeSnippet] = useState("Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.");
+    const [codeSnippet, setCodeSnippet] = useState("testingtesting");
     const [userInput, setUserInput] = useState("");
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
@@ -14,13 +14,19 @@ function Level() {
     const [speedLog, setSpeedLog] = useState([]);
     const containerRef = useRef(null);
 
-    // useEffect(() => {
-    //     if (!state?.level?.codeSnippet) {
-    //         navigate("/");
-    //     } else {
-    //         setCodeSnippet(state.level.codeSnippet.trim());
-    //     }
-    // }, [state, navigate]);
+    useEffect(() => {
+        if (containerRef.current) {
+            containerRef.current.focus();
+            const range = document.createRange();
+            const selection = window.getSelection();
+            if (containerRef.current.firstChild) {
+                range.setStart(containerRef.current.firstChild, 0);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+            }
+        }
+    }, []);
 
     const handleKeyDown = (e) => {
         if (endTime) return;

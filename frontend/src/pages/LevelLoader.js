@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSearchParams, useNavigate  } from "react-router-dom";
-import { getLevelByid } from './services/apiService';
+import { getLevelByid } from '../services/apiService';
 
 
 function LevelLoader() {

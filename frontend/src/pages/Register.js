@@ -1,4 +1,4 @@
-import { createAccount } from './services/apiService';
+import { createAccount } from '../services/apiService';
 
 function Register() {
   const submit = async (e) => {

@@ -1,5 +1,5 @@
-import './App.css';
-import logo from './resources/icon.png';
+import '../App.css';
+import logo from '../assets/icon.png';
 import { useRef, useEffect } from 'react';
 
 function Welcome() {
@@ -53,14 +53,14 @@ function Welcome() {
                 <h1 className="header">Coderacer</h1>
                 <img className="logo" src={logo} alt="Coderacer logo" />
                 <div className="button-group">
-                    <a href="/login">
+                    <a href="/Login">
                         <button className="action">Login</button>
                     </a>
-                    <a href="/register">
+                    <a href="/Register">
                         <button className="action">Register</button>
                     </a>
                 </div>
-                <a href="/home">
+                <a href="/Home">
                     <button className="action single-button">Home</button>
                 </a>
             </div>

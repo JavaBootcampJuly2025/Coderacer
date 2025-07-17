@@ -1,5 +1,5 @@
 import React from 'react';
-import '../Home.css';
+import '../App.css';
 
 const Leaderboard = ({ type }) => {
     // Hardcoded array of valid leaderboard types
