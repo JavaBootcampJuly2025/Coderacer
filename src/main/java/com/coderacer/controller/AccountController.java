@@ -4,6 +4,7 @@ import com.coderacer.dto.*;
 import com.coderacer.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,6 @@ import java.util.UUID;
 @RequestMapping("/api/accounts")
 @RequiredArgsConstructor
 public class AccountController {
-
     private final AccountService accountService;
 
     @GetMapping("/{id}")
@@ -46,6 +46,12 @@ public class AccountController {
                 .buildAndExpand(created.id())
                 .toUri();
         return ResponseEntity.created(location).body(created);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<String> attemptLogin(
+            @RequestBody @Valid AccountLoginDTO accountLoginDTO) {
+        return ResponseEntity.ok(accountService.attemptLogin(accountLoginDTO));
     }
 
     @PutMapping("/{id}")
