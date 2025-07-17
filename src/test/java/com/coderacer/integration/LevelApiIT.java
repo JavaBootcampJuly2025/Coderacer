@@ -162,13 +162,13 @@ class LevelApiIT {
     void shouldGetLevelsByDifficulty() {
         // Given
         LevelModifyDTO easyLevel = new LevelModifyDTO(
-                "public class Easy { public static void main(String[] args) { System.out.println(\"Easy\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("easy")
         );
         LevelModifyDTO hardLevel = new LevelModifyDTO(
-                "public class Hard { public static void main(String[] args) { System.out.println(\"Hard\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.HARD,
                 Arrays.asList("hard")
@@ -191,13 +191,13 @@ class LevelApiIT {
     void shouldGetRandomLevel() {
         // Given
         LevelModifyDTO level1 = new LevelModifyDTO(
-                "public class Random1 { public static void main(String[] args) { System.out.println(\"Random1\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("random")
         );
         LevelModifyDTO level2 = new LevelModifyDTO(
-                "public class Random2 { public static void main(String[] args) { System.out.println(\"Random2\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("random")
@@ -258,7 +258,7 @@ class LevelApiIT {
     void shouldDeleteLevel() {
         // Given
         LevelModifyDTO level = new LevelModifyDTO(
-                "public class ToDelete { public static void main(String[] args) { System.out.println(\"Delete\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("delete")
