@@ -27,9 +27,4 @@ public interface LeaderboardEntryRepository extends JpaRepository<LeaderboardEnt
      * Look up a single entry by username.
      */
     Optional<LeaderboardEntry> findByUsername(String username);
-
-    /**
-     * Look up N entries of top players.
-     */
-    List<LeaderboardEntry> findTopNNative(@Param("limit") int limit);
 }

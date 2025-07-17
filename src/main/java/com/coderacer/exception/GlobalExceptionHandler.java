@@ -1,5 +1,6 @@
 package com.coderacer.exception;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Hidden // hide from swagger because it doesnt work otherwise
 public class GlobalExceptionHandler {
 
     // Custom exceptions
