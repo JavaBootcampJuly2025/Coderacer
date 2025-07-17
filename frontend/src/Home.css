@@ -11,11 +11,11 @@
 
 /* Styling for buttons to match Flutter's rounded, dark blue buttons */
 .action {
-    width: 96px;
+    width: 128px;
     height: 48px;
     background-color: #174065;
     color: #ffffff;
-    border-radius: 24px;
+    /*border-radius: 24px;*/
     border: none;
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;

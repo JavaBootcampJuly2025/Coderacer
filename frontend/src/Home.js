@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import Chart from 'chart.js/auto';
 import Leaderboard from './components/Leaderboard';
 import Icon from './resources/icon.png'; // Import the icon
+import Settings from './resources/settings.png'; // Import the icon
 
 const Home = () => {
     useEffect(() => {
@@ -60,14 +61,24 @@ const Home = () => {
                         <span className="text-[#24E5B7] text-4xl font-montserrat">codegobrr</span>
                     </div>
                     <div className="flex justify-center space-x-5">
-                        {['Start Racing', 'Leaderboard', 'Profile'].map((label, index) => (
-                            <button
-                                key={index}
-                                className="action w-24 h-12 bg-[#174065] rounded-full text-white hover:bg-[#1a4971] transition"
-                            >
-                                {label}
-                            </button>
-                        ))}
+                        <button
+                            className="round-button w-12 h-12 bg-[#174065] rounded-full hover:bg-[#1a4971] transition flex items-center justify-center p-0"
+                        >
+                            <img
+                                src={Icon}
+                                className="w-10 h-10 rounded-full object-cover"
+                                alt="Profile"
+                            />
+                        </button>
+                        <button
+                            className="round-button w-12 h-12 bg-[#174065] rounded-full hover:bg-[#1a4971] transition flex items-center justify-center p-0"
+                        >
+                            <img
+                                src={Settings}
+                                className="w-10 h-10 rounded-full object-cover"
+                                alt="Profile"
+                            />
+                        </button>
                     </div>
                 </div>
 
@@ -80,7 +91,7 @@ const Home = () => {
                                 <canvas id="lineChart"></canvas>
                             </div>
                             {/* Right Panel */}
-                            <div className="w-[450px] h-[260px] bg-black bg-opacity-22 flex flex-col">
+                            <div className="w-[450px] h-[260px] bg-black bg-opacity-15 flex flex-col">
                                 <div className="w-full h-[46.25px] bg-[#174065]"></div>
                                 <div className="flex-grow flex flex-col justify-center space-y-5 px-5">
                                     <div className="flex justify-center space-x-5">
