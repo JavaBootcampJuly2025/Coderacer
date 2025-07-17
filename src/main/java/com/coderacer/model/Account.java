@@ -1,6 +1,5 @@
 package com.coderacer.model;
 
-import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
