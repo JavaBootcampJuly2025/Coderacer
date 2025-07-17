@@ -41,8 +41,8 @@ public class AccountController {
 
     @PostMapping
     @PreAuthorize("permitAll()")
-    public ResponseEntity<AccountDTO> createAccount(@RequestBody @Valid AccountCreateDTO dto) {
-        AccountDTO created = accountService.createAccount(dto);
+    public ResponseEntity<AccountDTO> createAccount(@RequestBody @Valid AccountCreateDTO accountCreateDTO) {
+        AccountDTO created = accountService.createAccount(accountCreateDTO);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
@@ -53,16 +53,16 @@ public class AccountController {
 
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<String> attemptLogin(@RequestBody @Valid AccountLoginDTO dto) {
-        return ResponseEntity.ok(accountService.attemptLogin(dto));
+    public ResponseEntity<String> attemptLogin(@RequestBody @Valid AccountLoginDTO accountLoginDTO) {
+        return ResponseEntity.ok(accountService.attemptLogin(accountLoginDTO));
     }
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AccountDTO> updateAccount(
             @PathVariable UUID id,
-            @RequestBody @Valid AccountUpdateDTO dto) {
-        return ResponseEntity.ok(accountService.updateAccount(id, dto));
+            @RequestBody @Valid AccountUpdateDTO accountUpdateDTO) {
+        return ResponseEntity.ok(accountService.updateAccount(id, accountUpdateDTO));
     }
 
     @DeleteMapping("/{id}")
@@ -77,8 +77,8 @@ public class AccountController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void changePassword(
             @PathVariable UUID id,
-            @RequestBody @Valid PasswordChangeDTO dto) {
-        accountService.changePassword(id, dto);
+            @RequestBody @Valid PasswordChangeDTO passwordChangeDTO) {
+        accountService.changePassword(id, passwordChangeDTO);
     }
 
     @GetMapping("/verify")
