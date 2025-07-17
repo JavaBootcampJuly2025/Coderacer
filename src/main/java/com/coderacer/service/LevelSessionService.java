@@ -87,26 +87,6 @@ public class LevelSessionService {
     }
 
     /**
-     * Updates an existing level session.
-     * @param id The ID of the session to update.
-     * @param updatedSession The LevelSession object with updated details.
-     * @return The updated LevelSession.
-     * @throws EntityNotFoundException if the session with the given ID does not exist.
-     */
-    @Transactional
-    public LevelSession updateLevelSession(UUID id, LevelSession updatedSession) {
-        LevelSession existingSession = levelSessionRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("LevelSession not found with ID: " + id));
-
-        existingSession.setCpm(updatedSession.getCpm());
-        existingSession.setAccuracy(updatedSession.getAccuracy());
-        existingSession.setStartTime(updatedSession.getStartTime());
-        existingSession.setEndTime(updatedSession.getEndTime());
-
-        return levelSessionRepository.save(existingSession);
-    }
-
-    /**
      * Deletes a level session by its ID.
      * @param id The UUID of the level session to delete.
      * @throws EntityNotFoundException if the session with the given ID does not exist.

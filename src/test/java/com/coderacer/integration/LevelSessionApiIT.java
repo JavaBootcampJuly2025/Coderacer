@@ -232,43 +232,6 @@ class LevelSessionApiIT {
     }
 
     @Test
-    void shouldUpdateLevelSession() {
-        // Given - Create a level session
-        LevelSessionCreateDto createDto = new LevelSessionCreateDto(
-                testLevel.getId(),
-                testAccount.getId(),
-                80.0,
-                90.0,
-                LocalDateTime.now().minusMinutes(10),
-                LocalDateTime.now().minusMinutes(5)
-        );
-
-        ResponseEntity<LevelSession> createResponse = restTemplate.postForEntity(
-                baseUrl, createDto, LevelSession.class);
-        UUID sessionId = createResponse.getBody().getId();
-
-        // When - Update the level session
-        LevelSession updatedSession = new LevelSession();
-        updatedSession.setCpm(95.0);
-        updatedSession.setAccuracy(96.0);
-        updatedSession.setStartTime(LocalDateTime.now().minusMinutes(8));
-        updatedSession.setEndTime(LocalDateTime.now().minusMinutes(3));
-
-        ResponseEntity<LevelSession> updateResponse = restTemplate.exchange(
-                baseUrl + "/" + sessionId,
-                HttpMethod.PUT,
-                new HttpEntity<>(updatedSession),
-                LevelSession.class
-        );
-
-        // Then
-        assertThat(updateResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(updateResponse.getBody().getId()).isEqualTo(sessionId);
-        assertThat(updateResponse.getBody().getCpm()).isEqualTo(95.0);
-        assertThat(updateResponse.getBody().getAccuracy()).isEqualTo(96.0);
-    }
-
-    @Test
     void shouldDeleteLevelSession() {
         // Given
         LevelSessionCreateDto createDto = new LevelSessionCreateDto(

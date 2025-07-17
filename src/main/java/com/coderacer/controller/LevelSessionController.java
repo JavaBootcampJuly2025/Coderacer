@@ -93,24 +93,6 @@ public class LevelSessionController {
     }
 
     /**
-     * Updates an existing LevelSession.
-     *
-     * @param id The UUID of the LevelSession to update.
-     * @param updatedSession The LevelSession object containing the updated data.
-     * @return ResponseEntity with the updated LevelSession and HTTP status 200 (OK),
-     * or HTTP status 404 (Not Found) if the session does not exist.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<LevelSession> updateLevelSession(@PathVariable UUID id, @RequestBody LevelSession updatedSession) {
-        try {
-            LevelSession result = levelSessionService.updateLevelSession(id, updatedSession);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
      * Deletes a LevelSession by its ID.
      *
      * @param id The UUID of the LevelSession to delete.
