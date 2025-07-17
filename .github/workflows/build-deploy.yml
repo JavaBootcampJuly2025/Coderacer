@@ -8,7 +8,7 @@ on:
 
 env:
   IMAGE_NAME: coderacer-postgres # Name of your Docker image
-  DOCKER_REGISTRY: docker.io
+  DOCKER_REGISTRY: ghcr.io      # Using GitHub Container Registry (ghcr.io)
   APP_PORT: 8000
 
 jobs:
@@ -41,8 +41,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
-          username: ${{ secrets.SQL_USERNAME }}
-          password: ${{ secrets.SQL_PASSWORD }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
