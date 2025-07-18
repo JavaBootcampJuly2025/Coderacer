@@ -1,3 +1,4 @@
-const Lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+const Loremm = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
+const Lorem = "int x = 10;"
 
 export { Lorem };

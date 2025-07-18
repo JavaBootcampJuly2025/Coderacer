@@ -127,3 +127,13 @@ footer {
 .main-body {
     padding-left: 3rem;
 }
+
+.chart-title {
+    font-size: 2rem; /* Slightly smaller than .header (3rem) for chart context */
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--accent);
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); /* Softer shadow for subtlety */
+    margin-bottom: 1rem; /* Consistent with .header */
+    text-align: center; /* Align with chart's centered content */
+}

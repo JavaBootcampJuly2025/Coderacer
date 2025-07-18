@@ -10,9 +10,15 @@ const SpeedChart = ({ endTime, speedLog }) => {
     console.log('SpeedChart props:', { endTime, speedLog }); // Debug log
     if (!endTime || !speedLog || speedLog.length <= 1) return null;
 
+    // Validate speedLog data
+    const validatedSpeedLog = speedLog.map(entry => ({
+        time: String(entry.time), // Ensure time is a string
+        cpm: Number(entry.cpm) || 0, // Ensure cpm is a number
+    }));
+
     return (
         <div className="w-[800px] h-[300px] p-4">
-            <h3>Typing Speed Over Time</h3>
+            <h3 className="chart-title">Typing Speed Over Time</h3>
             <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={speedLog}>
                     <CartesianGrid stroke={selectedTheme.border.replace('1)', '0.1)')} strokeDasharray="0" />
