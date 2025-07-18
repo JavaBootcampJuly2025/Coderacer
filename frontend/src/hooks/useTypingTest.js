@@ -61,14 +61,19 @@ const useTypingTest = (initialCodeSnippet) => {
                     setCorrectCharsCount((prev) => prev + 1);
                     const cpm = elapsedSec > 0 ? Math.round((correctCharsCount + 1) / elapsedSec * 60) : 0;
                     speedLogRef.current.push({ time: elapsedSec.toFixed(1), cpm });
+
+                    // Check completion within this scope
+                    const normalizedInput = newInput.replace(/\s+/g, ' ').trim();
+                    const normalizedSnippet = codeSnippet.replace(/\s+/g, ' ').trim();
+                    if (normalizedInput === normalizedSnippet || (newInput.length >= codeSnippet.length && !isMistake)) {
+                        setEndTime(now);
+                        console.log('Typing complete, endTime set:', now); // Debug log
+                    }
                 }
             }
 
             setUserInput(newInput);
-
-            if (newInput === codeSnippet) {
-                setEndTime(now);
-            }
+            console.log('userInput:', newInput, 'codeSnippet:', codeSnippet); // Debug log
         }
     };
 

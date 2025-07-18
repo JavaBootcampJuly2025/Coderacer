@@ -1,22 +1,45 @@
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, Area } from 'recharts';
+import { useTheme } from '../styles/ThemeContext';
+import themes from '../styles/colors';
 
 const SpeedChart = ({ endTime, speedLog }) => {
-    if (!endTime || speedLog.length <= 1) return null;
+    const { theme } = useTheme();
+    const selectedTheme = themes[theme];
+
+    console.log('SpeedChart props:', { endTime, speedLog }); // Debug log
+    if (!endTime || !speedLog || speedLog.length <= 1) return null;
 
     return (
-        <div style={{ marginTop: '2rem' }}>
+        <div className="w-[800px] h-[300px] p-4">
             <h3>Typing Speed Over Time</h3>
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={speedLog}>
-                    <CartesianGrid stroke="#eee" strokeDasharray="5 5" />
-                    <XAxis dataKey="time" label={{ value: 'Time (s)', position: 'insideBottom', dy: 10 }} />
-                    <YAxis label={{ value: 'CPM', angle: -90, position: 'insideLeft' }} />
+                    <CartesianGrid stroke={selectedTheme.border.replace('1)', '0.1)')} strokeDasharray="0" />
+                    <XAxis dataKey="time" label={{ value: 'Time (s)', position: 'insideBottom', dy: 10 }} tick={{ fill: selectedTheme.text }} />
+                    <YAxis label={{ value: 'CPM', angle: -90, position: 'insideLeft' }} tick={{ fill: selectedTheme.text }} />
                     <Tooltip />
-                    <Line type="monotone" dataKey="cpm" stroke="#8884d8" strokeWidth={2} dot={false} />
+                    <Area
+                        type="monotone"
+                        dataKey="cpm"
+                        fill={selectedTheme.leaderboardBg}
+                        stroke={selectedTheme.accent}
+                        strokeWidth={2}
+                        fillOpacity={1}
+                        isAnimationActive={false}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="cpm"
+                        stroke={selectedTheme.accent}
+                        strokeWidth={2}
+                        dot={false}
+                        isAnimationActive={false}
+                    />
                 </LineChart>
             </ResponsiveContainer>
         </div>
     );
 };
+
 export default SpeedChart;
