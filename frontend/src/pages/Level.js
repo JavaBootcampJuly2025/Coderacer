@@ -13,7 +13,7 @@ const Level = () => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,
@@ -39,7 +39,7 @@ const Level = () => {
                 totalTyped={totalTyped}
                 mistakes={mistakes}
             />
-            <SpeedChart endTime={endTime} speedLog={speedLog} />
+            <SpeedChart endTime={endTime} speedLog={speedLogRef.current} />
             </div>
         </div>
     );

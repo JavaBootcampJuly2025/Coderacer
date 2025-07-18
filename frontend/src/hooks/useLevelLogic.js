@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import useTypingTest from './useTypingTest';
-import { Lorem } from '../utils/constants';
+import { aaaaa } from '../utils/constants';
 
 const useLevelLogic = () => {
     const { state } = useLocation();
@@ -10,13 +10,13 @@ const useLevelLogic = () => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,
         calculateAccuracy,
         focusContainer,
-    } = useTypingTest(Lorem);
+    } = useTypingTest(aaaaa);
 
     return {
         state,
@@ -25,7 +25,7 @@ const useLevelLogic = () => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,

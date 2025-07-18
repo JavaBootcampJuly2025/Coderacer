@@ -7,7 +7,8 @@ const useTypingTest = (initialCodeSnippet) => {
     const [endTime, setEndTime] = useState(null);
     const [totalTyped, setTotalTyped] = useState(0);
     const [mistakes, setMistakes] = useState(0);
-    const [speedLog, setSpeedLog] = useState([]);
+    const [correctCharsCount, setCorrectCharsCount] = useState(0);
+    const speedLogRef =  useRef([]);
     const containerRef = useRef(null);
 
     useEffect(() => {
@@ -39,28 +40,27 @@ const useTypingTest = (initialCodeSnippet) => {
             }
 
             if (e.key === 'Backspace') {
+                const lastIndex = userInput.length - 1;
+                if (userInput[lastIndex] === codeSnippet[lastIndex]) {
+                    setCorrectCharsCount((prev) => prev - 1);
+                }
                 newInput = userInput.slice(0, -1);
             } else {
-                if (e.key === 'Enter') {
-                    newInput = userInput + '\n';
-                } else if (e.key === 'Tab') {
-                    newInput = userInput + '  ';
-                } else {
-                    newInput = userInput + e.key;
-                }
-
-                setTotalTyped((prev) => prev + (e.key === 'Tab' ? 2 : 1));
-
                 const expectedChar = codeSnippet[userInput.length];
                 const actualChar = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '  ' : e.key;
-                const isMistake = actualChar !== expectedChar && e.key !== 'Backspace';
+                const charsAdded = actualChar === '  ' ? 2 : actualChar.length;
+
+                newInput += actualChar;
+                setTotalTyped((prev) => prev + charsAdded);
+
+                const isMistake = actualChar !== expectedChar;
 
                 if (isMistake) {
                     setMistakes((prev) => prev + 1);
                 } else {
-                    const correctChars = [...newInput].filter((ch, i) => ch === codeSnippet[i]).length;
-                    const cpm = elapsedSec > 0 ? Math.round((correctChars / elapsedSec) * 60) : 0;
-                    setSpeedLog((prev) => [...prev, { time: elapsedSec.toFixed(1), cpm }]);
+                    setCorrectCharsCount((prev) => prev + 1);
+                    const cpm = elapsedSec > 0 ? Math.round((correctCharsCount + 1) / elapsedSec * 60) : 0;
+                    speedLogRef.current.push({ time: elapsedSec.toFixed(1), cpm });
                 }
             }
 
@@ -96,7 +96,7 @@ const useTypingTest = (initialCodeSnippet) => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,
