@@ -9,7 +9,6 @@ import com.coderacer.model.Level;
 import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
-import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.EmailVerificationTokenRepository;
 import com.coderacer.security.JWTUtil;
 import jakarta.validation.Valid;
