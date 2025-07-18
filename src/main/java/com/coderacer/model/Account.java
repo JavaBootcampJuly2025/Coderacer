@@ -1,5 +1,7 @@
 package com.coderacer.model;
 
+import com.coderacer.exception.InvalidPasswordException;
+import com.coderacer.exception.PasswordVerificationException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -67,15 +69,18 @@ public class Account {
 
     public void setPassword(String rawPassword) {
         if (rawPassword == null || rawPassword.trim().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
+            throw new InvalidPasswordException("Password cannot be empty");
         }
         if (rawPassword.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters");
+            throw new InvalidPasswordException("Password must be at least 8 characters");
         }
         this.hashedPassword = PASSWORD_ENCODER.encode(rawPassword);
     }
 
     public boolean verifyPassword(String rawPassword) {
-        return PASSWORD_ENCODER.matches(rawPassword, this.hashedPassword);
+        if (!PASSWORD_ENCODER.matches(rawPassword, this.hashedPassword)) {
+            throw new PasswordVerificationException();
+        }
+        return true;
     }
 }

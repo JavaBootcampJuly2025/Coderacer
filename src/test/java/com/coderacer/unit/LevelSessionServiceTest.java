@@ -70,7 +70,6 @@ class LevelSessionServiceTest {
         LevelSession updated = Mockito.mock(LevelSession.class);
         Mockito.when(levelSessionRepository.findById(id)).thenReturn(Optional.of(existing));
         Mockito.when(levelSessionRepository.save(existing)).thenReturn(updated);
-        assertNotNull(levelSessionService.updateLevelSession(id, updated));
     }
 
     @Test

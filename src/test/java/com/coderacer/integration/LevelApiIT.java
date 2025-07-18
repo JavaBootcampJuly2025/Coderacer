@@ -30,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Testcontainers
 @AutoConfigureWebMvc
-class LevelApiIntegrationTest {
+class LevelApiIT {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
@@ -103,13 +103,13 @@ class LevelApiIntegrationTest {
     void shouldGetAllLevels() {
         // Given - Create two levels
         LevelModifyDTO level1 = new LevelModifyDTO(
-                "public class Test1 { public static void main(String[] args) { System.out.println(\"Test1\"); } }",
+                "public class Test1 { public static void main(String[] args) { System.out.println(\"Test1 and some other stuff\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("test")
         );
         LevelModifyDTO level2 = new LevelModifyDTO(
-                "public class Test2 { public static void main(String[] args) { System.out.println(\"Test2\"); } }",
+                "public class Test2 { public static void main(String[] args) { System.out.println(\"Test2 and some other stuff\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.MEDIUM,
                 Arrays.asList("test")
@@ -133,7 +133,7 @@ class LevelApiIntegrationTest {
     void shouldGetLevelsByLanguage() {
         // Given
         LevelModifyDTO javaLevel = new LevelModifyDTO(
-                "public class JavaTest { public static void main(String[] args) { System.out.println(\"Java\"); } }",
+                "print('Hello Python or Java idk') # This is a simple Python program that prints a greeting message to the console}",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("java")
@@ -162,13 +162,13 @@ class LevelApiIntegrationTest {
     void shouldGetLevelsByDifficulty() {
         // Given
         LevelModifyDTO easyLevel = new LevelModifyDTO(
-                "public class Easy { public static void main(String[] args) { System.out.println(\"Easy\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("easy")
         );
         LevelModifyDTO hardLevel = new LevelModifyDTO(
-                "public class Hard { public static void main(String[] args) { System.out.println(\"Hard\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.HARD,
                 Arrays.asList("hard")
@@ -191,13 +191,13 @@ class LevelApiIntegrationTest {
     void shouldGetRandomLevel() {
         // Given
         LevelModifyDTO level1 = new LevelModifyDTO(
-                "public class Random1 { public static void main(String[] args) { System.out.println(\"Random1\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("random")
         );
         LevelModifyDTO level2 = new LevelModifyDTO(
-                "public class Random2 { public static void main(String[] args) { System.out.println(\"Random2\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("random")
@@ -233,7 +233,7 @@ class LevelApiIntegrationTest {
 
         // When - Update the level
         LevelModifyDTO updatedLevel = new LevelModifyDTO(
-                "public class Updated { public static void main(String[] args) { System.out.println(\"Updated\"); } }",
+                "public class Updated { public static void main(String[] args) { System.out.println(\"Updated I think\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.MEDIUM,
                 Arrays.asList("updated")
@@ -258,7 +258,7 @@ class LevelApiIntegrationTest {
     void shouldDeleteLevel() {
         // Given
         LevelModifyDTO level = new LevelModifyDTO(
-                "public class ToDelete { public static void main(String[] args) { System.out.println(\"Delete\"); } }",
+                "public class HelloWorld { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }",
                 ProgrammingLanguage.JAVA,
                 Difficulty.EASY,
                 Arrays.asList("delete")

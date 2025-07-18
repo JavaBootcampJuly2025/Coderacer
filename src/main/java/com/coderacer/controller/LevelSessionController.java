@@ -1,5 +1,6 @@
 package com.coderacer.controller;
 
+import com.coderacer.dto.LevelSessionDto;
 import com.coderacer.model.LevelSession;
 import com.coderacer.service.AccountService;
 import com.coderacer.service.LevelSessionService;
@@ -68,9 +69,12 @@ public class LevelSessionController {
      * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
      */
     @GetMapping("/by-account/{accountId}")
-    public ResponseEntity<List<LevelSession>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
+    public ResponseEntity<List<LevelSessionDto>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
         List<LevelSession> sessions = levelSessionService.getLevelSessionsByAccount(accountId);
-        return new ResponseEntity<>(sessions, HttpStatus.OK);
+        List<LevelSessionDto> dtos = sessions.stream()
+                .map(LevelSessionDto::fromEntity)
+                .toList();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     /**
@@ -80,27 +84,12 @@ public class LevelSessionController {
      * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
      */
     @GetMapping("/by-level/{levelId}")
-    public ResponseEntity<List<LevelSession>> getLevelSessionsByLevel(@PathVariable UUID levelId) {
+    public ResponseEntity<List<LevelSessionDto>> getLevelSessionsByLevel(@PathVariable UUID levelId) {
         List<LevelSession> sessions = levelSessionService.getLevelSessionsByLevel(levelId);
-        return new ResponseEntity<>(sessions, HttpStatus.OK);
-    }
-
-    /**
-     * Updates an existing LevelSession.
-     *
-     * @param id The UUID of the LevelSession to update.
-     * @param updatedSession The LevelSession object containing the updated data.
-     * @return ResponseEntity with the updated LevelSession and HTTP status 200 (OK),
-     * or HTTP status 404 (Not Found) if the session does not exist.
-     */
-    @PutMapping("/{id}")
-    public ResponseEntity<LevelSession> updateLevelSession(@PathVariable UUID id, @RequestBody LevelSession updatedSession) {
-        try {
-            LevelSession result = levelSessionService.updateLevelSession(id, updatedSession);
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        List<LevelSessionDto> dtos = sessions.stream()
+                .map(LevelSessionDto::fromEntity)
+                .toList();
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     /**
