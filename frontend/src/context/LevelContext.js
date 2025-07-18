@@ -6,7 +6,9 @@ export const LevelProvider = ({ children }) => {
     const [latestSession, setLatestSession] = useState(null);
 
     const saveSession = (speedLog, endTime) => {
-        setLatestSession({ speedLog, endTime, timestamp: new Date().toISOString() });
+        const session = { speedLog, endTime, timestamp: new Date().toISOString() };
+        console.log('Saving to LevelContext:', session);
+        setLatestSession(session);
     };
 
     return <LevelContext.Provider value={{ latestSession, saveSession }}>{children}</LevelContext.Provider>;

@@ -19,13 +19,10 @@ const useLevelLogic = () => {
         focusContainer,
     } = useTypingTest(Lorem);
 
-    // Safely access saveSession from context with fallback
-    const { saveSession = () => {} } = useLevelContext() || {};
+    const { saveSession } = useLevelContext() || {};
 
-    // Save session data when endTime is set
-    if (endTime && speedLog && speedLog.length > 1) {
-        saveSession(speedLog, endTime);
-    }
+    // Remove the saveSession call from render phase
+    const context = useLevelContext();
 
     return {
         state,
@@ -40,6 +37,7 @@ const useLevelLogic = () => {
         calculateCPM,
         calculateAccuracy,
         focusContainer,
+        saveSession // Expose saveSession to be called by Level component
     };
 };
 

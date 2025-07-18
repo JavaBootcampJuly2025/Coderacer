@@ -8,6 +8,21 @@ import Leaderboard from '../components/Leaderboard';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
 
+
+class ErrorBoundary extends React.Component {
+    state = { error: null };
+    static getDerivedStateFromError(error) {
+        console.error('ErrorBoundary caught:', error);
+        return { error };
+    }
+    render() {
+        if (this.state.error) {
+            return <div>Error rendering chart. Check console for details.</div>;
+        }
+        return this.props.children;
+    }
+}
+
 const Home = () => {
     const { latestSession } = useLevelContext();
 
@@ -15,8 +30,10 @@ const Home = () => {
         document.activeElement.blur();
     };
 
-    const speedLog = latestSession?.speedLog || [{ time: 0, cpm: 0 }, { time: 10, cpm: 50 }];
-    const endTime = latestSession?.endTime || 10;
+    const speedLog = latestSession?.speedLog || [{ time: "0.0", cpm: 0 }, { time: "10.0", cpm: 50 }];
+    const endTime = latestSession?.endTime || Date.now();
+    console.log('Home speedLog:', speedLog, 'endTime:', endTime);
+
 
     return (
         <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat" onClick={handleClick}>

@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import useLevelLogic from '../hooks/useLevelLogic';
 import TypingArea from '../components/TypingArea';
-import Results from '../components/Results';
-import SpeedChart from '../components/SpeedChart';
 import '../App.css';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
@@ -12,25 +10,28 @@ const Level = () => {
         codeSnippet,
         userInput,
         endTime,
-        totalTyped,
-        mistakes,
-        speedLog,
         containerRef,
         handleKeyDown,
-        calculateCPM,
-        calculateAccuracy,
         focusContainer,
+        speedLog,          // Add this
+        saveSession
     } = useLevelLogic();
 
     const navigate = useNavigate();
+    const hasNavigated = useRef(false); // Prevent multiple navigations
 
-    // Redirect to home when endTime is set
+// In Level.js
     useEffect(() => {
-        console.log('endTime updated:', endTime); // Debug log
-        if (endTime) {
-            navigate('/home'); // Immediate redirect
+        console.log('useEffect triggered, endTime:', endTime);
+        if (endTime && !hasNavigated.current) {
+            hasNavigated.current = true;
+            if (speedLog && speedLog.length > 1) {
+                saveSession(speedLog, endTime);
+            }
+            console.log('Navigating to /home');
+            navigate('/home');
         }
-    }, [endTime, navigate]); // Trigger only on endTime change
+    }, [endTime, navigate, saveSession, speedLog]);
 
     return (
         <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat">
@@ -43,14 +44,6 @@ const Level = () => {
                     handleKeyDown={handleKeyDown}
                     focusContainer={focusContainer}
                 />
-                <Results
-                    endTime={endTime}
-                    calculateCPM={calculateCPM}
-                    calculateAccuracy={calculateAccuracy}
-                    totalTyped={totalTyped}
-                    mistakes={mistakes}
-                />
-                <SpeedChart endTime={endTime} speedLog={speedLog} />
             </div>
         </div>
     );
