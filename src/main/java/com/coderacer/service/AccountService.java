@@ -145,10 +145,12 @@ public class AccountService {
         Account account = verificationToken.getAccount();
         account.setVerified(true);
         accountRepository.save(account);
+        emailVerificationTokenRepository.delete(verificationToken);
 
         return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
 
+    @Transactional
     public String attemptLogin(AccountLoginDTO accountLoginDTO) {
         Optional<Account> temp = accountRepository.findByUsername(accountLoginDTO.getUsername());
         if(temp.isEmpty()) {
