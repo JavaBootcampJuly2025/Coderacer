@@ -1,13 +1,19 @@
+// src/index.js
 import { StrictMode } from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
+import { ThemeProvider } from './styles/ThemeContext';
 import App from './App';
+import './styles/global.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const container = document.getElementById('root');
+const root = createRoot(container);
 root.render(
-  <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </StrictMode>,
+    <StrictMode>
+        <BrowserRouter>
+            <ThemeProvider>
+                <App />
+            </ThemeProvider>
+        </BrowserRouter>
+    </StrictMode>
 );

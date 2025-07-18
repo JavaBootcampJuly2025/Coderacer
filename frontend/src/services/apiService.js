@@ -40,3 +40,9 @@ export const getAccountMetrics = async accountId => {
     const response = await api.get(`/api/v1/metrics/${accountId}`);
     return response.data;
 };
+
+// Get level by id
+export const getLevelByid = async id => {
+    const response = await api.get(`/api/levels/${id}`);
+    return response.data;
+};
