@@ -9,6 +9,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class LevelSessionController {
      * @param createDto The DTO containing the data for the new session, sent in the request body.
      * @return ResponseEntity with the created LevelSession and HTTP status 201 (Created).
      */
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
     public ResponseEntity<LevelSession> createLevelSession(@RequestBody LevelSessionCreateDto createDto) {
         try {
@@ -55,6 +57,7 @@ public class LevelSessionController {
      * @param id The UUID of the LevelSession.
      * @return ResponseEntity with the LevelSession if found, or HTTP status 404 (Not Found).
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<LevelSession> getLevelSessionById(@PathVariable UUID id) {
         return levelSessionService.getLevelSessionById(id)
@@ -68,6 +71,7 @@ public class LevelSessionController {
      * @param accountId The UUID of the account.
      * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
      */
+    @PreAuthorize("hasRole('ADMIN') or #id == principal")
     @GetMapping("/by-account/{accountId}")
     public ResponseEntity<List<LevelSessionDto>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
         List<LevelSession> sessions = levelSessionService.getLevelSessionsByAccount(accountId);
@@ -83,15 +87,12 @@ public class LevelSessionController {
      * @param levelId The UUID of the level.
      * @return ResponseEntity with a list of LevelSessions and HTTP status 200 (OK).
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/by-level/{levelId}")
-    public ResponseEntity<List<LevelSessionDto>> getLevelSessionsByLevel(@PathVariable UUID levelId) {
+    public ResponseEntity<List<LevelSession>> getLevelSessionsByLevel(@PathVariable UUID levelId) {
         List<LevelSession> sessions = levelSessionService.getLevelSessionsByLevel(levelId);
-        List<LevelSessionDto> dtos = sessions.stream()
-                .map(LevelSessionDto::fromEntity)
-                .toList();
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
+        return new ResponseEntity<>(sessions, HttpStatus.OK);
     }
-
     /**
      * Deletes a LevelSession by its ID.
      *
@@ -99,6 +100,7 @@ public class LevelSessionController {
      * @return ResponseEntity with HTTP status 204 (No Content) on successful deletion,
      * or HTTP status 404 (Not Found) if the session does not exist.
      */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLevelSession(@PathVariable UUID id) {
         try {

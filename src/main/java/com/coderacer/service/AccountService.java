@@ -2,6 +2,7 @@ package com.coderacer.service;
 
 import com.coderacer.algo.RatingAlgorithm;
 import com.coderacer.dto.*;
+import com.coderacer.enums.Role;
 import com.coderacer.exception.*;
 import com.coderacer.model.Account;
 import com.coderacer.model.Level;
@@ -9,14 +10,18 @@ import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
 import com.coderacer.repository.EmailVerificationTokenRepository;
+import com.coderacer.security.JWTUtil;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -27,8 +32,8 @@ public class AccountService {
     private final LevelRepository levelRepository; // for rating calc only
     private final RatingAlgorithm ratingAlgo; // for rating calc only
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
-    @Autowired
-    private EmailService emailService;
+    private final EmailService emailService;
+    private final JWTUtil jwtUtil;
 
     @Transactional(readOnly = true)
     public AccountDTO getAccount(UUID id) {
@@ -67,6 +72,7 @@ public class AccountService {
         account.setPassword(dto.password()); // BCrypt encryption
         account.setRating(0);
         account.setVerified(false);
+        account.setRole(Role.USER);
 
         Account saved = accountRepository.save(account);
 
@@ -142,6 +148,26 @@ public class AccountService {
 
         return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
+
+    public String attemptLogin(AccountLoginDTO accountLoginDTO) {
+        Optional<Account> temp = accountRepository.findByUsername(accountLoginDTO.getUsername());
+        if(temp.isEmpty()) {
+            throw new AccountNotFoundException(accountLoginDTO.getUsername());
+        }
+
+        Account account = temp.get();
+
+        if(!account.isVerified()) {
+            throw new EmailNotVerifiedException("Account not verified");
+        }
+
+        if (!account.verifyPassword(accountLoginDTO.getPassword())) {
+            throw new PasswordVerificationException();
+        }
+
+        return jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
+    }
+
 
     /**
      * Updates the account's rating based on new level session - a recently completed game by said player.

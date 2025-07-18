@@ -25,6 +25,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
     }
 
+    @ExceptionHandler(EmailNotVerifiedException.class)
+    public ResponseEntity<ErrorResponse> handleEmailNotVerified(
+            EmailNotVerifiedException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
+    }
+
     @ExceptionHandler({UsernameConflictException.class, EmailConflictException.class})
     public ResponseEntity<ErrorResponse> handleConflict(
             ConflictException ex,
