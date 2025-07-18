@@ -5,24 +5,23 @@ import { useTheme } from '../../styles/ThemeContext';
 const CORNER_RADIUS = 12;
 
 const LevelSwitch = () => {
-    const { theme } = useTheme(); // Access the current theme
-    const [selected, setSelected] = useState('Normal'); // Default to Normal
+    const { theme } = useTheme();
+    const [selected, setSelected] = useState('Normal');
 
-    // Map of options to their indices for sliding animation
     const options = ['Easy', 'Normal', 'Hard'];
-    const selectedIndex = options.indexOf(selected);
+    console.log('Options:', options, 'Selected:', selected); // Debug log
 
-    // Calculate the translateX value for the slider (each button is 150px wide)
+    const selectedIndex = options.indexOf(selected);
     const sliderStyle = {
         transform: `translateX(${selectedIndex * 150}px)`,
         backgroundColor: `var(--primary-button)`,
         transition: 'transform 0.3s ease-in-out',
-        borderRadius: `${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0`, // Round top corners only
+        borderRadius: `${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0`,
     };
 
     return (
         <div
-            className={`flex w-[450px] h-12 bg-[var(--background)] rounded-[${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0] overflow-hidden border-transparent`}
+            className={`flex w-[450px] h-12 bg-[var(--background)] rounded-[${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0] overflow-hidden border border-[var(--border-gray)]`}
         >
             <div
                 className="absolute w-[150px] h-12"
@@ -39,7 +38,7 @@ const LevelSwitch = () => {
                             className="absolute inset-0 transition-opacity duration-200 hover:opacity-100 opacity-0"
                             style={{
                                 backgroundColor: `var(--primary-button-hover)`,
-                                borderRadius: `${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0`, // Match container's top-only rounding
+                                borderRadius: `${CORNER_RADIUS}px ${CORNER_RADIUS}px 0 0`,
                             }}
                         />
                     )}
