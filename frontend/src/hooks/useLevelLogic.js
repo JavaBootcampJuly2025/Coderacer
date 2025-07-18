@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import useTypingTest from './useTypingTest';
-import { Lorem } from '../utils/constants';
+import { aaaaa } from '../utils/constants';
 import { useLevelContext } from '../context/LevelContext'; // Ensure correct path
 
 const useLevelLogic = () => {
@@ -11,13 +11,13 @@ const useLevelLogic = () => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,
         calculateAccuracy,
         focusContainer,
-    } = useTypingTest(Lorem);
+    } = useTypingTest(aaaaa);
 
     // Safely access saveSession from context with fallback
     const { saveSession = () => {} } = useLevelContext() || {};
@@ -34,7 +34,7 @@ const useLevelLogic = () => {
         endTime,
         totalTyped,
         mistakes,
-        speedLog,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         calculateCPM,
