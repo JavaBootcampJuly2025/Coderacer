@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(EmailNotVerifiedException.class)
-    public ResponseEntity<ErrorResponse> handleAccountNotFound(
+    public ResponseEntity<ErrorResponse> handleEmailNotVerified(
             EmailNotVerifiedException ex,
             HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.FORBIDDEN, request);
