@@ -1,5 +1,5 @@
 import React from 'react';
-import Icon from '../assets/icon.png';
+import Icon from '../assets/icon.svg';
 import Settings from '../assets/settings.png';
 import { useTheme } from '../styles/ThemeContext';
 import Title from './ui/Title';
@@ -15,7 +15,7 @@ const Header = () => {
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
             <div className="w-64 flex flex-row items-center space-x-3">
-                <img src={Icon} className="w-20 h-20" alt="Codegobrr Icon"/>
+                <img src={Icon} className="w-14 h-14" alt="Codegobrr Icon"/>
                 <Title />
             </div>
             <div className="flex justify-center space-x-5">

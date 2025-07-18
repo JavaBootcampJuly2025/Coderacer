@@ -15,7 +15,8 @@ const themes = {
         border: 'rgba(255, 255, 255, 1)',
         footerText: '#ccc',
         borderGray: '#1a4971',
-        inbetween: '#376898',
+        inbetween: '#164270',
+        light: '#164270',
     },
     light: {
         defaultChar: '#aaa',
@@ -33,6 +34,7 @@ const themes = {
         footerText: '#1e2742',
         borderGray: '#555',
         inbetween: '#376898',
+        light: '#164270',
     },
 };
 

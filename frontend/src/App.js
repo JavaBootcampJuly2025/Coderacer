@@ -1,13 +1,11 @@
-
 import { Routes, Route } from 'react-router-dom';
-import Welcome from './pages/Welcome';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import NotFound from './404';
-import './App.css'
-import Home from "./pages/Home";
-import LevelLoader from "./pages/LevelLoader";
-import Level from "./pages/Level";
+import './App.css';
+import Home from './pages/Home';
+import LevelLoader from './pages/LevelLoader';
+import Level from './pages/Level';
 
 function App() {
     return (
@@ -20,6 +18,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
         </Routes>
-  );
+    );
 }
-export default App
+
+export default App;
