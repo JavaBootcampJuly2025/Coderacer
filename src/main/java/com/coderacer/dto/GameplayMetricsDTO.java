@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GameplayMetricsDTO {
-    double avgCpm;
-    double avgAccuracy;
+    private Double avgCpm;
+    private Double avgAccuracy;
 }
