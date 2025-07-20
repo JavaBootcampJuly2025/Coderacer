@@ -40,8 +40,6 @@ public class JWTUtil {
                 .get("role", String.class);
     }
 
-
-
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
