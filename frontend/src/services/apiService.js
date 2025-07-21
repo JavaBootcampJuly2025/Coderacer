@@ -23,6 +23,12 @@ export const createAccount = async accountData => {
     return response.data;
 };
 
+// Login into an account
+export const login = async loginData => {
+    const response = await api.post('/api/accounts/login', loginData);
+    return response.data;
+};
+
 // Fetch all levels
 export const getAllLevels = async () => {
     const response = await api.get('/api/levels');

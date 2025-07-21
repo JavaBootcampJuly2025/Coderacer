@@ -149,7 +149,8 @@ public class AccountService {
         return ResponseEntity.ok("Email verified successfully. You can now log in.");
     }
 
-    public String attemptLogin(AccountLoginDTO accountLoginDTO) {
+    @Transactional
+    public LoginResponseDTO attemptLogin(AccountLoginDTO accountLoginDTO) {
         Optional<Account> temp = accountRepository.findByUsername(accountLoginDTO.getUsername());
         if(temp.isEmpty()) {
             throw new AccountNotFoundException(accountLoginDTO.getUsername());
@@ -165,7 +166,9 @@ public class AccountService {
             throw new PasswordVerificationException();
         }
 
-        return jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
+        String token =  jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
+
+        return new LoginResponseDTO(token, account.getId());
     }
 
 

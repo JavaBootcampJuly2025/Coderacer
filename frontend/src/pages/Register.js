@@ -1,6 +1,10 @@
 import { createAccount } from '../services/apiService';
+import { useState } from 'react';
 
 function Register() {
+  const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("");
+  
   const submit = async (e) => {
     e.preventDefault();
 
@@ -12,9 +16,12 @@ function Register() {
     };
 
     try {
-      const result = await createAccount(accountData);
+      const response = await createAccount(accountData);
+      setMessageColor("green");
+      setMessage("registration succesful, check your email to verify your account and then login");
     } catch (error) {
-      // Handle error appropriately (e.g., display error message)
+      setMessageColor("red");
+      setMessage(error.response?.data?.message);
     }
   };
 
@@ -48,8 +55,11 @@ function Register() {
                 required
             />
             <input className="action" type="submit" value="Register" />
+            <Text className="message" style={{color: messageColor}}>{message}</Text>
           </form>
         </div>
+
+
       </div>
   );
 }
