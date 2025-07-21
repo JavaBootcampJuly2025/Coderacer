@@ -18,7 +18,8 @@ const PANEL_CONFIG = {
         default: {
             width: '60',
             height: '20',
-            textSize: 'sm',
+            textSize: '35px',
+            fontWeight: 'bold',
             font: 'montserrat',
             background: 'var(--primary-button)',
             hoverBackground: 'var(--primary-button-hover)',
@@ -78,10 +79,12 @@ const RightPanel = () => {
                                     text-[${buttonConfig.textColor}] 
                                     text-${buttonConfig.textSize} 
                                     font-${buttonConfig.font} 
+                                    font-${buttonConfig.fontWeight}
                                     cursor-pointer 
                                     hover:bg-[${buttonConfig.hoverBackground}] 
                                     transition-colors duration-${buttonConfig.transitionDuration}
                                 `}
+                                style={{ fontSize: buttonConfig.textSize }} // Apply textSize as fontSize
                                 onClick={onClick}
                             >
                                 {label}
