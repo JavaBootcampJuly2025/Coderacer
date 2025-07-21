@@ -9,7 +9,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig {
+public class runnerSecurityConfig {
 
     @Bean
     public SecurityFilterChain runnerSecurityFilterChain(HttpSecurity http) throws Exception {
