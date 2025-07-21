@@ -16,7 +16,6 @@ public class ExecutionResult {
     
     public enum Result {
         SUCCESS,
-        OUTPUT_MISMATCH,
         COMPILATION_ERROR,
         RUNTIME_ERROR,
         TIMEOUT

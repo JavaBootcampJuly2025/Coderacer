@@ -23,10 +23,9 @@ public class CodeExecutionService {
      *
      * @param javaCode        The Java code as a string. It must contain a public class with a main method.
      *                        Example: "public class MyClass { public static void main(String[] args) { System.out.println(\"Hello from compiled code!\"); } }"
-     * @param expectedOutputs List of expected output lines to compare against (optional)
      * @return ExecutionResult containing the result status and actual output lines
      */
-    public ExecutionResult compileAndRun(String javaCode, List<String> expectedOutputs) {
+    public ExecutionResult compileAndRun(String javaCode) {
         ExecutionResult result = new ExecutionResult();
 
         // Generate a unique identifier for this execution to create isolated files
@@ -145,17 +144,8 @@ public class CodeExecutionService {
 
             result.setOutputLines(actualOutputLines);
 
-            // Compare with expected outputs if provided
-            if (expectedOutputs != null && !expectedOutputs.isEmpty()) {
-                if (outputsMatch(actualOutputLines, expectedOutputs)) {
-                    result.setResult(ExecutionResult.Result.SUCCESS);
-                } else {
-                    result.setResult(ExecutionResult.Result.OUTPUT_MISMATCH);
-                }
-            } else {
-                // No expected outputs provided, consider it successful if no errors
-                result.setResult(ExecutionResult.Result.SUCCESS);
-            }
+            // If no undesirable results so far, assume success
+            result.setResult(ExecutionResult.Result.SUCCESS);
 
         } catch (IOException | InterruptedException e) {
             result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
@@ -167,30 +157,6 @@ public class CodeExecutionService {
         }
 
         return result;
-    }
-
-    /**
-     * Overloaded method for backward compatibility - executes code without expected outputs
-     */
-    public ExecutionResult compileAndRun(String javaCode) {
-        return compileAndRun(javaCode, null);
-    }
-
-    /**
-     * Compare actual output lines with expected output lines
-     */
-    private boolean outputsMatch(List<String> actualOutputs, List<String> expectedOutputs) {
-        if (actualOutputs.size() != expectedOutputs.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < actualOutputs.size(); i++) {
-            if (!actualOutputs.get(i).equals(expectedOutputs.get(i))) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
