@@ -3,20 +3,11 @@ package com.coderacer.runner.service;
 import com.coderacer.runner.model.ExecutionResult;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,8 +21,8 @@ public class CodeExecutionService {
     /**
      * Compiles and executes the given Java code string.
      *
-     * @param javaCode The Java code as a string. It must contain a public class with a main method.
-     * Example: "public class MyClass { public static void main(String[] args) { System.out.println(\"Hello from compiled code!\"); } }"
+     * @param javaCode        The Java code as a string. It must contain a public class with a main method.
+     *                        Example: "public class MyClass { public static void main(String[] args) { System.out.println(\"Hello from compiled code!\"); } }"
      * @param expectedOutputs List of expected output lines to compare against (optional)
      * @return ExecutionResult containing the result status and actual output lines
      */
@@ -80,20 +71,57 @@ public class CodeExecutionService {
 
             // 4. Run the compiled Java code
             Process runProcess = new ProcessBuilder("java", className)
-                    .directory(tempDir.toFile()) // Set working directory for java
-                    .redirectErrorStream(true) // Merge stderr into stdout
+                    .directory(tempDir.toFile())
+                    .redirectErrorStream(true)
                     .start();
 
-            String runOutput = readProcessOutput(runProcess);
-            boolean executed = runProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+            // Close stdin to prevent hanging on input operations
+            try {
+                runProcess.getOutputStream().close();
+            } catch (IOException ignored) {
+            }
 
-            if (!executed) {
+            // Track if we killed the process due to timeout
+            final boolean[] wasKilled = {false};
+
+            // Create a killer thread that will force-terminate the process
+            Thread killerThread = new Thread(() -> {
+                try {
+                    Thread.sleep(EXECUTION_TIMEOUT_SECONDS * 1000);
+                    if (runProcess.isAlive()) {
+                        wasKilled[0] = true; // Mark that we're killing due to timeout
+                        runProcess.destroyForcibly();
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            });
+            killerThread.setDaemon(true);
+            killerThread.start();
+
+            // Read output and wait for process
+            String runOutput = readProcessOutput(runProcess);
+
+            try {
+                runProcess.waitFor(); // No timeout here - let the killer thread handle it
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            // Check if we killed the process due to timeout
+            if (wasKilled[0]) {
+                result.setResult(ExecutionResult.Result.TIMEOUT);
+                return result;
+            }
+
+            // Check if process is somehow still alive (shouldn't happen but just in case)
+            if (runProcess.isAlive()) {
                 runProcess.destroyForcibly();
                 result.setResult(ExecutionResult.Result.TIMEOUT);
                 return result;
             }
 
-            // Check if execution had runtime errors
+            // Check if execution had runtime errors (only if not killed by us)
             if (runProcess.exitValue() != 0) {
                 result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
                 if (!runOutput.trim().isEmpty()) {
