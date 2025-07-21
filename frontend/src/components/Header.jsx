@@ -7,7 +7,7 @@ import Icon from '../assets/icon.svg?react';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
-    const { username, email, rating } = useAccountInfo(); // Access account info if logged in
+    const { username, rating } = useAccountInfo(); // Access account info if logged in
 
     // Toggle between light and dark themes
     const toggleTheme = () => {

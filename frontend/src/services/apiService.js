@@ -39,8 +39,12 @@ export const getAllLevels = async () => {
 };
 
 // Create a new level session
-export const createLevelSession = async sessionData => {
-    const response = await api.post('/api/v1/level-sessions', sessionData);
+export const createLevelSession = async (sessionData, authToken) => {
+    const response = await api.post('/api/v1/level-sessions', sessionData, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });;
     return response.data;
 };
 
