@@ -32,10 +32,6 @@ public class ExecutionResult {
     @Column(nullable = false)
     private Result result = Result.TIMEOUT;
 
-    /** Counted by lines. I want this to be used in frontend as "19/25 tests cases correct" etc. */
-    @Column(nullable = false)
-    private int correctOutputCount = 0;
-    
     /**
      * The actual lines of output produced by the user’s code.
      * Compare this against CodeSubmission.expectedOutputs.
