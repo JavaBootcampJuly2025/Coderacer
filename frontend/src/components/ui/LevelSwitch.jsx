@@ -9,15 +9,14 @@ const CONFIG = {
         height: '12',
         backgroundColor: 'var(--black)',
         borderRadius: '12px 12px 0 0', // Rounded top corners, square bottom
-        borderColor: 'var(--transparent)',
     },
     slider: {
         width: '150px',
         height: '12',
-        backgroundColor: 'var(--primary-button)',
+        backgroundColor: 'var(--inbetween)',
         borderRadius: '12px 12px 0 0',
-        borderColor: 'var(--inbetween)',
-        transition: 'transform 0.1s ease-in-out', // Fancier animation without scale
+        borderColor: 'var(--primary-button)',
+        transition: 'transform 0.1s ease-in-out',
     },
     button: {
         textColor: 'var(--text)',
@@ -27,7 +26,7 @@ const CONFIG = {
         zIndex: '20',
     },
     hoverOverlay: {
-        backgroundColor: 'var(--primary-button-hover)',
+        backgroundColor: 'var(--sliderhover)',
         borderRadius: '12px 12px 0 0',
         transition: 'opacity 0.2s ease-in-out',
     },
@@ -44,7 +43,7 @@ const LevelSwitch = () => {
 
     const selectedIndex = options.indexOf(selected);
     const sliderStyle = {
-        transform: `translateX(${selectedIndex * parseInt(CONFIG.slider.width) - 1}px) translateY(-1px)`,
+        transform: `translateX(${selectedIndex * parseInt(CONFIG.slider.width)}px) `,
         backgroundColor: CONFIG.slider.backgroundColor,
         transition: CONFIG.slider.transition,
         borderRadius: CONFIG.slider.borderRadius,
@@ -52,7 +51,7 @@ const LevelSwitch = () => {
 
     return (
         <div
-            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden border border-[${CONFIG.panel.borderColor}]`}
+            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden`}
             style={{ borderRadius: CONFIG.panel.borderRadius }}
         >
             <div
@@ -70,9 +69,8 @@ const LevelSwitch = () => {
                         style={{
                             backgroundColor: CONFIG.hoverOverlay.backgroundColor,
                             borderRadius: CONFIG.hoverOverlay.borderRadius,
-                            width: `calc(${CONFIG.slider.width} + 2px)`, // Increase by 2px (1px each side)
-                            height: `calc(${CONFIG.panel.height} + 2px)`, // Increase by 2px (1px each side)
-                            margin: '-1px', // Offset to extend 1px beyond button
+                            width: CONFIG.slider.width,
+                            height: CONFIG.panel.height,
                         }}
                     />
                     <span className="relative z-30 pointer-events-none">{option}</span>

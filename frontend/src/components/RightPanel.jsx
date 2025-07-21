@@ -8,9 +8,9 @@ import { useTheme } from '../styles/ThemeContext';
 const PANEL_CONFIG = {
     panel: {
         width: '450px',
-        height: '200px',
+        height: '160px',
         borderRadius: '12px',
-        background: 'var(--primary-button)',
+        background: 'var(--inbetween)',
         paddingX: '5',
     },
     buttons: {
@@ -20,7 +20,7 @@ const PANEL_CONFIG = {
             height: '20',
             textSize: 'sm',
             font: 'montserrat',
-            background: 'var(--inbetween)',
+            background: 'var(--primary-button)',
             hoverBackground: 'var(--primary-button-hover)',
             textColor: 'var(--text)',
             borderRadius: 'full',
