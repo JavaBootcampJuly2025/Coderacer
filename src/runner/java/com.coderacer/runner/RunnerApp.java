@@ -8,6 +8,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class RunnerApp {
     public static void main(String[] args) {
-        SpringApplication.run(RunnerApp.class, args);
+        SpringApplication app = new SpringApplication(RunnerApp.class);
+        app.setAdditionalProfiles("runner");
+        app.run(args);
     }
 }
