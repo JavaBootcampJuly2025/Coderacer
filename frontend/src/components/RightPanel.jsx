@@ -40,12 +40,11 @@ const RightPanel = () => {
     const navigate = useNavigate();
 
     const handlePlayClick = () => navigate('/level?id=1');
-    const handleChallengesClick = () => navigate('/challenges');
-    const handleStatisticsClick = () => navigate('/statistics');
+    const handleThinkerClick = () => navigate('/GameMode');
 
     const buttons = [
         // { label: 'Challenges', onClick: handleChallengesClick },
-        { label: 'Thinker', onClick: handleStatisticsClick },
+        { label: 'Thinker', onClick: handleThinkerClick },
         { label: 'Speeder', onClick: handlePlayClick },
     ];
 

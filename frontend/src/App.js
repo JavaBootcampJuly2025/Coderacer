@@ -6,6 +6,7 @@ import './App.css';
 import Home from './pages/Home';
 import LevelLoader from './pages/LevelLoader';
 import Level from './pages/Level';
+import GameMode from './pages/GameMode';
 
 function App() {
     return (
@@ -17,6 +18,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="*" element={<NotFound />} />
+            <Route path="/gamemode" element={<GameMode />} />
         </Routes>
     );
 }

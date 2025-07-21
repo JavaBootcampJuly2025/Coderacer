@@ -1,13 +1,12 @@
 import React from 'react';
-import Settings from '../assets/settings.png';
 import { useTheme } from '../styles/ThemeContext';
 import Title from './ui/Title';
-import Icon from '../assets/icon.svg?react';
 import { ReactComponent as Logo } from '../assets/icon.svg';
 import { ReactComponent as SunIcon } from '../assets/sun.svg';
 import { ReactComponent as MoonIcon } from '../assets/moon.svg';
 import { ReactComponent as UserIcon } from '../assets/user.svg';
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
@@ -19,10 +18,10 @@ const Header = () => {
 
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
-            <div className="w-64 flex flex-row items-center space-x-3">
+            <Link to="/home" className="w-64 flex flex-row items-center space-x-3 hover:opacity-80 transition">
                 <Logo className="logo" alt="Coderacer logo" />
                 <Title />
-            </div>
+            </Link>
             <div className="flex justify-center space-x-5">
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
