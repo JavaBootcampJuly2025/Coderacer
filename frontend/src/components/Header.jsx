@@ -1,11 +1,13 @@
 import React from 'react';
 import Settings from '../assets/settings.png';
 import { useTheme } from '../styles/ThemeContext';
+import useAccountInfo from '../hooks/useAccountInfo';
 import Title from './ui/Title';
 import Icon from '../assets/icon.svg?react';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
+    const { username, email, rating } = useAccountInfo(); // Access account info if logged in
 
     // Toggle between light and dark themes
     const toggleTheme = () => {
@@ -14,6 +16,8 @@ const Header = () => {
 
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
+            <text style={{color: "white"}}>{username}</text>
+            <text style={{color: "white"}}>{rating}</text>
             <div className="w-64 flex flex-row items-center space-x-3">
                 {/*<Icon className="w-14 h-14" style={{ fill: 'var(--accent)' }} alt="Codegobrr Icon" />*/}
                 <Title />

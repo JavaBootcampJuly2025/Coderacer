@@ -12,11 +12,14 @@ export const getAllAccounts = async () => {
 };
 
 // Fetch account by ID
-export const getAccountById = async id => {
-    const response = await api.get(`/api/accounts/${id}`);
+export const getAccountById = async (id, authToken) => {
+    const response = await api.get(`/api/accounts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
     return response.data;
 };
-
 // Create a new account
 export const createAccount = async accountData => {
     const response = await api.post('/api/accounts', accountData);

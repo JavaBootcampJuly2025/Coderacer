@@ -55,7 +55,7 @@ function Register() {
                 required
             />
             <input className="action" type="submit" value="Register" />
-            <Text className="message" style={{color: messageColor}}>{message}</Text>
+            <text className="message" style={{color: messageColor}}>{message}</text>
           </form>
         </div>
 
