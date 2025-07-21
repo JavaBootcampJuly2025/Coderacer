@@ -1,8 +1,8 @@
-package com.coderacer.dto;
+package com.coderacer.runner.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.util.List;
 import java.util.UUID;
