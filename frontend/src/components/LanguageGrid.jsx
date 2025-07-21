@@ -27,9 +27,8 @@ const CONFIG = {
     SHADOW_OPACITY: 0.3,
 };
 
-const LanguageGrid = () => {
+const LanguageGrid = ({ selectedLanguage, setSelectedLanguage }) => {
     const { theme } = useTheme();
-    const [selectedLanguage, setSelectedLanguage] = useState(null);
 
     const languages = ['PYTHON', 'JAVASCRIPT', 'JAVA', 'C', 'CPP', 'CSHARP', 'GO', 'RUST', 'KOTLIN'];
 

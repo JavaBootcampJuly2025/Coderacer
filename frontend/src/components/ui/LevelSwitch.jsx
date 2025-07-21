@@ -4,14 +4,13 @@ import { useTheme } from '../../styles/ThemeContext';
 // Constant for corner radius (in pixels)
 const CORNER_RADIUS = 12;
 
-const LevelSwitch = () => {
+const LevelSwitch = ({ selectedDifficulty, setSelectedDifficulty }) => {
     const { theme } = useTheme();
-    const [selected, setSelected] = useState('Normal');
 
-    const options = ['Easy', 'Normal', 'Hard'];
-    console.log('Options:', options, 'Selected:', selected); // Debug log
+    const options = ['EASY', 'MEDIUM', 'HARD'];
+    console.log('Options:', options, 'Selected:', selectedDifficulty); // Debug log
 
-    const selectedIndex = options.indexOf(selected);
+    const selectedIndex = options.indexOf(selectedDifficulty);
     const sliderStyle = {
         transform: `translateX(${selectedIndex * 150}px)`,
         backgroundColor: `var(--primary-button)`,
@@ -30,10 +29,10 @@ const LevelSwitch = () => {
             {options.map((option) => (
                 <button
                     key={option}
-                    onClick={() => setSelected(option)}
+                    onClick={() => setSelectedDifficulty(option)}
                     className="relative flex-1 h-full flex items-center justify-center text-[var(--text)] font-montserrat text-sm font-semibold z-20"
                 >
-                    {selected !== option && (
+                    {selectedDifficulty !== option && (
                         <div
                             className="absolute inset-0 transition-opacity duration-200 hover:opacity-100 opacity-0"
                             style={{

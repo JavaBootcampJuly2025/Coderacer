@@ -55,3 +55,14 @@ export const getLevelByid = async id => {
     const response = await api.get(`/api/levels/${id}`);
     return response.data;
 };
+
+// Get a random level with parameters
+export const getRandomLevelWithParameters = async (language, difficulty) => {
+    const response = await api.get('/api/levels/random', {
+        params: {
+            language,
+            difficulty,
+        }
+    });
+    return response.data;
+};

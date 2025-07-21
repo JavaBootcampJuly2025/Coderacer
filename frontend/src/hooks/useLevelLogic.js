@@ -17,7 +17,7 @@ const useLevelLogic = () => {
         calculateCPM,
         calculateAccuracy,
         focusContainer,
-    } = useTypingTest(Lorem);
+    } = useTypingTest(useLocation().state?.level.codeSnippet);
 
     const { saveSession } = useLevelContext() || {};
 

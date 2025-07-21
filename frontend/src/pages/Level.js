@@ -4,6 +4,7 @@ import TypingArea from '../components/TypingArea';
 import '../App.css';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
+import { createLevelSession } from '../services/apiService';
 
 const Level = () => {
     const {
