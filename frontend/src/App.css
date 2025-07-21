@@ -98,6 +98,13 @@
     color: var(--accent);
 }
 
+.theme-icon {
+    width: 29px;
+    height: 29px;
+    cursor: pointer;
+    color: var(--accent);
+}
+
 .header {
     font-size: 3rem;
     font-weight: 700;
