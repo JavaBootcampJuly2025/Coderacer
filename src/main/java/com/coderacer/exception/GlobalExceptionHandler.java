@@ -74,6 +74,13 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
     }
 
+    @ExceptionHandler(CodeExecutionClientException.class)
+    public ResponseEntity<ErrorResponse> handleCodeExecutionException(
+            CodeExecutionClientException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_GATEWAY, request);
+    }
+
     // Other exceptions
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<ErrorResponse> handleResponseStatusException(
