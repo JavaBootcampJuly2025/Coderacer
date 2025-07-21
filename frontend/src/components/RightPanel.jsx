@@ -4,93 +4,90 @@ import LevelSwitch from './ui/LevelSwitch';
 import LanguageGrid from './LanguageGrid';
 import { useTheme } from '../styles/ThemeContext';
 
-// Configuration object for the RightPanel component
-const CONFIG = {
+// Configuration constants
+const PANEL_CONFIG = {
     panel: {
         width: '450px',
         height: '200px',
-        borderRadius: '10px',
-        backgroundColor: 'var(--leaderboard-bg)',
-        flexDirection: 'column',
-        className: 'flex',
-    },
-    container: {
+        borderRadius: '12px',
+        background: 'var(--primary-button)',
         paddingX: '5',
-        spacingY: '5',
-        className: 'flex-grow flex flex-col justify-center',
     },
-    buttonContainer: {
-        spacingX: '5',
-        className: 'flex justify-center',
-    },
-    buttons: [
-        {
-            label: 'Challenges',
-            path: '/challenges',
-            width: '24',
-            height: '12',
-            backgroundColor: 'var(--primary-button)',
-            hoverBackgroundColor: 'var(--primary-button-hover)',
-            textColor: 'var(--text)',
+    buttons: {
+        spacing: '5',
+        default: {
+            width: '60',
+            height: '20',
+            textSize: 'sm',
             font: 'montserrat',
-            fontSize: 'sm',
-            borderRadius: 'full',
-            transition: 'colors duration-200',
-            className: 'flex items-center justify-center cursor-pointer',
-        },
-        {
-            label: 'Statistics',
-            path: '/statistics',
-            width: '24',
-            height: '12',
-            backgroundColor: 'var(--primary-button)',
-            hoverBackgroundColor: 'var(--primary-button-hover)',
+            background: 'var(--inbetween)',
+            hoverBackground: 'var(--primary-button-hover)',
             textColor: 'var(--text)',
-            font: 'montserrat',
-            fontSize: 'sm',
             borderRadius: 'full',
-            transition: 'colors duration-200',
-            className: 'flex items-center justify-center cursor-pointer',
+            transitionDuration: '200ms',
         },
-        {
-            label: 'Play',
-            path: '/level?id=1',
-            width: '24',
-            height: '12',
-            backgroundColor: 'var(--primary-button)',
-            hoverBackgroundColor: 'var(--primary-button-hover)',
-            textColor: 'var(--text)',
-            font: 'montserrat',
-            fontSize: 'sm',
-            borderRadius: 'full',
-            transition: 'colors duration-200',
-            className: 'flex items-center justify-center cursor-pointer',
-        },
-    ],
+        // Individual button overrides (optional)
+        variants: {
+            Play: {},
+            Challenges: {},
+            Statistics: {},
+        }
+    }
 };
 
 const RightPanel = () => {
     const navigate = useNavigate();
 
-    const handleNavigation = (path) => () => navigate(path);
+    const handlePlayClick = () => navigate('/level?id=1');
+    const handleChallengesClick = () => navigate('/challenges');
+    const handleStatisticsClick = () => navigate('/statistics');
+
+    const buttons = [
+        // { label: 'Challenges', onClick: handleChallengesClick },
+        { label: 'Thinker', onClick: handleStatisticsClick },
+        { label: 'Speeder', onClick: handlePlayClick },
+    ];
 
     return (
         <div
-            className={`w-${CONFIG.panel.width} h-${CONFIG.panel.height} rounded-${CONFIG.panel.borderRadius} bg-${CONFIG.panel.backgroundColor} ${CONFIG.panel.className} flex-column`}
+            className={`
+                w-[${PANEL_CONFIG.panel.width}] 
+                h-[${PANEL_CONFIG.panel.height}] 
+                rounded-[${PANEL_CONFIG.panel.borderRadius}] 
+                bg-[${PANEL_CONFIG.panel.background}] 
+                flex flex-col
+            `}
         >
             <LevelSwitch />
-            {/*<LanguageGrid />*/}
-            <div className={`${CONFIG.container.className} space-y-${CONFIG.container.spacingY} px-${CONFIG.container.paddingX}`}>
-                <div className={`${CONFIG.buttonContainer.className} space-x-${CONFIG.buttonContainer.spacingX}`}>
-                    {CONFIG.buttons.map((button, index) => (
-                        <button
-                            key={index}
-                            className={`w-${button.width} h-${button.height} bg-${button.backgroundColor} rounded-${button.borderRadius} text-${button.textColor} text-${button.fontSize} font-${button.font} hover:bg-${button.hoverBackgroundColor} transition-${button.transition} ${button.className}`}
-                            onClick={handleNavigation(button.path)}
-                        >
-                            {button.label}
-                        </button>
-                    ))}
+            <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
+                <div className={`flex justify-center space-x-${PANEL_CONFIG.buttons.spacing}`}>
+                    {buttons.map(({ label, onClick }, index) => {
+                        const buttonConfig = {
+                            ...PANEL_CONFIG.buttons.default,
+                            ...PANEL_CONFIG.buttons.variants[label]
+                        };
+                        return (
+                            <button
+                                key={index}
+                                className={`
+                                    w-${buttonConfig.width} 
+                                    h-${buttonConfig.height} 
+                                    bg-[${buttonConfig.background}] 
+                                    rounded-${buttonConfig.borderRadius} 
+                                    flex items-center justify-center 
+                                    text-[${buttonConfig.textColor}] 
+                                    text-${buttonConfig.textSize} 
+                                    font-${buttonConfig.font} 
+                                    cursor-pointer 
+                                    hover:bg-[${buttonConfig.hoverBackground}] 
+                                    transition-colors duration-${buttonConfig.transitionDuration}
+                                `}
+                                onClick={onClick}
+                            >
+                                {label}
+                            </button>
+                        );
+                    })}
                 </div>
             </div>
         </div>
