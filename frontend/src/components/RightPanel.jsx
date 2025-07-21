@@ -13,9 +13,9 @@ const RightPanel = () => {
     const handleStatisticsClick = () => navigate('/statistics');
 
     return (
-        <div className="w-[450px] h-[400px] rounded-[10px] bg-[var(--leaderboard-bg)] flex flex-col">
+        <div className="w-[450px] h-[200px] rounded-[10px] bg-[var(--leaderboard-bg)] flex flex-col">
             <LevelSwitch />
-            <LanguageGrid />
+            {/*<LanguageGrid />*/}
             <div className="flex-grow flex flex-col justify-center space-y-5 px-5">
                 <div className="flex justify-center space-x-5">
                     {['Challenges', 'Statistics', 'Play'].map((label, index) => (

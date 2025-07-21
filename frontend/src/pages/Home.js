@@ -1,5 +1,4 @@
 import React from 'react';
-// Remove: import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SpeedChart from '../components/SpeedChart';
 import RightPanel from '../components/RightPanel';
@@ -7,6 +6,80 @@ import Footer from '../components/Footer';
 import Leaderboard from '../components/Leaderboard';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
+
+// Configuration object for layout, sizes, spacing, and styling
+const CONFIG = {
+    // Root container
+    root: {
+        minHeight: 'min-h-screen',
+        backgroundColor: 'bg-[#13223A]',
+        flexDirection: 'flex-col',
+        alignItems: 'items-center',
+    },
+    // Header
+    header: {
+        width: 'w-full',
+        height: 'h-[80px]',
+        border: 'border border-[#59000000]',
+    },
+    // Main body
+    mainBody: {
+        width: 'w-full',
+        maxWidth: 'max-w-7xl',
+        flex: 'flex-grow',
+        flexDirection: 'flex-col',
+        justifyContent: 'justify-between',
+        padding: 'py-6', // 24px
+    },
+    // SpeedChart and RightPanel row
+    chartPanelRow: {
+        flexDirection: 'flex-row',
+        justifyContent: 'justify-center',
+        alignItems: 'items-start',
+        gap: 'gap-6', // 24px
+    },
+    chartPanelCol: {
+        flexDirection: 'flex-col',
+        justifyContent: 'justify-center',
+        alignItems: 'items-start',
+        gap: 'gap-6', // 24px
+    },
+    // SpeedChart
+    speedChart: {
+        width: 'w-5/5', // 60% of container
+        height: 'h-[380px]',
+        backgroundColor: 'bg-[#0000004E]', // Semi-transparent
+        border: 'border-2 border-[#174065]',
+        borderRadius: 'rounded-2xl', // 16px
+    },
+    // RightPanel
+    rightPanel: {
+        width: 'w-5/5', // 40% of container
+        height: 'h-[300px]',
+        backgroundColor: 'bg-[#0000004E]',
+        borderRadius: 'rounded-2xl',
+    },
+    // Leaderboard
+    leaderboard: {
+        width: 'w-[300px]',
+        margin: 'mt-5', // 20px
+        backgroundColor: 'bg-[#0000004E]',
+        borderRadius: 'rounded-2xl',
+    },
+    // Footer
+    footer: {
+        width: 'w-full',
+        height: 'h-[80px]',
+        border: 'border border-[#59000000]',
+    },
+    // Typography
+    typography: {
+        fontFamily: 'font-montserrat',
+        titleColor: 'text-[#24E5B7]',
+        titleFontSize: 'text-2xl', // 24px
+        titleFontWeight: 'font-medium',
+    },
+};
 
 const Home = () => {
     const { latestSession } = useLevelContext();
@@ -19,22 +92,43 @@ const Home = () => {
     const endTime = latestSession?.endTime || 10;
 
     return (
-        <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat" onClick={handleClick}>
-            <Header />
-            <div className="main-body">
-                <div className="flex-grow flex flex-col justify-between py-6">
-                    <div className="flex justify-start items-start gap-6">
-                        <SpeedChart endTime={endTime} speedLog={speedLog} />
-                        <RightPanel />
+        <div
+            className={`home-wrapper ${CONFIG.root.minHeight} ${CONFIG.root.backgroundColor} flex ${CONFIG.root.flexDirection} ${CONFIG.root.alignItems} ${CONFIG.typography.fontFamily}`}
+            onClick={handleClick}
+        >
+            {/* Header */}
+            <div className={`${CONFIG.header.width} ${CONFIG.header.height} ${CONFIG.header.border}`}>
+                <Header />
+            </div>
+
+            {/* Main Body */}
+            <div
+                className={`main-body ${CONFIG.mainBody.width} ${CONFIG.mainBody.maxWidth} ${CONFIG.mainBody.flex} flex ${CONFIG.mainBody.flexDirection} ${CONFIG.mainBody.justifyContent} ${CONFIG.mainBody.padding}`}
+            >
+                {/* Row for SpeedChart and RightPanel */}
+                <div className={`flex ${CONFIG.chartPanelRow.flexDirection} ${CONFIG.chartPanelRow.justifyContent} ${CONFIG.chartPanelRow.alignItems} ${CONFIG.chartPanelRow.gap}`}>
+                    {/* Leaderboard */}
+                    <div className={`${CONFIG.leaderboard.width} ${CONFIG.leaderboard.margin} ${CONFIG.leaderboard.backgroundColor} ${CONFIG.leaderboard.borderRadius}`}>
+                        <Leaderboard />
                     </div>
-                    <div className="mt-5">
-                        <div className="flex justify-start gap-6">
-                            {['easy', 'medium', 'hard'].map((type, index) => (
-                                <Leaderboard key={index} type={type} />
-                            ))}
+                    <div className={`flex ${CONFIG.chartPanelCol.flexDirection} ${CONFIG.chartPanelCol.justifyContent} ${CONFIG.chartPanelCol.alignItems} ${CONFIG.chartPanelCol.gap}`}>
+                        <div className={`${CONFIG.rightPanel.width} ${CONFIG.rightPanel.height} ${CONFIG.rightPanel.backgroundColor} ${CONFIG.rightPanel.borderRadius}`}>
+                            <RightPanel />
                         </div>
+                        <div className={`${CONFIG.speedChart.width} ${CONFIG.speedChart.height} ${CONFIG.speedChart.backgroundColor} ${CONFIG.speedChart.border} ${CONFIG.speedChart.borderRadius}`}>
+                            <SpeedChart endTime={endTime} speedLog={speedLog} />
+                        </div>
+
                     </div>
                 </div>
+
+
+
+
+            </div>
+
+            {/* Footer */}
+            <div className={`${CONFIG.footer.width} ${CONFIG.footer.height} ${CONFIG.footer.border}`}>
                 <Footer />
             </div>
         </div>
