@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * REST Controller for handling code compilation and execution requests.
  */
 @RestController
-@RequestMapping("/api/v1/code")
+@RequestMapping("/api/code")
 public class CodeCompilerController {
 
     private final CodeExecutionService codeExecutionService;

@@ -21,8 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "coding_problem",
-        uniqueConstraints = @UniqueConstraint(columnNames = "code_snippet"))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "title"))
 public class CodingProblem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -38,11 +37,6 @@ public class CodingProblem {
     @Size(min = 30, max = 5000)
     @Column(nullable = false, length = 5000)
     private String description;
-
-    @NotBlank
-    @Size(min = 100, max = 2000)
-    @Column(name = "code_snippet", nullable = false, length = 2000)
-    private String codeSnippet;
 
     @Enumerated(EnumType.STRING)
     @NotNull
