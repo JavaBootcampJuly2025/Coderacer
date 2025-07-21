@@ -1,5 +1,6 @@
 package com.coderacer.runner.service;
 
+import com.coderacer.runner.model.ExecutionResult;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -11,7 +12,10 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -28,21 +32,21 @@ public class CodeExecutionService {
      *
      * @param javaCode The Java code as a string. It must contain a public class with a main method.
      * Example: "public class MyClass { public static void main(String[] args) { System.out.println(\"Hello from compiled code!\"); } }"
-     * @return The combined standard output and standard error from compilation and execution.
+     * @param expectedOutputs List of expected output lines to compare against (optional)
+     * @return ExecutionResult containing the result status and actual output lines
      */
-    public String compileAndRun(String javaCode) {
+    public ExecutionResult compileAndRun(String javaCode, List<String> expectedOutputs) {
+        ExecutionResult result = new ExecutionResult();
+
         // Generate a unique identifier for this execution to create isolated files
         String uniqueId = UUID.randomUUID().toString().replace("-", "");
         String className = "GeneratedClass_" + uniqueId;
         Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "java_code_exec_" + uniqueId);
         Path javaFilePath = tempDir.resolve(className + ".java");
 
-        StringBuilder output = new StringBuilder();
-
         try {
             // 1. Create a temporary directory
             Files.createDirectories(tempDir);
-            output.append("Created temporary directory: ").append(tempDir).append("\n");
 
             // 2. Write the Java code to a .java file
             // Ensure the class name in the code matches the file name
@@ -50,72 +54,132 @@ public class CodeExecutionService {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFilePath.toFile()))) {
                 writer.write(modifiedJavaCode);
             }
-            output.append("Wrote Java code to: ").append(javaFilePath).append("\n");
 
             // 3. Compile the Java code
-            output.append("\n--- Compilation Output ---\n");
             Process compileProcess = new ProcessBuilder("javac", javaFilePath.toString())
                     .directory(tempDir.toFile()) // Set working directory for javac
                     .redirectErrorStream(true) // Merge stderr into stdout
                     .start();
 
             String compileOutput = readProcessOutput(compileProcess);
-            output.append(compileOutput);
-
             boolean compiled = compileProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS) && compileProcess.exitValue() == 0;
 
             if (!compiled) {
-                output.append("\nCompilation FAILED or TIMED OUT.\n");
-                if (!compileProcess.isAlive()) {
-                    output.append("Exit Code: ").append(compileProcess.exitValue()).append("\n");
-                } else {
-                    output.append("Compilation process timed out.\n");
+                if (compileProcess.isAlive()) {
                     compileProcess.destroyForcibly();
+                    result.setResult(ExecutionResult.Result.TIMEOUT);
+                } else {
+                    result.setResult(ExecutionResult.Result.COMPILATION_ERROR);
+                    // Add compilation error to output lines
+                    if (!compileOutput.trim().isEmpty()) {
+                        result.getOutputLines().addAll(Arrays.asList(compileOutput.split("\n")));
+                    }
                 }
-                return output.toString();
+                return result;
             }
-            output.append("Compilation SUCCESSFUL.\n");
 
             // 4. Run the compiled Java code
-            output.append("\n--- Execution Output ---\n");
             Process runProcess = new ProcessBuilder("java", className)
                     .directory(tempDir.toFile()) // Set working directory for java
                     .redirectErrorStream(true) // Merge stderr into stdout
                     .start();
 
             String runOutput = readProcessOutput(runProcess);
-            output.append(runOutput);
-
             boolean executed = runProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS);
 
             if (!executed) {
-                output.append("\nExecution TIMED OUT.\n");
                 runProcess.destroyForcibly();
+                result.setResult(ExecutionResult.Result.TIMEOUT);
+                return result;
+            }
+
+            // Check if execution had runtime errors
+            if (runProcess.exitValue() != 0) {
+                result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
+                if (!runOutput.trim().isEmpty()) {
+                    result.getOutputLines().addAll(Arrays.asList(runOutput.split("\n")));
+                }
+                return result;
+            }
+
+            // Process successful execution output
+            List<String> actualOutputLines = new ArrayList<>();
+            if (!runOutput.trim().isEmpty()) {
+                String[] lines = runOutput.split("\n");
+                for (String line : lines) {
+                    // Filter out empty lines and trim whitespace
+                    String trimmedLine = line.trim();
+                    if (!trimmedLine.isEmpty()) {
+                        actualOutputLines.add(trimmedLine);
+                    }
+                }
+            }
+
+            result.setOutputLines(actualOutputLines);
+
+            // Compare with expected outputs if provided
+            if (expectedOutputs != null && !expectedOutputs.isEmpty()) {
+                if (outputsMatch(actualOutputLines, expectedOutputs)) {
+                    result.setResult(ExecutionResult.Result.SUCCESS);
+                } else {
+                    result.setResult(ExecutionResult.Result.OUTPUT_MISMATCH);
+                }
             } else {
-                output.append("Exit Code: ").append(runProcess.exitValue()).append("\n");
+                // No expected outputs provided, consider it successful if no errors
+                result.setResult(ExecutionResult.Result.SUCCESS);
             }
 
         } catch (IOException | InterruptedException e) {
-            output.append("\nAn internal error occurred: ").append(e.getMessage()).append("\n");
+            result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
+            result.getOutputLines().add("Internal error: " + e.getMessage());
             Thread.currentThread().interrupt(); // Restore the interrupted status
         } finally {
             // 5. Clean up temporary files and directory
-            output.append("\n--- Cleanup ---\n");
-            try {
-                if (Files.exists(tempDir)) {
-                    // Use Files.walk to delete directory and its contents recursively
-                    Files.walk(tempDir)
-                            .sorted(Comparator.reverseOrder())
-                            .map(Path::toFile)
-                            .forEach(File::delete);
-                    output.append("Cleaned up temporary directory: ").append(tempDir).append("\n");
-                }
-            } catch (IOException e) {
-                output.append("Error during cleanup: ").append(e.getMessage()).append("\n");
+            cleanupTempDirectory(tempDir);
+        }
+
+        return result;
+    }
+
+    /**
+     * Overloaded method for backward compatibility - executes code without expected outputs
+     */
+    public ExecutionResult compileAndRun(String javaCode) {
+        return compileAndRun(javaCode, null);
+    }
+
+    /**
+     * Compare actual output lines with expected output lines
+     */
+    private boolean outputsMatch(List<String> actualOutputs, List<String> expectedOutputs) {
+        if (actualOutputs.size() != expectedOutputs.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < actualOutputs.size(); i++) {
+            if (!actualOutputs.get(i).equals(expectedOutputs.get(i))) {
+                return false;
             }
         }
 
-        return output.toString();
+        return true;
+    }
+
+    /**
+     * Clean up temporary directory and its contents
+     */
+    private void cleanupTempDirectory(Path tempDir) {
+        try {
+            if (Files.exists(tempDir)) {
+                Files.walk(tempDir)
+                        .sorted(Comparator.reverseOrder())
+                        .map(Path::toFile)
+                        .forEach(File::delete);
+            }
+        } catch (IOException e) {
+            // Log cleanup error but don't throw - cleanup failures shouldn't affect the result
+            System.err.println("Error during cleanup of " + tempDir + ": " + e.getMessage());
+        }
     }
 
     /**

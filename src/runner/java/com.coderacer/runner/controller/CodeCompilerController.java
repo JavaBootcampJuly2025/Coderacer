@@ -1,5 +1,6 @@
 package com.coderacer.runner.controller;
 
+import com.coderacer.runner.model.ExecutionResult;
 import com.coderacer.runner.service.CodeExecutionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +31,12 @@ public class CodeCompilerController {
      * from the compilation and execution process.
      */
     @PostMapping("/execute")
-    public ResponseEntity<String> executeCode(@RequestBody String code) {
+    public ResponseEntity<ExecutionResult> executeCode(@RequestBody String code) {
         if (code == null || code.trim().isEmpty()) {
-            return ResponseEntity.badRequest().body("Java code cannot be empty.");
+            ExecutionResult errorResult = new ExecutionResult();
+            errorResult.setResult(ExecutionResult.Result.COMPILATION_ERROR);
         }
-        String result = codeExecutionService.compileAndRun(code);
+        ExecutionResult result = codeExecutionService.compileAndRun(code);
         return ResponseEntity.ok(result);
     }
 }
