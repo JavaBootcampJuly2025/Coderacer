@@ -6,8 +6,8 @@ const themes = {
         incorrectChar: '#cd0b0b',
         unwrittenChar: '#2a6a9f', // Added for unwritten text
         caret: '#ffbe26',
-        primaryButton: '#174065',
-        primaryButtonHover: '#1a4971',
+        primaryButton: '#20375c',
+        primaryButtonHover: '#293750',
         background: '#13223A',
         text: '#fff',
         accent: '#24E5B7',
@@ -15,8 +15,9 @@ const themes = {
         border: 'rgba(255, 255, 255, 1)',
         footerText: '#ccc',
         borderGray: '#1a4971',
-        inbetween: '#164270',
+        inbetween: '#213049',
         light: '#164270',
+        transparent: 'rgba(0,0,0,0)'
     },
     light: {
         defaultChar: '#aaa',
@@ -33,8 +34,9 @@ const themes = {
         border: 'rgba(255, 255, 255, 0.5)',
         footerText: '#1e2742',
         borderGray: '#555',
-        inbetween: '#376898',
+        inbetween: '#00234d',
         light: '#164270',
+        transparent: 'rgba(0,0,0,0)'
     },
 };
 

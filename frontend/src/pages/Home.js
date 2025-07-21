@@ -6,6 +6,9 @@ import Footer from '../components/Footer';
 import Leaderboard from '../components/Leaderboard';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
+import colors from '../styles/colors'; // Import colors
+import { useTheme } from '../styles/ThemeContext'
+
 
 // Configuration object for layout, sizes, spacing, and styling
 const CONFIG = {
@@ -32,7 +35,7 @@ const CONFIG = {
         padding: 'py-6', // 24px
     },
     // SpeedChart and RightPanel row
-    chartPanelRow: {
+    mainRow: {
         flexDirection: 'flex-row',
         justifyContent: 'justify-center',
         alignItems: 'items-start',
@@ -48,22 +51,20 @@ const CONFIG = {
     speedChart: {
         width: 'w-5/5', // 60% of container
         height: 'h-[380px]',
-        backgroundColor: 'bg-[#0000004E]', // Semi-transparent
-        border: 'border-2 border-[#174065]',
+        // backgroundColor: 'bg-[var(--leaderboard-bg)]', // Semi-transparent
+        // border: 'border-2 border-[#174065]',
         borderRadius: 'rounded-2xl', // 16px
     },
     // RightPanel
     rightPanel: {
         width: 'w-5/5', // 40% of container
         height: 'h-[300px]',
-        backgroundColor: 'bg-[#0000004E]',
+        // backgroundColor: 'bg-[var(--leaderboard-bg)]',
         borderRadius: 'rounded-2xl',
     },
     // Leaderboard
     leaderboard: {
         width: 'w-[300px]',
-        margin: 'mt-5', // 20px
-        backgroundColor: 'bg-[#0000004E]',
         borderRadius: 'rounded-2xl',
     },
     // Footer
@@ -105,12 +106,13 @@ const Home = () => {
             <div
                 className={`main-body ${CONFIG.mainBody.width} ${CONFIG.mainBody.maxWidth} ${CONFIG.mainBody.flex} flex ${CONFIG.mainBody.flexDirection} ${CONFIG.mainBody.justifyContent} ${CONFIG.mainBody.padding}`}
             >
-                {/* Row for SpeedChart and RightPanel */}
-                <div className={`flex ${CONFIG.chartPanelRow.flexDirection} ${CONFIG.chartPanelRow.justifyContent} ${CONFIG.chartPanelRow.alignItems} ${CONFIG.chartPanelRow.gap}`}>
+                {/* Main Row */}
+                <div className={`flex ${CONFIG.mainRow.flexDirection} ${CONFIG.mainRow.justifyContent} ${CONFIG.mainRow.alignItems} ${CONFIG.mainRow.gap}`}>
                     {/* Leaderboard */}
                     <div className={`${CONFIG.leaderboard.width} ${CONFIG.leaderboard.margin} ${CONFIG.leaderboard.backgroundColor} ${CONFIG.leaderboard.borderRadius}`}>
                         <Leaderboard />
                     </div>
+                    {/* Chart and button column */}
                     <div className={`flex ${CONFIG.chartPanelCol.flexDirection} ${CONFIG.chartPanelCol.justifyContent} ${CONFIG.chartPanelCol.alignItems} ${CONFIG.chartPanelCol.gap}`}>
                         <div className={`${CONFIG.rightPanel.width} ${CONFIG.rightPanel.height} ${CONFIG.rightPanel.backgroundColor} ${CONFIG.rightPanel.borderRadius}`}>
                             <RightPanel />
