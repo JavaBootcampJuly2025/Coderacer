@@ -5,7 +5,6 @@ import com.coderacer.dto.ExecutionResultDTO;
 import com.coderacer.dto.TestResultDTO;
 import com.coderacer.exception.CodingProblemNotFoundException;
 import com.coderacer.model.CodingProblem;
-import com.coderacer.model.TestCase;
 import com.coderacer.repository.CodingProblemRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,60 +25,47 @@ public class TestingService {
         CodingProblem problem = codingProblemRepository.findById(problemId)
                 .orElseThrow(() -> new CodingProblemNotFoundException("Problem not found: " + problemId));
 
-        List<TestCase> testCases = problem.getTestCases();
-        int totalTests = testCases.size();
-        int passedTests = 0;
+        List<Integer> inputs = problem.getInputs();
+        List<Integer> expectedOutputs = problem.getOutputs();
 
-        for (TestCase testCase : testCases) {
-            if (runSingleTest(code, testCase)) {
-                passedTests++;
-            }
+        ExecutionResultDTO result = codeExecutionClient.executeCode(code, inputs);
+
+        if (result.getResult() != ExecutionResultDTO.Result.SUCCESS) {
+            return TestResultDTO.builder()
+                    .problemId(problemId)
+                    .totalTests(expectedOutputs.size())
+                    .passedTests(0)
+                    .allPassed(false)
+                    .build();
         }
+
+        List<String> actualOutputs = result.getOutputLines();
+        int total = expectedOutputs.size();
+        int passed = countMatchingOutputs(expectedOutputs, actualOutputs);
 
         return TestResultDTO.builder()
                 .problemId(problemId)
-                .totalTests(totalTests)
-                .passedTests(passedTests)
-                .allPassed(passedTests == totalTests)
+                .totalTests(total)
+                .passedTests(passed)
+                .allPassed(passed == total)
                 .build();
     }
 
-    private boolean runSingleTest(String code, TestCase testCase) {
-        try {
+    private int countMatchingOutputs(List<Integer> expected, List<String> actual) {
+        int passed = 0;
+        int minSize = Math.min(expected.size(), actual.size());
 
-            List<Integer> inputToPass = testCase.getInputs();
-            ExecutionResultDTO result = codeExecutionClient.executeCode(code, inputToPass);
-
-            // Check if execution was successful
-            if (result.getResult() != ExecutionResultDTO.Result.SUCCESS) {
-                return false;
-            }
-
-            // Compare actual output with expected
-            List<String> actualOutput = result.getOutputLines();
-            List<String> expectedOutput = testCase.getExpectedOutputs();
-
-            return compareOutputs(expectedOutput, actualOutput);
-
-        } catch (Exception e) {
-            log.error("Error executing test case: {}", e.getMessage());
-            return false;
-        }
-    }
-
-    private boolean compareOutputs(List<String> expected, List<String> actual) {
-        if (expected.size() != actual.size()) {
-            return false;
-        }
-
-        for (int i = 0; i < expected.size(); i++) {
-            String expectedLine = expected.get(i).trim();
-            String actualLine = actual.get(i).trim();
-            if (!expectedLine.equals(actualLine)) {
-                return false;
+        for (int i = 0; i < minSize; i++) {
+            try {
+                int actualInt = Integer.parseInt(actual.get(i).trim());
+                if (actualInt == expected.get(i)) {
+                    passed++;
+                }
+            } catch (NumberFormatException e) {
+                // Mismatch if not an integer
             }
         }
 
-        return true;
+        return passed;
     }
 }
