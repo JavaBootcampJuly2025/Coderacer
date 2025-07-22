@@ -44,18 +44,16 @@ public class CodeExecutionService {
      * Default entry: always wrap snippet in template so standalone methods compile.
      */
     public ExecutionResult compileAndRun(String code, List<Integer> inputData) {
-        return executePipeline(code, inputData, true);
+        return executePipeline(code, inputData);
     }
 
     /**
      * Internal unified pipeline for setup, compile, and run.
      */
-    private ExecutionResult executePipeline(String code, List<Integer> inputData, boolean wrapWithTemplate) {
+    private ExecutionResult executePipeline(String code, List<Integer> inputData) {
         String uniqueId = UUID.randomUUID().toString().replace("-", "");
         String className = "GeneratedClass_" + uniqueId;
-        String fullCode = wrapWithTemplate
-                ? String.format(JAVA_TEMPLATE, className, code)
-                : code.replaceFirst("public\\s+class\\s+\\w+", "public class " + className);
+        String fullCode = String.format(JAVA_TEMPLATE, className, code);
 
         boolean withDocker = useDocker && isDockerAvailable();
         Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "java_code_exec_" + uniqueId);
