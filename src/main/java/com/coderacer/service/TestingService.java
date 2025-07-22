@@ -63,13 +63,11 @@ public class TestingService {
                 .build();
     }
 
-    // TODO: Inject test inputs into code before execution. Pass via (String[] args) ???
-    // As it is now, it doesn't depend on given input
     private boolean runSingleTest(String code, TestCase testCase) {
         try {
 
-            List<String> inputToPass = testCase.getInputs();
-            ExecutionResultDTO result = codeExecutionClient.executeCode(code); // TODO code should care about input - so update the microservice
+            List<Integer> inputToPass = testCase.getInputs();
+            ExecutionResultDTO result = codeExecutionClient.executeCode(code, inputToPass);
 
             // Check if execution was successful
             if (result.getResult() != ExecutionResultDTO.Result.SUCCESS) {

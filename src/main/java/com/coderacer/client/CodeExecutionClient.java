@@ -10,6 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * Client to communicate with the code execution microservice
  */
@@ -26,10 +30,11 @@ public class CodeExecutionClient {
     /**
      * Calls the code execution microservice to compile and run code
      *
-     * @param code  The source code to execute
+     * @param code        The source code to execute
+     * @param inputToPass The parameter list in the form of a string
      * @return ExecutionResult containing output, errors, and execution info
      */
-    public ExecutionResultDTO executeCode(String code) {
+    public ExecutionResultDTO executeCode(String code, List<Integer> inputToPass) {
         try {
             String url = codeExecutionServiceUrl + "/api/code";
 
@@ -37,7 +42,11 @@ public class CodeExecutionClient {
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
-            HttpEntity<String> request = new HttpEntity<>(code, headers);
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("code", code);
+            payload.put("inputData", inputToPass);
+
+            HttpEntity<Map<String, Object>> request = new HttpEntity<>(payload, headers);
 
             // Make the call
             log.debug("Calling code execution service at: {}", url);
