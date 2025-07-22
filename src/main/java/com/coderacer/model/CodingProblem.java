@@ -53,9 +53,9 @@ public class CodingProblem {
     @Column(length = 200)
     private List<@NotBlank @Size(max = 200) String> exampleOutputs = new ArrayList<>();
 
-    /**
-     * A list of test cases, each containing a list of inputs and a list of expected outputs.
-     */
-    @OneToMany(mappedBy = "codingProblem", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<@Valid TestCase> testCases = new ArrayList<>();
+    @ElementCollection
+    private List<@NotNull Integer> inputs = new ArrayList<>();
+
+    @ElementCollection
+    private List<@NotNull Integer> outputs = new ArrayList<>();
 }
