@@ -1,5 +1,6 @@
 import '../App.css';
-import logo from '../assets/icon.png';
+//import logo from '../assets/icon.png';
+import { ReactComponent as Logo } from './logo.svg';
 import { useRef, useEffect } from 'react';
 
 function Welcome() {
@@ -51,7 +52,7 @@ function Welcome() {
         <div className="home-wrapper">
             <div className="content-glass" ref={containerRef}>
                 <h1 className="header">Coderacer</h1>
-                <img className="logo" src={logo} alt="Coderacer logo" />
+                <Logo className="logo" alt="Coderacer logo" />;
                 <div className="button-group">
                     <a href="/Login">
                         <button className="action">Login</button>

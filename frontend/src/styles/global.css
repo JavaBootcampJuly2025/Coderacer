@@ -16,4 +16,7 @@
     --border-gray: #1a4971;
     --inbetween: #376898;
     --light: #164270;
+    --transparent: rgba(0,0,0,0);
+    --black: rgba(0,0,0,0.5);
+    --sliderhover: #293750;
 }

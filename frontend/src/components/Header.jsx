@@ -1,9 +1,13 @@
 import React from 'react';
-import Settings from '../assets/settings.png';
 import { useTheme } from '../styles/ThemeContext';
 import useAccountInfo from '../hooks/useAccountInfo';
 import Title from './ui/Title';
-import Icon from '../assets/icon.svg?react';
+import { ReactComponent as Logo } from '../assets/icon.svg';
+import { ReactComponent as SunIcon } from '../assets/sun.svg';
+import { ReactComponent as MoonIcon } from '../assets/moon.svg';
+import { ReactComponent as UserIcon } from '../assets/user.svg';
+import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
@@ -18,10 +22,10 @@ const Header = () => {
         <div className="w-full h-24 flex justify-between items-center px-5">
             <text style={{color: "white"}}>{username}</text>
             <text style={{color: "white"}}>{rating}</text>
-            <div className="w-64 flex flex-row items-center space-x-3">
-                {/*<Icon className="w-14 h-14" style={{ fill: 'var(--accent)' }} alt="Codegobrr Icon" />*/}
+            <Link to="/home" className="w-64 flex flex-row items-center space-x-3 hover:opacity-80 transition">
+                <Logo className="logo" alt="Coderacer logo" />
                 <Title />
-            </div>
+            </Link>
             <div className="flex justify-center space-x-5">
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
@@ -29,26 +33,18 @@ const Header = () => {
                     title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
                 >
                     <span className="text-[var(--text)] text-2xl font-montserrat">
-                        {theme === 'light' ? '☀️' : '🌙'}
+                        {theme === 'light' ? <SunIcon className="theme-icon" /> : <MoonIcon className="theme-icon" />}
                     </span>
                 </button>
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
                 >
-                    <img
-                        src={Icon}
-                        className="w-10 h-10 rounded-full object-cover"
-                        alt="Profile"
-                    />
+                    <UserIcon className="theme-icon" alt="Profile"/>
                 </button>
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
                 >
-                    <img
-                        src={Settings}
-                        className="w-10 h-10 rounded-full object-cover"
-                        alt="Settings"
-                    />
+                    <SettingsIcon className="theme-icon" alt="Settings"/>
                 </button>
             </div>
         </div>
