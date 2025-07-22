@@ -73,6 +73,7 @@ export const getGameplayMetrics = async (id, authToken) => {
             Authorization: `Bearer ${authToken}`,
         },
     });
+    return response.data;
 }
   
 // Get top-rated accounts

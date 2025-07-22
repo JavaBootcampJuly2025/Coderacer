@@ -24,13 +24,14 @@ const useAccountInfo = () => {
                 setUsername(response.username);
                 setEmail(response.email);
                 setRating(response.rating);
-                setLoggedOn(true);
             } catch (error) {
                 localStorage.removeItem('loginToken');
                 localStorage.removeItem('loginId');
                 setLoggedOn(false);
                 return;
             }
+
+            setLoggedOn(true);
 
             try {
                 const response = await getGameplayMetrics(id, token);
