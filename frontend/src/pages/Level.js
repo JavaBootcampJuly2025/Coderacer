@@ -20,6 +20,8 @@ const Level = () => {
         saveSession,
         calculateCPM,
         calculateAccuracy,
+        totalTyped,
+        mistakes,
     } = useLevelLogic();
 
     const location = useLocation();
@@ -38,7 +40,7 @@ const Level = () => {
 
             if (speedLog?.length > 1) {
                 console.log('Saving session data...');
-                saveSession(speedLog, endTime);
+                saveSession();
             }
 
             const token = localStorage.getItem('loginToken');
@@ -53,17 +55,17 @@ const Level = () => {
                         accuracy: calculateAccuracy(),
                         startTime: new Date(startTime).toISOString().slice(0, -1),
                         endTime: new Date(endTime).toISOString().slice(0, -1),
-                    }
+                    };
                     const response = createLevelSession(sessionData, token);
                 } catch (error) {
-                            
+                    console.error('Error creating level session:', error);
                 }
             }
 
             console.log('Navigating to /home');
-            navigate('/home', { replace: true }); // Added replace to prevent back navigation
+            navigate('/home', { replace: true });
         }
-    }, [endTime, navigate, speedLog, saveSession]);
+    }, [endTime, navigate, speedLog, saveSession, calculateCPM, calculateAccuracy, startTime, location.state?.level.id]);
 
     return (
         <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat">
