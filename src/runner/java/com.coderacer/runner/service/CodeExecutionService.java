@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class CodeExecutionService {
 
-    private static final long EXECUTION_TIMEOUT_SECONDS = 10; // Timeout for compilation and execution
+    private static final long EXECUTION_TIMEOUT_SECONDS = 10;
 
     @Value("${code.execution.use-docker:true}")
     private boolean useDocker;
@@ -28,354 +28,240 @@ public class CodeExecutionService {
     @Value("${code.execution.docker.cpu:0.2}")
     private String dockerCpuLimit;
 
-    /**
-     * Compiles and executes the given Java code string with optional input data.
-     *
-     * @param javaCode        The Java code as a string. It must contain a public class with a main method.
-     * @param inputData       Optional list of integers to feed to Scanner input
-     * @return ExecutionResult containing the result status and actual output lines
-     */
-    public ExecutionResult compileAndRun(String javaCode, List<Integer> inputData) {
-        if (useDocker && isDockerAvailable()) {
-            System.out.println("OMG DOCKER WORKS");
-            return compileAndRunWithDocker(javaCode, inputData);
-        } else {
-            return compileAndRunDirect(javaCode, inputData);
-        }
-    }
-
-    /**
-     * Docker-based compilation and execution
-     */
-    private ExecutionResult compileAndRunWithDocker(String javaCode, List<Integer> inputData) {
-        ExecutionResult result = new ExecutionResult();
-
-        // Generate a unique identifier for this execution to create isolated files
-        String uniqueId = UUID.randomUUID().toString().replace("-", "");
-        String className = "GeneratedClass_" + uniqueId;
-        Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "java_code_exec_" + uniqueId);
-        Path javaFilePath = tempDir.resolve(className + ".java");
-
-        try {
-            // 1. Create a temporary directory
-            Files.createDirectories(tempDir);
-
-            // 2. Write the Java code to a .java file
-            // Ensure the class name in the code matches the file name
-            String modifiedJavaCode = javaCode.replaceFirst("public\\s+class\\s+\\w+", "public class " + className);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFilePath.toFile()))) {
-                writer.write(modifiedJavaCode);
-            }
-
-            // 3. Compile the Java code using Docker
-            Process compileProcess = new ProcessBuilder(
-                    "docker", "run", "--rm",
-                    "--memory=128m", "--cpus=0.5",
-                    "--network=none", // No network access during compilation
-                    "-v", tempDir.toAbsolutePath() + ":/workspace",
-                    "openjdk:11-jdk-slim",
-                    "javac", "/workspace/" + className + ".java"
-            ).redirectErrorStream(true) // Merge stderr into stdout
-                    .start();
-
-            String compileOutput = readProcessOutput(compileProcess);
-            boolean compiled = compileProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS) && compileProcess.exitValue() == 0;
-
-            if (!compiled) {
-                if (compileProcess.isAlive()) {
-                    compileProcess.destroyForcibly();
-                    result.setResult(ExecutionResult.Result.TIMEOUT);
-                } else {
-                    result.setResult(ExecutionResult.Result.COMPILATION_ERROR);
-                    // Add compilation error to output lines
-                    if (!compileOutput.trim().isEmpty()) {
-                        result.getOutputLines().addAll(Arrays.asList(compileOutput.split("\n")));
-                    }
-                }
-                return result;
-            }
-
-            // 4. Prepare input data if available
-            Path inputFilePath = null;
-            if (inputData != null && !inputData.isEmpty()) {
-                inputFilePath = tempDir.resolve("input.txt");
-                try (BufferedWriter inputWriter = new BufferedWriter(new FileWriter(inputFilePath.toFile()))) {
-                    // First write the count of integers
-                    inputWriter.write(String.valueOf(inputData.size()));
-                    inputWriter.newLine();
-                    // Then write each integer
-                    for (Integer value : inputData) {
-                        inputWriter.write(String.valueOf(value));
-                        inputWriter.newLine();
-                    }
-                }
-            }
-
-            // 5. Run the compiled Java code using Docker
-            List<String> runCommand = new ArrayList<>(Arrays.asList(
-                    "docker", "run", "--rm",
-                    "--memory=" + dockerMemoryLimit,
-                    "--cpus=" + dockerCpuLimit,
-                    "--network=none", // No network access during execution
-                    "-v", tempDir.toAbsolutePath() + ":/workspace"
-            ));
-
-            if (inputData != null && !inputData.isEmpty()) {
-                runCommand.addAll(Arrays.asList(
-                        "openjdk:11-jre-slim",
-                        "sh", "-c", "cd /workspace && java " + className + " < input.txt"
-                ));
-            } else {
-                runCommand.addAll(Arrays.asList(
-                        "openjdk:11-jre-slim",
-                        "java", "-cp", "/workspace", className
-                ));
-            }
-
-            Process runProcess = new ProcessBuilder(runCommand)
-                    .redirectErrorStream(true)
-                    .start();
-
-            // Track if we killed the process due to timeout
-            final boolean[] wasKilled = {false};
-
-            // Create a killer thread that will force-terminate the process
-            Thread killerThread = new Thread(() -> {
-                try {
-                    Thread.sleep(EXECUTION_TIMEOUT_SECONDS * 1000);
-                    if (runProcess.isAlive()) {
-                        wasKilled[0] = true; // Mark that we're killing due to timeout
-                        runProcess.destroyForcibly();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-            killerThread.setDaemon(true);
-            killerThread.start();
-
-            // Read output and wait for process
-            String runOutput = readProcessOutput(runProcess);
-
-            try {
-                runProcess.waitFor(); // No timeout here - let the killer thread handle it
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            // Check if we killed the process due to timeout
-            if (wasKilled[0]) {
-                result.setResult(ExecutionResult.Result.TIMEOUT);
-                return result;
-            }
-
-            // Check if process is somehow still alive (shouldn't happen but just in case)
-            if (runProcess.isAlive()) {
-                runProcess.destroyForcibly();
-                result.setResult(ExecutionResult.Result.TIMEOUT);
-                return result;
-            }
-
-            // Check if execution had runtime errors (only if not killed by us)
-            if (runProcess.exitValue() != 0) {
-                result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
-                if (!runOutput.trim().isEmpty()) {
-                    result.getOutputLines().addAll(Arrays.asList(runOutput.split("\n")));
-                }
-                return result;
-            }
-
-            // Process successful execution output
-            List<String> actualOutputLines = new ArrayList<>();
-            if (!runOutput.trim().isEmpty()) {
-                String[] lines = runOutput.split("\n");
-                for (String line : lines) {
-                    // Filter out empty lines and trim whitespace
-                    String trimmedLine = line.trim();
-                    if (!trimmedLine.isEmpty()) {
-                        actualOutputLines.add(trimmedLine);
-                    }
-                }
-            }
-
-            result.setOutputLines(actualOutputLines);
-
-            // If no undesirable results so far, assume success
-            result.setResult(ExecutionResult.Result.SUCCESS);
-
-        } catch (IOException | InterruptedException e) {
-            result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
-            result.getOutputLines().add("Docker execution error: " + e.getMessage());
-            Thread.currentThread().interrupt(); // Restore the interrupted status
-        } finally {
-            // 6. Clean up temporary files and directory
-            cleanupTempDirectory(tempDir);
-        }
-
-        return result;
-    }
-
-    /**
-     * Direct execution (your original method) - fallback when Docker is not available
-     */
-    private ExecutionResult compileAndRunDirect(String javaCode, List<Integer> inputData) {
-        ExecutionResult result = new ExecutionResult();
-
-        // Generate a unique identifier for this execution to create isolated files
-        String uniqueId = UUID.randomUUID().toString().replace("-", "");
-        String className = "GeneratedClass_" + uniqueId;
-        Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "java_code_exec_" + uniqueId);
-        Path javaFilePath = tempDir.resolve(className + ".java");
-
-        try {
-            // 1. Create a temporary directory
-            Files.createDirectories(tempDir);
-
-            // 2. Write the Java code to a .java file
-            // Ensure the class name in the code matches the file name
-            String modifiedJavaCode = javaCode.replaceFirst("public\\s+class\\s+\\w+", "public class " + className);
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFilePath.toFile()))) {
-                writer.write(modifiedJavaCode);
-            }
-
-            // 3. Compile the Java code
-            Process compileProcess = new ProcessBuilder("javac", javaFilePath.toString())
-                    .directory(tempDir.toFile()) // Set working directory for javac
-                    .redirectErrorStream(true) // Merge stderr into stdout
-                    .start();
-
-            String compileOutput = readProcessOutput(compileProcess);
-            boolean compiled = compileProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS) && compileProcess.exitValue() == 0;
-
-            if (!compiled) {
-                if (compileProcess.isAlive()) {
-                    compileProcess.destroyForcibly();
-                    result.setResult(ExecutionResult.Result.TIMEOUT);
-                } else {
-                    result.setResult(ExecutionResult.Result.COMPILATION_ERROR);
-                    // Add compilation error to output lines
-                    if (!compileOutput.trim().isEmpty()) {
-                        result.getOutputLines().addAll(Arrays.asList(compileOutput.split("\n")));
-                    }
-                }
-                return result;
-            }
-
-            // 4. Run the compiled Java code
-            Process runProcess = new ProcessBuilder("java", className)
-                    .directory(tempDir.toFile())
-                    .redirectErrorStream(true)
-                    .start();
-
-            // Provide input data to the process if available
-            if (inputData != null && !inputData.isEmpty()) {
-                try (PrintWriter writer = new PrintWriter(runProcess.getOutputStream(), true)) {
-                    // First write the count of integers
-                    writer.println(inputData.size());
-                    // Then write each integer
-                    for (Integer value : inputData) {
-                        writer.println(value);
-                    }
-                } catch (Exception e) {
-                    // If we can't write input, continue anyway
-                }
-            } else {
-                // Close stdin to prevent hanging on input operations
-                try {
-                    runProcess.getOutputStream().close();
-                } catch (IOException ignored) {
-                }
-            }
-
-            // Track if we killed the process due to timeout
-            final boolean[] wasKilled = {false};
-
-            // Create a killer thread that will force-terminate the process
-            Thread killerThread = new Thread(() -> {
-                try {
-                    Thread.sleep(EXECUTION_TIMEOUT_SECONDS * 1000);
-                    if (runProcess.isAlive()) {
-                        wasKilled[0] = true; // Mark that we're killing due to timeout
-                        runProcess.destroyForcibly();
-                    }
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            });
-            killerThread.setDaemon(true);
-            killerThread.start();
-
-            // Read output and wait for process
-            String runOutput = readProcessOutput(runProcess);
-
-            try {
-                runProcess.waitFor(); // No timeout here - let the killer thread handle it
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            // Check if we killed the process due to timeout
-            if (wasKilled[0]) {
-                result.setResult(ExecutionResult.Result.TIMEOUT);
-                return result;
-            }
-
-            // Check if process is somehow still alive (shouldn't happen but just in case)
-            if (runProcess.isAlive()) {
-                runProcess.destroyForcibly();
-                result.setResult(ExecutionResult.Result.TIMEOUT);
-                return result;
-            }
-
-            // Check if execution had runtime errors (only if not killed by us)
-            if (runProcess.exitValue() != 0) {
-                result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
-                if (!runOutput.trim().isEmpty()) {
-                    result.getOutputLines().addAll(Arrays.asList(runOutput.split("\n")));
-                }
-                return result;
-            }
-
-            // Process successful execution output
-            List<String> actualOutputLines = new ArrayList<>();
-            if (!runOutput.trim().isEmpty()) {
-                String[] lines = runOutput.split("\n");
-                for (String line : lines) {
-                    // Filter out empty lines and trim whitespace
-                    String trimmedLine = line.trim();
-                    if (!trimmedLine.isEmpty()) {
-                        actualOutputLines.add(trimmedLine);
-                    }
-                }
-            }
-
-            result.setOutputLines(actualOutputLines);
-
-            // If no undesirable results so far, assume success
-            result.setResult(ExecutionResult.Result.SUCCESS);
-
-        } catch (IOException | InterruptedException e) {
-            result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
-            result.getOutputLines().add("Internal error: " + e.getMessage());
-            Thread.currentThread().interrupt(); // Restore the interrupted status
-        } finally {
-            // 5. Clean up temporary files and directory
-            cleanupTempDirectory(tempDir);
-        }
-
-        return result;
-    }
-
-    /**
-     * Legacy method for backward compatibility
-     */
+    // Overloaded in case of need for execution without specific input data passed
     public ExecutionResult compileAndRun(String javaCode) {
         return compileAndRun(javaCode, null);
     }
 
-    /**
-     * Check if Docker is available on the system
-     */
+    public ExecutionResult compileAndRun(String javaCode, List<Integer> inputData) {
+        if (useDocker && isDockerAvailable()) {
+            return executeCode(javaCode, inputData, true);
+        } else {
+            return executeCode(javaCode, inputData, false);
+        }
+    }
+
+    private ExecutionResult executeCode(String javaCode, List<Integer> inputData, boolean withDocker) {
+        ExecutionResult result = new ExecutionResult();
+        String uniqueId = UUID.randomUUID().toString().replace("-", "");
+        String className = "GeneratedClass_" + uniqueId;
+        Path tempDir = Paths.get(System.getProperty("java.io.tmpdir"), "java_code_exec_" + uniqueId);
+
+        try {
+            // Setup phase
+            setupExecutionEnvironment(tempDir, className, javaCode, inputData);
+
+            // Compilation phase
+            if (!compileCode(tempDir, className, withDocker, result)) {
+                return result;
+            }
+
+            // Execution phase
+            executeCompiledCode(tempDir, className, inputData, withDocker, result);
+
+        } catch (IOException | InterruptedException e) {
+            result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
+            result.getOutputLines().add((withDocker ? "Docker" : "Direct") + " execution error: " + e.getMessage());
+            Thread.currentThread().interrupt();
+        } finally {
+            cleanupTempDirectory(tempDir);
+        }
+
+        return result;
+    }
+
+    private void setupExecutionEnvironment(Path tempDir, String className, String javaCode, List<Integer> inputData) throws IOException {
+        Files.createDirectories(tempDir);
+
+        // Write Java code
+        Path javaFilePath = tempDir.resolve(className + ".java");
+        String modifiedJavaCode = javaCode.replaceFirst("public\\s+class\\s+\\w+", "public class " + className);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(javaFilePath.toFile()))) {
+            writer.write(modifiedJavaCode);
+        }
+
+        // Write input data if available (only needed for Docker)
+        if (inputData != null && !inputData.isEmpty()) {
+            Path inputFilePath = tempDir.resolve("input.txt");
+            try (BufferedWriter inputWriter = new BufferedWriter(new FileWriter(inputFilePath.toFile()))) {
+                inputWriter.write(String.valueOf(inputData.size()));
+                inputWriter.newLine();
+                for (Integer value : inputData) {
+                    inputWriter.write(String.valueOf(value));
+                    inputWriter.newLine();
+                }
+            }
+        }
+    }
+
+    private boolean compileCode(Path tempDir, String className, boolean withDocker, ExecutionResult result) throws IOException, InterruptedException {
+        Process compileProcess = withDocker
+                ? createDockerCompileProcess(tempDir, className)
+                : createDirectCompileProcess(tempDir, className);
+
+        return handleCompilationResult(compileProcess, result);
+    }
+
+    private Process createDockerCompileProcess(Path tempDir, String className) throws IOException {
+        return new ProcessBuilder(
+                "docker", "run", "--rm",
+                "--memory=128m", "--cpus=0.5",
+                "--network=none",
+                "-v", tempDir.toAbsolutePath() + ":/workspace",
+                "openjdk:11-jdk-slim",
+                "javac", "/workspace/" + className + ".java"
+        ).redirectErrorStream(true).start();
+    }
+
+    private Process createDirectCompileProcess(Path tempDir, String className) throws IOException {
+        return new ProcessBuilder("javac", className + ".java")
+                .directory(tempDir.toFile())
+                .redirectErrorStream(true)
+                .start();
+    }
+
+    private boolean handleCompilationResult(Process compileProcess, ExecutionResult result) throws IOException, InterruptedException {
+        String compileOutput = readProcessOutput(compileProcess);
+        boolean compiled = compileProcess.waitFor(EXECUTION_TIMEOUT_SECONDS, TimeUnit.SECONDS) && compileProcess.exitValue() == 0;
+
+        if (!compiled) {
+            if (compileProcess.isAlive()) {
+                compileProcess.destroyForcibly();
+                result.setResult(ExecutionResult.Result.TIMEOUT);
+            } else {
+                result.setResult(ExecutionResult.Result.COMPILATION_ERROR);
+                if (!compileOutput.trim().isEmpty()) {
+                    result.getOutputLines().addAll(Arrays.asList(compileOutput.split("\n")));
+                }
+            }
+        }
+        return compiled;
+    }
+
+    private void executeCompiledCode(Path tempDir, String className, List<Integer> inputData, boolean withDocker, ExecutionResult result) throws IOException, InterruptedException {
+        Process runProcess = withDocker
+                ? createDockerRunProcess(tempDir, className, inputData)
+                : createDirectRunProcess(tempDir, className, inputData);
+
+        ExecutionContext context = new ExecutionContext();
+        setupTimeoutKiller(runProcess, context);
+
+        String runOutput = readProcessOutput(runProcess);
+        waitForProcess(runProcess);
+
+        if (context.wasKilledByTimeout) {
+            result.setResult(ExecutionResult.Result.TIMEOUT);
+            return;
+        }
+
+        if (runProcess.isAlive()) {
+            runProcess.destroyForcibly();
+            result.setResult(ExecutionResult.Result.TIMEOUT);
+            return;
+        }
+
+        if (runProcess.exitValue() != 0) {
+            result.setResult(ExecutionResult.Result.RUNTIME_ERROR);
+            if (!runOutput.trim().isEmpty()) {
+                result.getOutputLines().addAll(Arrays.asList(runOutput.split("\n")));
+            }
+            return;
+        }
+
+        // Success case
+        processSuccessfulOutput(runOutput, result);
+    }
+
+    private Process createDockerRunProcess(Path tempDir, String className, List<Integer> inputData) throws IOException {
+        List<String> runCommand = new ArrayList<>(Arrays.asList(
+                "docker", "run", "--rm",
+                "--memory=" + dockerMemoryLimit,
+                "--cpus=" + dockerCpuLimit,
+                "--network=none",
+                "-v", tempDir.toAbsolutePath() + ":/workspace"
+        ));
+
+        if (inputData != null && !inputData.isEmpty()) {
+            runCommand.addAll(Arrays.asList(
+                    "openjdk:11-jre-slim",
+                    "sh", "-c", "cd /workspace && java " + className + " < input.txt"
+            ));
+        } else {
+            runCommand.addAll(Arrays.asList(
+                    "openjdk:11-jre-slim",
+                    "java", "-cp", "/workspace", className
+            ));
+        }
+
+        return new ProcessBuilder(runCommand).redirectErrorStream(true).start();
+    }
+
+    private Process createDirectRunProcess(Path tempDir, String className, List<Integer> inputData) throws IOException {
+        Process runProcess = new ProcessBuilder("java", className)
+                .directory(tempDir.toFile())
+                .redirectErrorStream(true)
+                .start();
+
+        // Handle input for direct execution
+        if (inputData != null && !inputData.isEmpty()) {
+            try (PrintWriter writer = new PrintWriter(runProcess.getOutputStream(), true)) {
+                writer.println(inputData.size());
+                for (Integer value : inputData) {
+                    writer.println(value);
+                }
+            } catch (Exception ignored) {
+                // Continue if input writing fails
+            }
+        } else {
+            try {
+                runProcess.getOutputStream().close();
+            } catch (IOException ignored) {
+            }
+        }
+
+        return runProcess;
+    }
+
+    private void setupTimeoutKiller(Process process, ExecutionContext context) {
+        Thread killerThread = new Thread(() -> {
+            try {
+                Thread.sleep(EXECUTION_TIMEOUT_SECONDS * 1000);
+                if (process.isAlive()) {
+                    context.wasKilledByTimeout = true;
+                    process.destroyForcibly();
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+        killerThread.setDaemon(true);
+        killerThread.start();
+    }
+
+    private void waitForProcess(Process process) throws InterruptedException {
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw e;
+        }
+    }
+
+    private void processSuccessfulOutput(String runOutput, ExecutionResult result) {
+        List<String> actualOutputLines = new ArrayList<>();
+        if (!runOutput.trim().isEmpty()) {
+            String[] lines = runOutput.split("\n");
+            for (String line : lines) {
+                String trimmedLine = line.trim();
+                if (!trimmedLine.isEmpty()) {
+                    actualOutputLines.add(trimmedLine);
+                }
+            }
+        }
+        result.setOutputLines(actualOutputLines);
+        result.setResult(ExecutionResult.Result.SUCCESS);
+    }
+
     private boolean isDockerAvailable() {
         try {
             Process process = new ProcessBuilder("docker", "--version").start();
@@ -386,9 +272,6 @@ public class CodeExecutionService {
         }
     }
 
-    /**
-     * Clean up temporary directory and its contents
-     */
     private void cleanupTempDirectory(Path tempDir) {
         try {
             if (Files.exists(tempDir)) {
@@ -398,18 +281,10 @@ public class CodeExecutionService {
                         .forEach(File::delete);
             }
         } catch (IOException e) {
-            // Log cleanup error but don't throw - cleanup failures shouldn't affect the result
             System.err.println("Error during cleanup of " + tempDir + ": " + e.getMessage());
         }
     }
 
-    /**
-     * Reads the entire output stream of a process.
-     *
-     * @param process The process whose output stream is to be read.
-     * @return The content of the process's output stream as a string.
-     * @throws IOException If an I/O error occurs.
-     */
     private String readProcessOutput(Process process) throws IOException {
         StringBuilder output = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
@@ -419,5 +294,10 @@ public class CodeExecutionService {
             }
         }
         return output.toString();
+    }
+
+    // Helper class to track timeout state
+    private static class ExecutionContext {
+        boolean wasKilledByTimeout = false;
     }
 }
