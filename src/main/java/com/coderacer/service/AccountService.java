@@ -10,6 +10,7 @@ import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
 import com.coderacer.repository.EmailVerificationTokenRepository;
+import com.coderacer.repository.LevelSessionRepository;
 import com.coderacer.security.JWTUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,9 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final LevelRepository levelRepository; // for rating calc only
-    private final RatingAlgorithm ratingAlgo; // for rating calc only
+    private final LevelSessionRepository levelSessionRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final RatingAlgorithm ratingAlgo; // for rating calc only
     private final EmailService emailService;
     private final JWTUtil jwtUtil;
 
@@ -117,6 +119,10 @@ public class AccountService {
         if (!accountRepository.existsById(id)) {
             throw new AccountNotFoundException(id);
         }
+
+        levelSessionRepository.deleteByAccountId(id);
+        emailVerificationTokenRepository.deleteByAccountId(id);
+
         accountRepository.deleteById(id);
     }
 

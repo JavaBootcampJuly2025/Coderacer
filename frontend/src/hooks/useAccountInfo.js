@@ -9,40 +9,40 @@ const useAccountInfo = () => {
     const [avgCpm, setAvgCpm] = useState(0);
     const [avgAccuracy, setAvgAccuracy] = useState(0);
 
-    useEffect(() => {
-        const getAccountInfo = async () => {
-            const token = localStorage.getItem('loginToken');
-            const id = localStorage.getItem('loginId');
+    const updateAccountInfo = async () => {
+        const token = localStorage.getItem('loginToken');
+        const id = localStorage.getItem('loginId');
 
-            if(token == null || id == null) {
-                setLoggedOn(false);
-                return;
-            }
-            
-            try {
-                const response = await getAccountById(id, token);
-                setUsername(response.username);
-                setEmail(response.email);
-                setRating(response.rating);
-            } catch (error) {
-                localStorage.removeItem('loginToken');
-                localStorage.removeItem('loginId');
-                setLoggedOn(false);
-                return;
-            }
-
-            setLoggedOn(true);
-
-            try {
-                const response = await getGameplayMetrics(id, token);
-                setAvgCpm(response.avgCpm);
-                setAvgAccuracy(response.avgAccuracy);
-            } catch (error) {
-
-            }
+        if(token == null || id == null) {
+            setLoggedOn(false);
+            return;
         }
 
-        getAccountInfo();
+        try {
+            const response = await getAccountById(id, token);
+            setUsername(response.username);
+            setEmail(response.email);
+            setRating(response.rating);
+        } catch (error) {
+            localStorage.removeItem('loginToken');
+            localStorage.removeItem('loginId');
+            setLoggedOn(false);
+            return;
+        }
+
+        setLoggedOn(true);
+
+        try {
+            const response = await getGameplayMetrics(id, token);
+            setAvgCpm(response.avgCpm);
+            setAvgAccuracy(response.avgAccuracy);
+        } catch (error) {
+
+        }
+    }
+
+    useEffect(() => {
+        updateAccountInfo();
     }, []);
 
     return {
@@ -52,6 +52,7 @@ const useAccountInfo = () => {
         loggedOn,
         avgCpm,
         avgAccuracy,
+        updateAccountInfo
     };
 };
 

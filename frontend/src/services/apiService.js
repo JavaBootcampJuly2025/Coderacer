@@ -21,6 +21,16 @@ export const createAccount = async accountData => {
     return response.data;
 };
 
+// Delete an account
+export const deleteAccount = async (id, authToken) => {
+    const response = await api.delete(`/api/accounts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+    return response.data;
+};
+
 // Login into an account
 export const login = async loginData => {
     const response = await api.post('/api/accounts/login', loginData);
