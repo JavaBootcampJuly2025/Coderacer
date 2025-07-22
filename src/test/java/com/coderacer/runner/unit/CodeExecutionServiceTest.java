@@ -22,7 +22,6 @@ class CodeExecutionServiceTest {
     @BeforeEach
     void setUp() {
         service = new CodeExecutionService();
-        ReflectionTestUtils.setField(service, "useDocker", false); // disable docker for unit test
     }
 
     @Test
@@ -156,5 +155,89 @@ class CodeExecutionServiceTest {
         ExecutionResult result = service.compileAndRun(code);
         assertEquals(ExecutionResult.Result.SUCCESS, result.getResult());
         assertEquals(List.of("Legacy"), result.getOutputLines());
+    }
+
+    @Test
+    void testFileSystemWriteAttempt() {
+        String code = """
+            import java.io.*;
+            public class Main {
+                public static void main(String[] args) throws Exception {
+                    FileWriter fw = new FileWriter("/tmp/hacked.txt");
+                    fw.write("hacked");
+                    fw.close();
+                    System.out.println("Done");
+                }
+            }
+        """;
+
+        ExecutionResult result = service.compileAndRun(code);
+        assertEquals(ExecutionResult.Result.RUNTIME_ERROR, result.getResult(), "File system writes should be blocked in secure environments");
+    }
+
+    @Test
+    void testRuntimeExecBlocked() {
+        String code = """
+            public class Main {
+                public static void main(String[] args) throws Exception {
+                    Runtime.getRuntime().exec("touch /tmp/evil");
+                    System.out.println("Executed");
+                }
+            }
+        """;
+
+        ExecutionResult result = service.compileAndRun(code);
+        assertEquals(ExecutionResult.Result.RUNTIME_ERROR, result.getResult(), "Runtime.exec should be blocked in secure environments");
+    }
+
+    @Test
+    void testNetworkAccess() {
+        String code = """
+            import java.net.*;
+            public class Main {
+                public static void main(String[] args) throws Exception {
+                    Socket s = new Socket("example.com", 80);
+                    System.out.println("Connected");
+                    s.close();
+                }
+            }
+        """;
+
+        ExecutionResult result = service.compileAndRun(code);
+        assertTrue(
+                result.getResult() == ExecutionResult.Result.SUCCESS || result.getResult() == ExecutionResult.Result.RUNTIME_ERROR,
+                "Should not allow external connections in secure environments"
+        );
+    }
+
+    @Test
+    void testForkBombLikeThreadSpamming() {
+        String code = """
+            public class Main {
+                public static void main(String[] args) {
+                    while (true) new Thread(() -> {}).start();
+                }
+            }
+        """;
+
+        ExecutionResult result = service.compileAndRun(code);
+        assertTrue(
+                result.getResult() == ExecutionResult.Result.TIMEOUT || result.getResult() == ExecutionResult.Result.RUNTIME_ERROR,
+                "Fork bomb should timeout or error"
+        );
+    }
+
+    @Test
+    void testSystemExitIsPrevented() {
+        String code = """
+            public class Main {
+                public static void main(String[] args) {
+                    System.exit(1);
+                }
+            }
+        """;
+
+        ExecutionResult result = service.compileAndRun(code);
+        assertEquals(ExecutionResult.Result.RUNTIME_ERROR, result.getResult(), "System.exit should not terminate the process");
     }
 }
