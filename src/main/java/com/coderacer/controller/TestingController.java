@@ -1,6 +1,6 @@
 package com.coderacer.controller;
 
-import com.coderacer.dto.TestResultDto;
+import com.coderacer.dto.TestResultDTO;
 import com.coderacer.service.TestingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -15,12 +15,12 @@ public class TestingController {
     private final TestingService testingService;
 
     @PostMapping("/problem/{problemId}")
-    public TestResultDto testCode(@PathVariable UUID problemId, @RequestBody String code) {
+    public TestResultDTO testCode(@PathVariable UUID problemId, @RequestBody String code) {
         return testingService.testCode(problemId, code);
     }
 
     @PostMapping("/problem/{problemId}/testcase/{testCaseIndex}")
-    public TestResultDto testSingleTestCase(@PathVariable UUID problemId, @PathVariable int testCaseIndex, @RequestBody String code) {
+    public TestResultDTO testSingleTestCase(@PathVariable UUID problemId, @PathVariable int testCaseIndex, @RequestBody String code) {
         return testingService.testSingleTestCase(problemId, testCaseIndex, code);
     }
 }

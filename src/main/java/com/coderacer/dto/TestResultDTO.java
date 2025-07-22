@@ -11,7 +11,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TestResultDto {
+public class TestResultDTO {
     private UUID problemId;
     private int totalTests;
     private int passedTests;

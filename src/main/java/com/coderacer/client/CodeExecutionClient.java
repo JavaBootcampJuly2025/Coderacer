@@ -1,6 +1,6 @@
 package com.coderacer.client;
 
-import com.coderacer.dto.ExecutionResultDto;
+import com.coderacer.dto.ExecutionResultDTO;
 import com.coderacer.exception.CodeExecutionClientException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,7 @@ public class CodeExecutionClient {
      * @param code  The source code to execute
      * @return ExecutionResult containing output, errors, and execution info
      */
-    public ExecutionResultDto executeCode(String code) {
+    public ExecutionResultDTO executeCode(String code) {
         try {
             String url = codeExecutionServiceUrl + "/api/code";
 
@@ -41,11 +41,11 @@ public class CodeExecutionClient {
 
             // Make the call
             log.debug("Calling code execution service at: {}", url);
-            ResponseEntity<ExecutionResultDto> response = restTemplate.exchange(
+            ResponseEntity<ExecutionResultDTO> response = restTemplate.exchange(
                     url,
                     HttpMethod.POST,
                     request,
-                    ExecutionResultDto.class
+                    ExecutionResultDTO.class
             );
 
             return response.getBody();

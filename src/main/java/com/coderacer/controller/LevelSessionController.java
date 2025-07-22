@@ -1,6 +1,6 @@
 package com.coderacer.controller;
 
-import com.coderacer.dto.LevelSessionDto;
+import com.coderacer.dto.LevelSessionDTO;
 import com.coderacer.model.LevelSession;
 import com.coderacer.service.AccountService;
 import com.coderacer.service.LevelSessionService;
@@ -73,10 +73,10 @@ public class LevelSessionController {
      */
     @PreAuthorize("hasRole('ADMIN') or #id == principal")
     @GetMapping("/by-account/{accountId}")
-    public ResponseEntity<List<LevelSessionDto>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
+    public ResponseEntity<List<LevelSessionDTO>> getLevelSessionsByAccount(@PathVariable UUID accountId) {
         List<LevelSession> sessions = levelSessionService.getLevelSessionsByAccount(accountId);
-        List<LevelSessionDto> dtos = sessions.stream()
-                .map(LevelSessionDto::fromEntity)
+        List<LevelSessionDTO> dtos = sessions.stream()
+                .map(LevelSessionDTO::fromEntity)
                 .toList();
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }

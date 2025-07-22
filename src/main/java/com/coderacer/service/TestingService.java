@@ -1,8 +1,8 @@
 package com.coderacer.service;
 
 import com.coderacer.client.CodeExecutionClient;
-import com.coderacer.dto.ExecutionResultDto;
-import com.coderacer.dto.TestResultDto;
+import com.coderacer.dto.ExecutionResultDTO;
+import com.coderacer.dto.TestResultDTO;
 import com.coderacer.exception.CodingProblemNotFoundException;
 import com.coderacer.model.CodingProblem;
 import com.coderacer.model.TestCase;
@@ -22,7 +22,7 @@ public class TestingService {
     private final CodingProblemRepository codingProblemRepository;
     private final CodeExecutionClient codeExecutionClient;
 
-    public TestResultDto testCode(UUID problemId, String code) {
+    public TestResultDTO testCode(UUID problemId, String code) {
         CodingProblem problem = codingProblemRepository.findById(problemId)
                 .orElseThrow(() -> new CodingProblemNotFoundException("Problem not found: " + problemId));
 
@@ -36,7 +36,7 @@ public class TestingService {
             }
         }
 
-        return TestResultDto.builder()
+        return TestResultDTO.builder()
                 .problemId(problemId)
                 .totalTests(totalTests)
                 .passedTests(passedTests)
@@ -44,7 +44,7 @@ public class TestingService {
                 .build();
     }
 
-    public TestResultDto testSingleTestCase(UUID problemId, int testCaseIndex, String code) {
+    public TestResultDTO testSingleTestCase(UUID problemId, int testCaseIndex, String code) {
         CodingProblem problem = codingProblemRepository.findById(problemId)
                 .orElseThrow(() -> new CodingProblemNotFoundException("Problem not found: " + problemId));
 
@@ -55,7 +55,7 @@ public class TestingService {
         TestCase testCase = problem.getTestCases().get(testCaseIndex);
         boolean passed = runSingleTest(code, testCase);
 
-        return TestResultDto.builder()
+        return TestResultDTO.builder()
                 .problemId(problemId)
                 .totalTests(1)
                 .passedTests(passed ? 1 : 0)
@@ -69,10 +69,10 @@ public class TestingService {
         try {
 
             List<String> inputToPass = testCase.getInputs();
-            ExecutionResultDto result = codeExecutionClient.executeCode(code); // TODO code should care about input - so update the microservice
+            ExecutionResultDTO result = codeExecutionClient.executeCode(code); // TODO code should care about input - so update the microservice
 
             // Check if execution was successful
-            if (result.getResult() != ExecutionResultDto.Result.SUCCESS) {
+            if (result.getResult() != ExecutionResultDTO.Result.SUCCESS) {
                 return false;
             }
 

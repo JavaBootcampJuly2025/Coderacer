@@ -56,6 +56,6 @@ public class CodingProblem {
     /**
      * A list of test cases, each containing a list of inputs and a list of expected outputs.
      */
-    @ElementCollection
+    @OneToMany(mappedBy = "codingProblem", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<@Valid TestCase> testCases = new ArrayList<>();
 }

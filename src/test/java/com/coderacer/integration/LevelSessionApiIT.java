@@ -1,7 +1,7 @@
 package com.coderacer.integration;
 
 import com.coderacer.dto.LevelSessionCreateDto;
-import com.coderacer.dto.LevelSessionDto;
+import com.coderacer.dto.LevelSessionDTO;
 import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.ProgrammingLanguage;
 import com.coderacer.model.Account;
@@ -131,12 +131,12 @@ class LevelSessionApiIT {
 
         // Then - manually deserialize with ObjectMapper into DTO array (no timestamps here)
         ObjectMapper mapper = new ObjectMapper();
-        LevelSessionDto[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDto[].class);
+        LevelSessionDTO[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDTO[].class);
 
         // Assert size and values
         assertThat(dtos).hasSize(2);
         assertThat(Arrays.stream(dtos))
-                .extracting(LevelSessionDto::getCpm)
+                .extracting(LevelSessionDTO::getCpm)
                 .containsExactlyInAnyOrder(80.0, 85.0);
     }
     @Test
@@ -179,12 +179,12 @@ class LevelSessionApiIT {
 
         // Deserialize to DTO array
         ObjectMapper mapper = new ObjectMapper();
-        LevelSessionDto[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDto[].class);
+        LevelSessionDTO[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDTO[].class);
 
         // Assert size and CPM values for created sessions
         assertThat(dtos).hasSize(2);
         assertThat(Arrays.stream(dtos))
-                .extracting(LevelSessionDto::getCpm)
+                .extracting(LevelSessionDTO::getCpm)
                 .containsExactlyInAnyOrder(75.0, 90.0);
     }
 
