@@ -76,10 +76,10 @@ const RightPanel = () => {
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            <LanguageGrid
-                selectedLanguage={selectedLanguage}
-                setSelectedLanguage={setSelectedLanguage}
-            />
+            {/*<LanguageGrid*/}
+            {/*    selectedLanguage={selectedLanguage}*/}
+            {/*    setSelectedLanguage={setSelectedLanguage}*/}
+            {/*/>*/}
             <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
                 <div className={`flex justify-center space-x-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
