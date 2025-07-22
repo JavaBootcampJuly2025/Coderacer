@@ -32,10 +32,10 @@ const CodeInputArea = ({
 
     return (
         <div className="code-input-container h-full">
-            <div className="bg-[#1E3A5F] rounded-lg p-4 h-full shadow-lg">
+            <div className="bg-[var(--sliderhover)] rounded-lg p-4 h-full strong-shadow border-2 border-[var(--accent)]">
                 <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-semibold text-white">Your Code</h3>
-                    <div className="text-sm text-gray-400">
+                    <h3 className="text-xl font-bold text-[var(--text)]">Your Code</h3>
+                    <div className="text-base text-[var(--text)]">
                         Press Tab for indentation
                     </div>
                 </div>
@@ -51,23 +51,21 @@ const CodeInputArea = ({
                         onKeyDown={handleKeyDown}
                         placeholder="Write your code here..."
                         disabled={isSubmitted}
-                        className={`
-                            w-full h-96 p-4 bg-[#0F1419] text-gray-100 
-                            border border-gray-600 rounded-lg resize-none
-                            font-mono text-sm leading-relaxed
-                            focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500
-                            disabled:bg-gray-800 disabled:cursor-not-allowed
-                            placeholder-gray-500
-                        `}
+                        className="w-full h-96 p-4 rounded-lg resize-none font-mono text-base leading-relaxed focus:outline-none disabled:cursor-not-allowed
+                                   focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
                         style={{
                             minHeight: '400px',
                             tabSize: 4,
-                            fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace'
+                            fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                            backgroundColor: 'var(--inbetween)', // Use 'inbetween' for shading
+                            color: 'var(--text)',
+                            border: '1px solid var(--accent)',
+                            borderRadius: '0.5rem'
                         }}
                     />
                 </div>
 
-                <div className="mt-2 text-xs text-gray-400">
+                <div className="mt-2 text-base text-[var(--text)]">
                     Lines: {userCode.split('\n').length} |
                     Characters: {userCode.length}
                 </div>

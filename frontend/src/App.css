@@ -150,3 +150,7 @@ footer {
     font-size: 35px;
     font-weight: bold;
 }
+
+.strong-shadow {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); /* More intense and tighter shadow */
+}

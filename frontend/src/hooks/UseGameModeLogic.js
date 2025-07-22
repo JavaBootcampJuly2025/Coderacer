@@ -1,54 +1,74 @@
 import { useState, useRef, useCallback } from 'react';
 
-// Sample coding prompts for different difficulty levels
+// Sample coding prompts for different difficulty levels (Java only)
 const CODING_PROMPTS = [
     {
         id: 1,
         difficulty: 'Easy',
-        prompt: 'Write a function in Java that calculates the sum of two integers.',
+        prompt: 'Write a function in Java that calculates the sum of two integers and prints the result.',
         language: 'java',
-        expectedKeywords: ['public', 'static', 'int', '+', 'return']
+        expectedKeywords: ['public', 'static', 'int', '+', 'System.out.println'],
+        expectedOutput: `15
+20
+-3`
     },
     {
         id: 2,
         difficulty: 'Easy',
         prompt: 'Create a Java method that prints "Hello, World!" to the console.',
         language: 'java',
-        expectedKeywords: ['public', 'static', 'void', 'main', 'System.out.println']
+        expectedKeywords: ['public', 'static', 'void', 'main', 'System.out.println'],
+        expectedOutput: `Hello, World!`
     },
     {
         id: 3,
         difficulty: 'Medium',
-        prompt: 'Write a Java method to reverse a given string.',
+        prompt: 'Write a Java method to reverse a given string and print the result.',
         language: 'java',
-        expectedKeywords: ['public', 'static', 'String', 'StringBuilder', 'reverse', 'return']
+        expectedKeywords: ['public', 'static', 'String', 'StringBuilder', 'reverse', 'System.out.println'],
+        expectedOutput: `olleh
+avaJ
+!dlroW`
     },
     {
         id: 4,
         difficulty: 'Medium',
-        prompt: 'Implement a Java function that checks if a number is prime.',
+        prompt: 'Implement a Java function that checks if a number is prime and prints true or false.',
         language: 'java',
-        expectedKeywords: ['public', 'static', 'boolean', 'for', '%', 'return']
+        expectedKeywords: ['public', 'static', 'boolean', 'for', '%', 'System.out.println'],
+        expectedOutput: `true
+false
+true
+false`
     },
     {
         id: 5,
         difficulty: 'Hard',
-        prompt: 'Write a Java method that implements binary search on a sorted array of integers.',
+        prompt: 'Write a Java method that implements binary search and prints the index of the found element.',
         language: 'java',
-        expectedKeywords: ['public', 'static', 'int', 'while', 'mid', 'return']
+        expectedKeywords: ['public', 'static', 'int', 'while', 'mid', 'System.out.println'],
+        expectedOutput: `2
+-1
+0
+4`
     },
     {
         id: 6,
         difficulty: 'Hard',
-        prompt: 'Create a Java class representing a simple BankAccount with methods for deposit and withdrawal.',
+        prompt: 'Create a Java class representing a simple BankAccount and print the balance after operations.',
         language: 'java',
-        expectedKeywords: ['public', 'class', 'private', 'double', 'deposit', 'withdraw', 'balance']
+        expectedKeywords: ['public', 'class', 'private', 'double', 'deposit', 'withdraw', 'System.out.println'],
+        expectedOutput: `100.0
+150.0
+120.0
+120.0`
     }
 ];
 
 const useGameModeLogic = () => {
     const [currentPrompt, setCurrentPrompt] = useState(CODING_PROMPTS[0].prompt);
     const [currentPromptData, setCurrentPromptData] = useState(CODING_PROMPTS[0]);
+    const [expectedOutput, setExpectedOutput] = useState(CODING_PROMPTS[0].expectedOutput);
     const [userCode, setUserCode] = useState('');
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [submissionResult, setSubmissionResult] = useState(null);
@@ -72,16 +92,20 @@ const useGameModeLogic = () => {
         }
     }, [isSubmitted]);
 
-    // Simple code evaluation based on keywords and basic structure
+    // Enhanced code evaluation with console output focus
     const evaluateCode = useCallback((code, promptData) => {
         if (!code.trim()) {
             return {
                 success: false,
-                message: 'Please write some code before submitting.'
+                message: 'Please write some code before submitting.',
+                details: {
+                    structureScore: 0,
+                    outputScore: 0,
+                    totalScore: 0
+                }
             };
         }
 
-        const codeLines = code.toLowerCase().split('\n');
         const codeText = code.toLowerCase();
 
         // Check for expected keywords
@@ -97,15 +121,11 @@ const useGameModeLogic = () => {
         // Check for function/method declaration
         if (promptData.language === 'java' && (codeText.includes('public') || codeText.includes('private'))) {
             structureScore += 0.3;
-        } else if (promptData.language === 'python' && codeText.includes('def ')) {
-            structureScore += 0.3;
-        } else if (promptData.language === 'javascript' && (codeText.includes('function') || codeText.includes('=>'))) {
-            structureScore += 0.3;
         }
 
-        // Check for return statement
-        if (codeText.includes('return')) {
-            structureScore += 0.3;
+        // Check for print statements (important for console output)
+        if (codeText.includes('system.out.println') || codeText.includes('system.out.print')) {
+            structureScore += 0.4;
         }
 
         // Check for basic logic (loops, conditionals)
@@ -120,27 +140,39 @@ const useGameModeLogic = () => {
         const closeParens = (code.match(/\)/g) || []).length;
 
         if (openBraces === closeBraces && openParens === closeParens) {
-            structureScore += 0.2;
+            structureScore += 0.1;
         }
 
-        const totalScore = (keywordScore * 0.6) + (structureScore * 0.4);
+        // Simplified output scoring based on structure
+        const outputScore = keywordScore * 100;
 
-        if (totalScore >= 0.7) {
-            return {
-                success: true,
-                message: `Great job! Your code looks good. Score: ${Math.round(totalScore * 100)}%`
-            };
-        } else if (totalScore >= 0.4) {
-            return {
-                success: false,
-                message: `Good attempt! Try to include more of the required elements. Score: ${Math.round(totalScore * 100)}%`
-            };
+        // Combine scores: 60% structure, 40% output
+        const finalStructureScore = Math.round((keywordScore * 0.6 + structureScore * 0.4) * 100);
+        const finalOutputScore = Math.round(outputScore);
+        const totalScore = Math.round(finalStructureScore * 0.6 + finalOutputScore * 0.4);
+
+        const success = totalScore >= 70;
+
+        let message;
+        if (totalScore >= 90) {
+            message = 'Excellent work! Your solution should produce the expected output.';
+        } else if (totalScore >= 70) {
+            message = 'Good job! Your solution meets the requirements.';
+        } else if (totalScore >= 50) {
+            message = 'Good attempt! Make sure to include print statements for console output.';
         } else {
-            return {
-                success: false,
-                message: `Keep trying! Make sure your code addresses the prompt requirements. Score: ${Math.round(totalScore * 100)}%`
-            };
+            message = 'Keep trying! Focus on the required elements and console output.';
         }
+
+        return {
+            success,
+            message,
+            details: {
+                structureScore: finalStructureScore,
+                outputScore: finalOutputScore,
+                totalScore
+            }
+        };
     }, []);
 
     // Handle code submission
@@ -159,6 +191,7 @@ const useGameModeLogic = () => {
 
         setCurrentPrompt(newPromptData.prompt);
         setCurrentPromptData(newPromptData);
+        setExpectedOutput(newPromptData.expectedOutput);
         setUserCode('');
         setIsSubmitted(false);
         setSubmissionResult(null);
@@ -172,6 +205,7 @@ const useGameModeLogic = () => {
     return {
         currentPrompt,
         currentPromptData,
+        expectedOutput,
         userCode,
         isSubmitted,
         submissionResult,
