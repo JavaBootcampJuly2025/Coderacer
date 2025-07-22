@@ -48,9 +48,9 @@ const useTypingTest = (initialCodeSnippet = '') => {
             if (e.key === 'Backspace') {
                 newInput = userInput.slice(0, -1);
             } else {
-                const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '  ' : e.key;
+                const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '    ' : e.key;
                 newInput = userInput + charsToAdd;
-                const charsAdded = e.key === 'Tab' ? 2 : 1;
+                const charsAdded = e.key === 'Tab' ? 4 : 1;
 
                 setTotalTyped((prev) => {
                     const newTotal = prev + charsAdded;

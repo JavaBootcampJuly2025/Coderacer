@@ -18,7 +18,7 @@ const SpeedChart = ({ endTime, speedLog }) => {
     }));
 
     return (
-        <div className="w-[800px] h-[380px] p-4 bg-[var(--leaderboard-bg)] rounded-2xl">
+        <div className="w-[800px] h-[380px] p-4 bg-[var(--inbetween)] rounded-2xl">
             <h3 className="chart-title">Typing Speed Over Time</h3>
             <ResponsiveContainer width="100%" height={260}>
                 <LineChart data={speedLog}>
