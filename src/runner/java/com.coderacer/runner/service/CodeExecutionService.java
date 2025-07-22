@@ -19,13 +19,13 @@ public class CodeExecutionService {
     private static final long EXECUTION_TIMEOUT_SECONDS = 10; // Timeout for compilation and execution
 
     /**
-     * Compiles and executes the given Java code string.
+     * Compiles and executes the given Java code string with optional input data.
      *
      * @param javaCode        The Java code as a string. It must contain a public class with a main method.
-     *                        Example: "public class MyClass { public static void main(String[] args) { System.out.println(\"Hello from compiled code!\"); } }"
+     * @param inputData       Optional list of integers to feed to Scanner input
      * @return ExecutionResult containing the result status and actual output lines
      */
-    public ExecutionResult compileAndRun(String javaCode) {
+    public ExecutionResult compileAndRun(String javaCode, List<Integer> inputData) {
         ExecutionResult result = new ExecutionResult();
 
         // Generate a unique identifier for this execution to create isolated files
@@ -74,10 +74,24 @@ public class CodeExecutionService {
                     .redirectErrorStream(true)
                     .start();
 
-            // Close stdin to prevent hanging on input operations
-            try {
-                runProcess.getOutputStream().close();
-            } catch (IOException ignored) {
+            // Provide input data to the process if available
+            if (inputData != null && !inputData.isEmpty()) {
+                try (PrintWriter writer = new PrintWriter(runProcess.getOutputStream(), true)) {
+                    // First write the count of integers
+                    writer.println(inputData.size());
+                    // Then write each integer
+                    for (Integer value : inputData) {
+                        writer.println(value);
+                    }
+                } catch (Exception e) {
+                    // If we can't write input, continue anyway
+                }
+            } else {
+                // Close stdin to prevent hanging on input operations
+                try {
+                    runProcess.getOutputStream().close();
+                } catch (IOException ignored) {
+                }
             }
 
             // Track if we killed the process due to timeout
@@ -157,6 +171,13 @@ public class CodeExecutionService {
         }
 
         return result;
+    }
+
+    /**
+     * Legacy method for backward compatibility
+     */
+    public ExecutionResult compileAndRun(String javaCode) {
+        return compileAndRun(javaCode, null);
     }
 
     /**
