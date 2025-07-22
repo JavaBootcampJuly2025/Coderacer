@@ -70,7 +70,7 @@ function Login() {
                         >
                             Login
                         </button>
-                        <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
+                        <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto text-center">
                             Don't a have an account? <a href="/register" className="underline">Register</a> here.
                         </p>
                     </form>
