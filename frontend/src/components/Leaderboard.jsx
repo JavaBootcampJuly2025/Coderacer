@@ -28,8 +28,8 @@ const Leaderboard = () => {
     return (
         <div className="w-[300px] h-[705px] bg-[var(--inbetween)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
-                <span className="text-[var(--accent)] text-5xl font-montserrat font-light">
-                    Top 10
+                <span className="text-[var(--accent)] text-4xl font-montserrat font-medium">
+                    Leaderboard
                 </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">

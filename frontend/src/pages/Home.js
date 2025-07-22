@@ -39,7 +39,7 @@ const CONFIG = {
         flexDirection: 'flex-col',
         justifyContent: 'justify-center',
         alignItems: 'items-start',
-        gap: 'gap-6',
+        // gap: 'gap-6',
     },
     buttonStatsRow: {
         flexDirection: 'flex-row',
