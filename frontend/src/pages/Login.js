@@ -35,7 +35,7 @@ function Login() {
     };
 
     return (
-        <div className={`min-h-screen flex flex-col items-center font-montserrat transition-colors duration-300 ${
+        <div className={`home-wrapper min-h-screen bg-[#13223A] flex flex-col items-center font-montserrat ${
             theme === 'light' ? 'bg-white text-black' : 'bg-[#13223A] text-white'
         }`}>
             <div className="w-full h-[80px] border border-[#59000000]">
