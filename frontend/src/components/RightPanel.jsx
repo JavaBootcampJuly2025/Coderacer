@@ -10,7 +10,7 @@ import { useTheme } from '../styles/ThemeContext';
 const PANEL_CONFIG = {
     panel: {
         width: '450px',
-        height: '160px',
+        height: '270px',
         borderRadius: '12px',
         background: 'var(--inbetween)',
         paddingX: '5',
@@ -18,9 +18,9 @@ const PANEL_CONFIG = {
     buttons: {
         spacing: '5',
         default: {
-            width: '60',
+            width: '410px',
             height: '20',
-            textSize: '35px',
+            textSize: '30px',
             fontWeight: 'bold',
             font: 'montserrat',
             background: 'var(--primary-button)',
@@ -28,6 +28,7 @@ const PANEL_CONFIG = {
             textColor: 'var(--text)',
             borderRadius: 'full',
             transitionDuration: '200ms',
+            letterSpacing: '0.15em', // Added letter spacing
         },
         // Individual button overrides (optional)
         variants: {
@@ -50,16 +51,16 @@ const RightPanel = () => {
             const levelData = await getRandomLevelWithParameters(selectedLanguage, selectedDifficulty);
             navigate("/level", { state: { level: levelData } });
         } catch (error) {
-            
+
         }
     };
-                   
+
     const handleThinkerClick = () => navigate('/GameMode');
 
     const buttons = [
         // { label: 'Challenges', onClick: handleChallengesClick },
-        { label: 'Thinker', onClick: handleThinkerClick },
-        { label: 'Speeder', onClick: handlePlayClick },
+        { label: 'THINKER', onClick: handleThinkerClick },
+        { label: 'SPEEDER', onClick: handlePlayClick },
     ];
 
     return (
@@ -72,16 +73,16 @@ const RightPanel = () => {
                 flex flex-col
             `}
         >
-            <LevelSwitch 
+            <LevelSwitch
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            {/*<LanguageGrid*/}
-            {/*    selectedLanguage={selectedLanguage}*/}
-            {/*    setSelectedLanguage={setSelectedLanguage}*/}
-            {/*/>*/}
+            {/*<LanguageGrid
+                selectedLanguage={selectedLanguage}
+                setSelectedLanguage={setSelectedLanguage}
+            />*/}
             <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
-                <div className={`flex justify-center space-x-${PANEL_CONFIG.buttons.spacing}`}>
+                <div className={`flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
                         const buttonConfig = {
                             ...PANEL_CONFIG.buttons.default,
@@ -91,7 +92,7 @@ const RightPanel = () => {
                             <button
                                 key={index}
                                 className={`
-                                    w-${buttonConfig.width} 
+                                    w-[${buttonConfig.width}]
                                     h-${buttonConfig.height} 
                                     bg-[${buttonConfig.background}] 
                                     rounded-${buttonConfig.borderRadius} 
@@ -100,6 +101,7 @@ const RightPanel = () => {
                                     text-${buttonConfig.textSize} 
                                     font-${buttonConfig.font} 
                                     font-${buttonConfig.fontWeight}
+                                    tracking-[${buttonConfig.letterSpacing}] 
                                     cursor-pointer 
                                     hover:bg-[${buttonConfig.hoverBackground}] 
                                     transition-colors duration-${buttonConfig.transitionDuration}
