@@ -5,7 +5,7 @@ import Footer from '../components/Footer';
 import { useTheme } from '../styles/ThemeContext';
 
 function Register() {
-  const { theme } = useTheme(); // Get current theme
+  const { theme } = useTheme();
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState("");
 
@@ -32,14 +32,12 @@ function Register() {
       <div className={`min-h-screen flex flex-col items-center font-montserrat transition-colors duration-300 ${
           theme === 'light' ? 'bg-white text-black' : 'bg-[#13223A] text-white'
       }`}>
-        {/* Header */}
         <div className="w-full h-[80px] border border-[#59000000]">
           <Header />
         </div>
 
-        {/* Register Form */}
         <div className="flex-grow flex items-center justify-center py-12 w-full max-w-2xl">
-          <div className={`w-full p-10 rounded-2xl shadow-xl transition-colors duration-300 ${
+          <div className={`w-full p-10 rounded-2xl shadow-xl transition-colors duration-300 border-4 border-black-400 rounded-lg ${
               theme === 'light' ? 'bg-gray-100' : 'bg-[#1C2B47]'
           }`}>
             <h2 className="text-2xl font-semibold mb-6 text-center text-[var(--accent)]">Create Your Account</h2>
@@ -78,7 +76,6 @@ function Register() {
           </div>
         </div>
 
-        {/* Footer */}
         <div className="w-full h-[80px] border border-[#59000000]">
           <Footer />
         </div>
