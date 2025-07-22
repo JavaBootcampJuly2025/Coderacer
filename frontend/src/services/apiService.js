@@ -14,6 +14,7 @@ export const getAccountById = async (id, authToken) => {
     });
     return response.data;
 };
+
 // Create a new account
 export const createAccount = async accountData => {
     const response = await api.post('/api/accounts', accountData);
@@ -65,6 +66,14 @@ export const getRandomLevelWithParameters = async (language, difficulty) => {
     return response.data;
 };
 
+// Fetch account gameplay metrics
+export const getGameplayMetrics = async (id, authToken) => {
+    const response = await api.get(`/api/metrics/gameplayMetrics/${id}`, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+  
 // Get top-rated accounts
 export const getTop = async () => {
     const response = await api.get('/api/leaderboard/top');

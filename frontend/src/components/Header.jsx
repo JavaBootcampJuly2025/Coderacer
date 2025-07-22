@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useTheme } from '../styles/ThemeContext';
 import useAccountInfo from '../hooks/useAccountInfo';
 import Title from './ui/Title';
@@ -8,10 +8,16 @@ import { ReactComponent as MoonIcon } from '../assets/moon.svg';
 import { ReactComponent as UserIcon } from '../assets/user.svg';
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
 import { Link } from 'react-router-dom';
+import ProfilePopup from './ProfilePopup';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
-    const { username, rating } = useAccountInfo(); // Access account info if logged in
+    const { username, email, rating, avgCpm, avgAccuracy, loggedOn } = useAccountInfo(); // Access account info if logged in
+    const [showUserMenu, setShowUserMenu] = useState(false);
+
+    const toggleUserMenu = () => {
+        setShowUserMenu(prev => !prev);
+    };
 
     // Toggle between light and dark themes
     const toggleTheme = () => {
@@ -38,13 +44,20 @@ const Header = () => {
                 </button>
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
+                    onClick={toggleUserMenu}
+                    title="User Info"
                 >
-                    <UserIcon className="theme-icon" alt="Profile"/>
+                    <UserIcon className="theme-icon" alt="Profile" />
                 </button>
+
+                {showUserMenu && (
+                    <ProfilePopup username={username} rating={rating} email={email} avgCpm={avgCpm} avgAccuracy={avgAccuracy} loggedOn={loggedOn} />
+                )}
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
                 >
                     <SettingsIcon className="theme-icon" alt="Settings"/>
+
                 </button>
             </div>
         </div>
