@@ -24,13 +24,13 @@ public class TestCase {
 
     @ElementCollection
     @CollectionTable(name = "testcase_inputs", joinColumns = @JoinColumn(name = "testcase_id"))
-    @Column(name = "input_line", length = 200)
-    private List<@NotBlank @Size(max = 200) String> inputs = new ArrayList<>();
+    @Column(name = "input_value")
+    private List<@NotNull Integer> inputs = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "testcase_outputs", joinColumns = @JoinColumn(name = "testcase_id"))
-    @Column(name = "output_line", length = 200)
-    private List<@NotBlank @Size(max = 200) String> expectedOutputs = new ArrayList<>();
+    @Column(name = "output_value")
+    private List<@NotNull Integer> expectedOutputs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "problem_id")
