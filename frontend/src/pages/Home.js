@@ -4,6 +4,7 @@ import SpeedChart from '../components/SpeedChart';
 import RightPanel from '../components/RightPanel';
 import Footer from '../components/Footer';
 import Leaderboard from '../components/Leaderboard';
+import UserMetrics from '../components/UserMetrics';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
 import colors from '../styles/colors';
@@ -39,7 +40,7 @@ const CONFIG = {
         flexDirection: 'flex-col',
         justifyContent: 'justify-center',
         alignItems: 'items-start',
-        // gap: 'gap-6',
+        gap: 'gap-6',
     },
     buttonStatsRow: {
         flexDirection: 'flex-row',
@@ -53,6 +54,11 @@ const CONFIG = {
         borderRadius: 'rounded-2xl',
     },
     rightPanel: {
+        width: 'w-5/5',
+        height: 'h-[300px]',
+        borderRadius: 'rounded-2xl',
+    },
+    UserMetrics: {
         width: 'w-5/5',
         height: 'h-[300px]',
         borderRadius: 'rounded-2xl',
@@ -104,12 +110,13 @@ const Home = () => {
                         <Leaderboard />
                     </div>
                     <div className={`flex ${CONFIG.chartPanelCol.flexDirection} ${CONFIG.chartPanelCol.justifyContent} ${CONFIG.chartPanelCol.alignItems} ${CONFIG.chartPanelCol.gap}`}>
-                        <div className={'flex ${CONFIG.chartPanelCol.flexDirection} ${CONFIG.chartPanelCol.justifyContent} ${CONFIG.chartPanelCol.alignItems} ${CONFIG.chartPanelCol.gap}'}>
+                        <div className={`flex flex-row ${CONFIG.chartPanelCol.gap}`}>
                             <div className={`${CONFIG.rightPanel.width} ${CONFIG.rightPanel.height} ${CONFIG.rightPanel.borderRadius}`}>
                                 <RightPanel />
                             </div>
-                            <div>
-                                HERE
+
+                            <div className={`${CONFIG.UserMetrics.width} ${CONFIG.UserMetrics.height} ${CONFIG.UserMetrics.borderRadius}`}>
+                                <UserMetrics />
                             </div>
                         </div>
 

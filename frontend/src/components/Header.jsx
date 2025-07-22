@@ -11,15 +11,14 @@ import { Link } from 'react-router-dom';
 import ProfilePopup from './ProfilePopup';
 
 const Header = () => {
-    const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
-    const { username, email, rating, avgCpm, avgAccuracy, loggedOn } = useAccountInfo(); // Access account info if logged in
+    const { theme, applyTheme } = useTheme();
+    const { username, email, rating, avgCpm, avgAccuracy, loggedOn } = useAccountInfo();
     const [showUserMenu, setShowUserMenu] = useState(false);
 
     const toggleUserMenu = () => {
         setShowUserMenu(prev => !prev);
     };
 
-    // Toggle between light and dark themes
     const toggleTheme = () => {
         applyTheme(theme === 'light' ? 'dark' : 'light');
     };
@@ -30,8 +29,6 @@ const Header = () => {
                 <Logo className="logo" alt="Coderacer logo" />
                 <Title />
             </Link>
-            {/*<text style={{color: "white"}}>username</text>*/}
-            {/*<text style={{color: "white"}}>rating</text>*/}
             <div className="flex justify-center space-x-5">
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
@@ -57,7 +54,6 @@ const Header = () => {
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
                 >
                     <SettingsIcon className="theme-icon" alt="Settings"/>
-
                 </button>
             </div>
         </div>
