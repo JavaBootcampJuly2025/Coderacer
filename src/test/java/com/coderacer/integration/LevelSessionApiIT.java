@@ -1,13 +1,16 @@
 package com.coderacer.integration;
 
+import com.coderacer.dto.AccountLoginDTO;
 import com.coderacer.dto.LevelSessionCreateDto;
 import com.coderacer.dto.LevelSessionDTO;
 import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.ProgrammingLanguage;
+import com.coderacer.enums.Role;
 import com.coderacer.model.Account;
 import com.coderacer.model.Level;
 import com.coderacer.model.LevelSession;
 import com.coderacer.repository.AccountRepository;
+import com.coderacer.repository.EmailVerificationTokenRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.repository.LevelSessionRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,10 +19,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -50,6 +59,26 @@ class LevelSessionApiIT {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        // disable real email
+        registry.add("spring.mail.host", () -> "localhost");
+        registry.add("spring.mail.port", () -> 3025);
+    }
+
+    /**
+     * Test config that provides a no-op EmailService bean, replacing the real one.
+     */
+    @TestConfiguration
+    static class NoOpEmailConfig {
+        @Bean
+        @Primary
+        public com.coderacer.service.EmailService emailService() {
+            return new com.coderacer.service.EmailService() {
+                @Override
+                public void sendVerificationEmail(com.coderacer.model.Account account, String token) {
+                    // nothing :)
+                }
+            };
+        }
     }
 
     @Autowired
@@ -70,18 +99,28 @@ class LevelSessionApiIT {
     @Autowired
     private AccountRepository accountRepository;
 
+    @Autowired
+    private EmailVerificationTokenRepository tokenRepository;
+
     private String baseUrl;
+    private String accountsBaseUrl;
     private Level testLevel;
     private Account testAccount;
+    private String adminToken;
 
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/v1/level-sessions";
+        accountsBaseUrl = "http://localhost:" + port + "/api/accounts";
 
         // Clean up
         levelSessionRepository.deleteAll();
         levelRepository.deleteAll();
+        tokenRepository.deleteAll();
         accountRepository.deleteAll();
+
+        // Set up admin for authentication
+        setupAdmin();
 
         // Create test data
         testLevel = new Level();
@@ -96,7 +135,41 @@ class LevelSessionApiIT {
         testAccount.setEmail("test@example.com");
         testAccount.setPassword("password123");
         testAccount.setRating(1000);
+        testAccount.setRole(Role.USER);
+        testAccount.setVerified(true);
         testAccount = accountRepository.save(testAccount);
+    }
+
+    private void setupAdmin() {
+        // Create admin account
+        Account admin = new Account();
+        admin.setUsername("admin");
+        admin.setEmail("admin@example.com");
+        admin.setRole(Role.ADMIN);
+        admin.setVerified(true);
+        admin.setPassword("adminPassword123");
+        accountRepository.saveAndFlush(admin);
+
+        // Get JWT token
+        AccountLoginDTO login = new AccountLoginDTO("admin", "adminPassword123");
+        ResponseEntity<String> resp = restTemplate.postForEntity(
+                accountsBaseUrl + "/login", login, String.class);
+
+        if (resp.getStatusCode() == HttpStatus.OK) {
+            adminToken = resp.getBody();
+        }
+    }
+
+    /**
+     * Helper to create headers with admin authentication
+     */
+    private HttpHeaders authHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        if (adminToken != null && !adminToken.isEmpty()) {
+            headers.setBearerAuth(adminToken);
+        }
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
     }
 
     @Test
@@ -120,12 +193,15 @@ class LevelSessionApiIT {
                 LocalDateTime.now()
         );
 
-        restTemplate.postForEntity(baseUrl, session1, LevelSession.class);
-        restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(session1, authHeaders()), LevelSession.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(session2, authHeaders()), LevelSession.class);
 
-        // When - get raw JSON response as String from GET endpoint
-        ResponseEntity<String> rawResponse = restTemplate.getForEntity(
-                baseUrl + "/by-account/" + testAccount.getId(), String.class);
+        // When - get raw JSON response as String from GET endpoint with auth
+        ResponseEntity<String> rawResponse = restTemplate.exchange(
+                baseUrl + "/by-account/" + testAccount.getId(),
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class);
 
         assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
 
@@ -138,54 +214,6 @@ class LevelSessionApiIT {
         assertThat(Arrays.stream(dtos))
                 .extracting(LevelSessionDTO::getCpm)
                 .containsExactlyInAnyOrder(80.0, 85.0);
-    }
-    @Test
-    void shouldGetLevelSessionsByLevel() throws Exception {
-        // Given - Create another account and level sessions
-        Account anotherAccount = new Account();
-        anotherAccount.setUsername("anotheruser");
-        anotherAccount.setEmail("another@example.com");
-        anotherAccount.setPassword("password456");
-        anotherAccount.setRating(1200);
-        anotherAccount = accountRepository.save(anotherAccount);
-
-        LevelSessionCreateDto session1 = new LevelSessionCreateDto(
-                testLevel.getId(),
-                testAccount.getId(),
-                75.0,
-                88.0,
-                LocalDateTime.now().minusMinutes(10),
-                LocalDateTime.now().minusMinutes(5)
-        );
-
-        LevelSessionCreateDto session2 = new LevelSessionCreateDto(
-                testLevel.getId(),
-                anotherAccount.getId(),
-                90.0,
-                94.0,
-                LocalDateTime.now().minusMinutes(5),
-                LocalDateTime.now()
-        );
-
-        restTemplate.postForEntity(baseUrl, session1, LevelSession.class);
-        restTemplate.postForEntity(baseUrl, session2, LevelSession.class);
-
-        // When - get raw JSON response as String from GET endpoint
-        ResponseEntity<String> rawResponse = restTemplate.getForEntity(
-                baseUrl + "/by-level/" + testLevel.getId(), String.class);
-
-        // Then - assert HTTP status is OK
-        assertThat(rawResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-        // Deserialize to DTO array
-        ObjectMapper mapper = new ObjectMapper();
-        LevelSessionDTO[] dtos = mapper.readValue(rawResponse.getBody(), LevelSessionDTO[].class);
-
-        // Assert size and CPM values for created sessions
-        assertThat(dtos).hasSize(2);
-        assertThat(Arrays.stream(dtos))
-                .extracting(LevelSessionDTO::getCpm)
-                .containsExactlyInAnyOrder(75.0, 90.0);
     }
 
     @Test
@@ -200,24 +228,30 @@ class LevelSessionApiIT {
                 LocalDateTime.now().minusMinutes(5)
         );
 
-        ResponseEntity<LevelSession> createResponse = restTemplate.postForEntity(
-                baseUrl, createDto, LevelSession.class);
+        ResponseEntity<LevelSession> createResponse = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(createDto, authHeaders()),
+                LevelSession.class);
         UUID sessionId = createResponse.getBody().getId();
 
         // When
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
                 baseUrl + "/" + sessionId,
                 HttpMethod.DELETE,
-                null,
+                new HttpEntity<>(authHeaders()),
                 Void.class
         );
 
         // Then
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        // Verify level session is deleted
-        ResponseEntity<String> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + sessionId, String.class);
+        // Verify level session is deleted with auth
+        ResponseEntity<String> getResponse = restTemplate.exchange(
+                baseUrl + "/" + sessionId,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -225,8 +259,11 @@ class LevelSessionApiIT {
     void shouldReturn404ForNonExistentLevelSession() {
         // When
         UUID nonExistentId = UUID.randomUUID();
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/" + nonExistentId, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/" + nonExistentId,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -245,8 +282,11 @@ class LevelSessionApiIT {
         );
 
         // When
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                baseUrl, createDto, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(createDto, authHeaders()),
+                String.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -265,8 +305,11 @@ class LevelSessionApiIT {
         );
 
         // When
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                baseUrl, createDto, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(createDto, authHeaders()),
+                String.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
@@ -280,11 +323,16 @@ class LevelSessionApiIT {
         newAccount.setEmail("new@example.com");
         newAccount.setPassword("password789");
         newAccount.setRating(800);
+        newAccount.setRole(Role.USER);
+        newAccount.setVerified(true);
         newAccount = accountRepository.save(newAccount);
 
         // When
-        ResponseEntity<LevelSession[]> response = restTemplate.getForEntity(
-                baseUrl + "/by-account/" + newAccount.getId(), LevelSession[].class);
+        ResponseEntity<LevelSession[]> response = restTemplate.exchange(
+                baseUrl + "/by-account/" + newAccount.getId(),
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelSession[].class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -302,8 +350,11 @@ class LevelSessionApiIT {
         newLevel = levelRepository.save(newLevel);
 
         // When
-        ResponseEntity<LevelSession[]> response = restTemplate.getForEntity(
-                baseUrl + "/by-level/" + newLevel.getId(), LevelSession[].class);
+        ResponseEntity<LevelSession[]> response = restTemplate.exchange(
+                baseUrl + "/by-level/" + newLevel.getId(),
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelSession[].class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

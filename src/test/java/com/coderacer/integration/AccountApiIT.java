@@ -1,9 +1,7 @@
 package com.coderacer.integration;
 
-import com.coderacer.dto.AccountCreateDTO;
-import com.coderacer.dto.AccountDTO;
-import com.coderacer.dto.AccountUpdateDTO;
-import com.coderacer.dto.PasswordChangeDTO;
+import com.coderacer.dto.*;
+import com.coderacer.enums.Role;
 import com.coderacer.model.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +14,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -86,11 +81,39 @@ class AccountApiIT {
     @Autowired
     private com.coderacer.repository.AccountRepository accountRepository;
 
+    private String adminToken;
+
     @BeforeEach
-    void setUp() {
-        baseUrl = "http://localhost:" + port + "/api/accounts";
+    void setUpAdmin() {
         tokenRepository.deleteAll();
         accountRepository.deleteAll();
+        baseUrl = "http://localhost:" + port + "/api/accounts";
+
+        // Create admin acc
+        Account admin = new Account();
+        admin.setUsername("admin");
+        admin.setEmail("admin@example.com");
+        admin.setRole(Role.ADMIN);
+        admin.setVerified(true);
+        admin.setPassword("idkWhatAmIDoingWithMyLife");
+        accountRepository.saveAndFlush(admin);
+
+        // Get JWT token
+        AccountLoginDTO login = new AccountLoginDTO("admin", "idkWhatAmIDoingWithMyLife");
+        ResponseEntity<String> resp = restTemplate.postForEntity(
+                baseUrl + "/login", login, String.class);
+        assertThat(resp.getStatusCode()).isEqualTo(HttpStatus.OK);
+        adminToken = resp.getBody();
+    }
+
+    /**
+     * Helper to login and return HttpHeaders with Bearer token
+     */
+    private HttpHeaders adminHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(adminToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
     }
 
     @Test
@@ -115,10 +138,13 @@ class AccountApiIT {
         assertThat(createResponse.getBody().rating()).isEqualTo(0);
         assertThat(createResponse.getBody().verified()).isFalse();
 
-        // When - Retrieve account
+        // When - Retrieve account with admin headers
         UUID accountId = createResponse.getBody().id();
-        ResponseEntity<AccountDTO> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + accountId, AccountDTO.class);
+        ResponseEntity<AccountDTO> getResponse = restTemplate.exchange(
+                baseUrl + "/" + accountId,
+                HttpMethod.GET,
+                new HttpEntity<>(adminHeaders()),
+                AccountDTO.class);
 
         // Then - Verify retrieval
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -136,9 +162,12 @@ class AccountApiIT {
 
         restTemplate.postForEntity(baseUrl, account, AccountDTO.class);
 
-        // When
-        ResponseEntity<AccountDTO> response = restTemplate.getForEntity(
-                baseUrl + "/username/findme", AccountDTO.class);
+        // When - with admin headers
+        ResponseEntity<AccountDTO> response = restTemplate.exchange(
+                baseUrl + "/username/findme",
+                HttpMethod.GET,
+                new HttpEntity<>(adminHeaders()),
+                AccountDTO.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -158,7 +187,7 @@ class AccountApiIT {
                 baseUrl, originalAccount, AccountDTO.class);
         UUID accountId = createResponse.getBody().id();
 
-        // When - Update account
+        // When - Update account with admin headers
         AccountUpdateDTO updateDTO = new AccountUpdateDTO(
                 "updated@example.com",
                 100,
@@ -168,7 +197,7 @@ class AccountApiIT {
         ResponseEntity<AccountDTO> updateResponse = restTemplate.exchange(
                 baseUrl + "/" + accountId,
                 HttpMethod.PUT,
-                new HttpEntity<>(updateDTO),
+                new HttpEntity<>(updateDTO, adminHeaders()),
                 AccountDTO.class
         );
 
@@ -193,20 +222,23 @@ class AccountApiIT {
                 baseUrl, account, AccountDTO.class);
         UUID accountId = createResponse.getBody().id();
 
-        // When
+        // When - Delete with admin headers
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
                 baseUrl + "/" + accountId,
                 HttpMethod.DELETE,
-                null,
+                new HttpEntity<>(adminHeaders()),
                 Void.class
         );
 
         // Then
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-        // Verify account is deleted
-        ResponseEntity<String> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + accountId, String.class);
+        // Verify account is deleted - also use admin headers for verification
+        ResponseEntity<String> getResponse = restTemplate.exchange(
+                baseUrl + "/" + accountId,
+                HttpMethod.GET,
+                new HttpEntity<>(adminHeaders()),
+                String.class);
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -223,7 +255,7 @@ class AccountApiIT {
                 baseUrl, account, AccountDTO.class);
         UUID accountId = createResponse.getBody().id();
 
-        // When
+        // When - Change password with admin headers
         PasswordChangeDTO passwordChange = new PasswordChangeDTO(
                 "oldpassword",
                 "newpassword123"
@@ -232,7 +264,7 @@ class AccountApiIT {
         ResponseEntity<Void> changeResponse = restTemplate.exchange(
                 baseUrl + "/" + accountId + "/password",
                 HttpMethod.PUT,
-                new HttpEntity<>(passwordChange),
+                new HttpEntity<>(passwordChange, adminHeaders()),
                 Void.class
         );
 
@@ -242,10 +274,13 @@ class AccountApiIT {
 
     @Test
     void shouldReturn404ForNonExistentAccount() {
-        // When
+        // When - Use admin headers for consistency
         UUID nonExistentId = UUID.randomUUID();
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/" + nonExistentId, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/" + nonExistentId,
+                HttpMethod.GET,
+                new HttpEntity<>(adminHeaders()),
+                String.class);
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -253,15 +288,7 @@ class AccountApiIT {
 
     @Test
     void shouldReturn409ForDuplicateUsername() {
-        // Given
-        Account existingAccount = new Account();
-        existingAccount.setUsername("duplicate");
-        existingAccount.setEmail("first@example.com");
-        existingAccount.setPassword("password123");
-        existingAccount.setRating(0);
-        existingAccount.setVerified(false);
-        accountRepository.saveAndFlush(existingAccount);
-
+        // Given - Create first account
         AccountCreateDTO account1 = new AccountCreateDTO(
                 "duplicate",
                 "first@example.com",
@@ -269,13 +296,13 @@ class AccountApiIT {
         );
         restTemplate.postForEntity(baseUrl, account1, AccountDTO.class);
 
+        // When - Try to create second account with same username
         AccountCreateDTO account2 = new AccountCreateDTO(
                 "duplicate",
                 "second@example.com",
                 "password123"
         );
 
-        // When
         ResponseEntity<String> response = restTemplate.postForEntity(
                 baseUrl, account2, String.class);
 
