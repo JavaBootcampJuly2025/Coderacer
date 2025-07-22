@@ -44,25 +44,6 @@ public class TestingService {
                 .build();
     }
 
-    public TestResultDTO testSingleTestCase(UUID problemId, int testCaseIndex, String code) {
-        CodingProblem problem = codingProblemRepository.findById(problemId)
-                .orElseThrow(() -> new CodingProblemNotFoundException("Problem not found: " + problemId));
-
-        if (testCaseIndex < 0 || testCaseIndex >= problem.getTestCases().size()) {
-            throw new RuntimeException("Test case index out of bounds");
-        }
-
-        TestCase testCase = problem.getTestCases().get(testCaseIndex);
-        boolean passed = runSingleTest(code, testCase);
-
-        return TestResultDTO.builder()
-                .problemId(problemId)
-                .totalTests(1)
-                .passedTests(passed ? 1 : 0)
-                .allPassed(passed)
-                .build();
-    }
-
     private boolean runSingleTest(String code, TestCase testCase) {
         try {
 

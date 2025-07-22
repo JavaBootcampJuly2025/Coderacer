@@ -18,9 +18,4 @@ public class TestingController {
     public TestResultDTO testCode(@PathVariable UUID problemId, @RequestBody String code) {
         return testingService.testCode(problemId, code);
     }
-
-    @PostMapping("/problem/{problemId}/testcase/{testCaseIndex}")
-    public TestResultDTO testSingleTestCase(@PathVariable UUID problemId, @PathVariable int testCaseIndex, @RequestBody String code) {
-        return testingService.testSingleTestCase(problemId, testCaseIndex, code);
-    }
 }
