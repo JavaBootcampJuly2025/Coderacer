@@ -1,6 +1,18 @@
 import React from 'react';
+import {login} from "../services/apiService";
 
 const ProfilePopup = ({ username, rating, email, avgCpm, avgAccuracy, loggedOn }) => {
+    const logout = async (e) => {
+        e.preventDefault();
+
+        localStorage.removeItem('loginToken');
+        localStorage.removeItem('loginId');
+
+        setTimeout(() => {
+            window.location.href = "/";
+        }, 1000);
+    };
+
     if(loggedOn === false) return (
         <div
             className="absolute rounded-2xl shadow-lg p-4 z-20 border"
@@ -21,6 +33,15 @@ const ProfilePopup = ({ username, rating, email, avgCpm, avgAccuracy, loggedOn }
             >
                 Not Logged In
             </div>
+            <button
+                className="w-full py-3 rounded-xl bg-[var(--primary-button)] text-[var(--primary-button-text)] font-semibold hover:bg-[var(--primary-button-hover)] transition duration-300"
+                onClick={() => window.location.href = '/login'}
+            >
+                Login
+            </button>
+            <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
+                Don't a have an account? <a href="/register" className="underline">Register</a> here.
+            </p>
         </div>
     )
     return (
@@ -58,6 +79,12 @@ const ProfilePopup = ({ username, rating, email, avgCpm, avgAccuracy, loggedOn }
             <div className="mb-2">
                 <span style={{ color: 'var(--label)' }}>AvgAccuracy:</span> {avgAccuracy || 0}
             </div>
+            <button
+                className="w-full py-3 rounded-xl bg-[var(--primary-button)] text-[var(--primary-button-text)] font-semibold hover:bg-[var(--primary-button-hover)] transition duration-300"
+                onClick={logout}
+            >
+                Logout
+            </button>
         </div>
     );
 };
