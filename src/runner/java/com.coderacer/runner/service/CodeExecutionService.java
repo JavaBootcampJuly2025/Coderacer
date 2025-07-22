@@ -28,6 +28,9 @@ public class CodeExecutionService {
     @Value("${code.execution.docker.cpu:0.2}")
     private String dockerCpuLimit;
 
+    @Value("${code.execution.docker.seccomp-profile:}")
+    private String seccompProfilePath;
+
     public ExecutionResult compileAndRun(String javaCode, List<Integer> inputData) {
         if (useDocker && isDockerAvailable()) {
             return executeCode(javaCode, inputData, true);
@@ -102,7 +105,7 @@ public class CodeExecutionService {
     }
 
     private Process createDockerCompileProcess(Path tempDir, String className) throws IOException {
-        return new ProcessBuilder(
+        List<String> cmd = new ArrayList<>(Arrays.asList(
                 "docker", "run", "--rm",
                 "--memory=256m", "--memory-swap=256m",
                 "--cpus=0.5",
@@ -113,12 +116,20 @@ public class CodeExecutionService {
                 "--cap-drop=ALL",
                 "--pids-limit=16",
                 "--ulimit", "nofile=128:128",
-                "-v", tempDir.toAbsolutePath() + ":/workspace", // Keep writable for compilation
+                "-v", tempDir.toAbsolutePath() + ":/workspace",
                 "-w", "/workspace",
                 "openjdk:11-jdk-slim",
                 "sh", "-c", "timeout " + EXECUTION_TIMEOUT_SECONDS + "s javac " + className + ".java"
-        ).redirectErrorStream(true).start();
+        ));
+
+        String seccompPath = getSeccompProfileAbsolutePath();
+        if (seccompPath != null) {
+            cmd.addAll(Arrays.asList("--security-opt", "seccomp=" + seccompPath));
+        }
+
+        return new ProcessBuilder(cmd).redirectErrorStream(true).start();
     }
+
 
     private Process createDirectCompileProcess(Path tempDir, String className) throws IOException {
         return new ProcessBuilder("javac", className + ".java")
@@ -183,18 +194,27 @@ public class CodeExecutionService {
         List<String> runCommand = new ArrayList<>(Arrays.asList(
                 "docker", "run", "--rm",
                 "--memory=" + dockerMemoryLimit,
-                "--memory-swap=" + dockerMemoryLimit, // Prevent swap usage
+                "--memory-swap=" + dockerMemoryLimit,
                 "--cpus=" + dockerCpuLimit,
-                "--network=none", // No network access
-                "--read-only", // Read-only root filesystem
-                "--tmpfs", "/tmp:exec,size=10m,mode=1777", // Limited tmp space
-                "--security-opt", "no-new-privileges", // Prevent privilege escalation
-                "--cap-drop=ALL", // Drop all capabilities
-                "--pids-limit=32", // Limit number of processes
-                "--ulimit", "nofile=64:64", // Limit open files
-                "--ulimit", "nproc=16:16", // Limit processes
-                "-v", tempDir.toAbsolutePath() + ":/workspace:ro", // Read-only mount
-                "-w", "/tmp" // Set working directory to writable tmp
+                "--network=none",
+                "--read-only",
+                "--tmpfs", "/tmp:exec,size=10m,mode=1777",
+                "--security-opt", "no-new-privileges",
+                "--cap-drop=ALL",
+                "--pids-limit=32",
+                "--ulimit", "nofile=64:64",
+                "--ulimit", "nproc=16:16"
+        ));
+
+        // Add seccomp profile if configured
+        String seccompPath = getSeccompProfileAbsolutePath();
+        if (seccompPath != null) {
+            runCommand.addAll(Arrays.asList("--security-opt", "seccomp=" + seccompPath));
+        }
+
+        runCommand.addAll(Arrays.asList(
+                "-v", tempDir.toAbsolutePath() + ":/workspace:ro",
+                "-w", "/tmp"
         ));
 
         if (inputData != null && !inputData.isEmpty()) {
@@ -319,5 +339,18 @@ public class CodeExecutionService {
     // Helper class to track timeout state
     private static class ExecutionContext {
         boolean wasKilledByTimeout = false;
+    }
+
+    // Helper class to get seccomp.json path
+    private String getSeccompProfileAbsolutePath() {
+        if (seccompProfilePath == null || seccompProfilePath.trim().isEmpty()) {
+            return null;
+        }
+        Path path = Paths.get(seccompProfilePath.trim());
+        if (!path.isAbsolute()) {
+            // If relative, resolve against project directory or working directory dynamically
+            path = Paths.get(System.getProperty("user.dir")).resolve(path).normalize();
+        }
+        return path.toAbsolutePath().toString();
     }
 }
