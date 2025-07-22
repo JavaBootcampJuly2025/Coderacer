@@ -1,40 +1,39 @@
 // src/components/Leaderboard.jsx
-import React, {useState} from 'react';
+import React from 'react';
 import '../App.css';
-import { useEffect } from 'react';
-import {getTop} from "../services/apiService";
 import colors from '../styles/colors'; // Import colors
 
-const Leaderboard = () => {
-    const [leaderboard, setLeaderboard] = useState([]);
-    useEffect(() => {
-        async function loadLeaderboard() {
-            try {
-                const response = await getTop();
-                setLeaderboard(response);
-            } catch (error) {
+const Leaderboard = ({ type }) => {
+    const leaderboardTypes = ['easy', 'medium', 'hard'];
+    const selectedType = leaderboardTypes.includes(type) ? type : 'easy';
 
-            }
-        }
-
-        loadLeaderboard();
-    }, []);
+    const leaderboardData = [
+        { rank: 1, name: 'Player1', score: 100 },
+        { rank: 2, name: 'Player2', score: 85 },
+        { rank: 3, name: 'Player3', score: 70 },
+        { rank: 4, name: 'Player4', score: 60 },
+        { rank: 5, name: 'Player5', score: 50 },{ rank: 1, name: 'Player1', score: 100 },
+        { rank: 2, name: 'Player2', score: 85 },
+        { rank: 3, name: 'Player3', score: 70 },
+        { rank: 4, name: 'Player4', score: 60 },
+        { rank: 5, name: 'Player5', score: 50 },
+    ];
 
     return (
         <div className="w-[300px] h-[705px] bg-[var(--leaderboard-bg)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
                 <span className="text-[var(--accent)] text-5xl font-montserrat font-light">
-                    Top 10
+                    {selectedType}
                 </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">
-                {leaderboard.map((entry, index) => (
+                {leaderboardData.map((entry) => (
                     <div
-                        key={entry.id}
+                        key={entry.rank}
                         className="flex justify-between items-center py-2 border-b border-[var(--border-gray)]"
                     >
-                        <span className="text-[var(--text)] text-sm font-montserrat">{index + 1}. {entry.username}</span>
-                        <span className="text-[var(--text)] text-sm font-montserrat">{entry.matchmakingRating}</span>
+                        <span className="text-[var(--text)] text-sm font-montserrat">{entry.rank}. {entry.name}</span>
+                        <span className="text-[var(--text)] text-sm font-montserrat">{entry.score}</span>
                     </div>
                 ))}
             </div>

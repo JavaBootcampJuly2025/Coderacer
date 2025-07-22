@@ -5,6 +5,12 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// Fetch all accounts
+export const getAllAccounts = async () => {
+    const response = await api.get('/api/accounts');
+    return response.data;
+};
+
 // Fetch account by ID
 export const getAccountById = async (id, authToken) => {
     const response = await api.get(`/api/accounts/${id}`, {
@@ -62,11 +68,5 @@ export const getRandomLevelWithParameters = async (language, difficulty) => {
             difficulty,
         }
     });
-    return response.data;
-};
-
-// Get top-rated accounts
-export const getTop = async () => {
-    const response = await api.get('/api/leaderboard/top');
     return response.data;
 };
