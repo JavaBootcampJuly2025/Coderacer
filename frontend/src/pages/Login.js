@@ -70,6 +70,9 @@ function Login() {
                         >
                             Login
                         </button>
+                        <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
+                            Don't a have an account? <a href="/register" className="underline">Register</a> here.
+                        </p>
                     </form>
                     {message && (
                         <p className={`mt-4 text-center ${messageColor}`}>{message}</p>
