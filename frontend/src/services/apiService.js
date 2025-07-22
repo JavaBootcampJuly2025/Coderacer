@@ -12,14 +12,23 @@ export const getAllAccounts = async () => {
 };
 
 // Fetch account by ID
-export const getAccountById = async id => {
-    const response = await api.get(`/api/accounts/${id}`);
+export const getAccountById = async (id, authToken) => {
+    const response = await api.get(`/api/accounts/${id}`, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
     return response.data;
 };
-
 // Create a new account
 export const createAccount = async accountData => {
     const response = await api.post('/api/accounts', accountData);
+    return response.data;
+};
+
+// Login into an account
+export const login = async loginData => {
+    const response = await api.post('/api/accounts/login', loginData);
     return response.data;
 };
 
@@ -30,8 +39,12 @@ export const getAllLevels = async () => {
 };
 
 // Create a new level session
-export const createLevelSession = async sessionData => {
-    const response = await api.post('/api/v1/level-sessions', sessionData);
+export const createLevelSession = async (sessionData, authToken) => {
+    const response = await api.post('/api/v1/level-sessions', sessionData, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });;
     return response.data;
 };
 
@@ -44,5 +57,16 @@ export const getAccountMetrics = async accountId => {
 // Get level by id
 export const getLevelByid = async id => {
     const response = await api.get(`/api/levels/${id}`);
+    return response.data;
+};
+
+// Get a random level with parameters
+export const getRandomLevelWithParameters = async (language, difficulty) => {
+    const response = await api.get('/api/levels/random', {
+        params: {
+            language,
+            difficulty,
+        }
+    });
     return response.data;
 };

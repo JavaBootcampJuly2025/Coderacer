@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTheme } from '../styles/ThemeContext';
+import useAccountInfo from '../hooks/useAccountInfo';
 import Title from './ui/Title';
 import { ReactComponent as Logo } from '../assets/icon.svg';
 import { ReactComponent as SunIcon } from '../assets/sun.svg';
@@ -10,6 +11,7 @@ import { Link } from 'react-router-dom';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
+    const { username, rating } = useAccountInfo(); // Access account info if logged in
 
     // Toggle between light and dark themes
     const toggleTheme = () => {
@@ -18,6 +20,8 @@ const Header = () => {
 
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
+            <text style={{color: "white"}}>{username}</text>
+            <text style={{color: "white"}}>{rating}</text>
             <Link to="/home" className="w-64 flex flex-row items-center space-x-3 hover:opacity-80 transition">
                 <Logo className="logo" alt="Coderacer logo" />
                 <Title />

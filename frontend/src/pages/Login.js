@@ -1,27 +1,47 @@
+import { login } from "../services/apiService";
+import { useState } from 'react';
+
 function Login() {
+    const [message, setMessage] = useState("");
+    const [messageColor, setMessageColor] = useState("");
+
     const submit = async (e) => {
         e.preventDefault();
-    };
 
+        const form = e.target;
+        const loginEnter = {
+            username: form.username.value,
+            password: form.password.value,
+        };
+
+        try {
+            const response = await login(loginEnter);
+            setMessageColor("green");
+            setMessage("login succesful redirecting to home");
+            localStorage.setItem('loginToken', response.token);
+            localStorage.setItem('loginId', response.id);
+
+            setTimeout(() => {
+                window.location.href = "/";
+            }, 1000);
+        } catch (error) {
+            setMessageColor("red");
+            setMessage(error.response?.data?.message);
+        }
+    };
     return (
         <div className="home-wrapper">
             <div className="content-glass">
                 <h1 className="header">Login</h1>
                 <form onSubmit={submit}>
-                    {/*<label className="label" htmlFor="email">*/}
-                    {/*    Email*/}
-                    {/*</label>*/}
                     <input
                         className="inputForm"
-                        type="email"
-                        id="email"
-                        name="email"
-                        placeholder="Enter your email"
+                        type="text"
+                        id="username"
+                        name="username"
+                        placeholder="Enter your username"
                         required
                     />
-                    {/*<label className="label" htmlFor="password">*/}
-                    {/*    Password*/}
-                    {/*</label>*/}
                     <input
                         className="inputForm"
                         type="password"
@@ -30,10 +50,8 @@ function Login() {
                         placeholder="Enter your password"
                         required
                     />
-
-
-
                     <input className="action" type="submit" value="Login" />
+                    <text className="message" style={{color: messageColor}}>{message}</text>
                 </form>
             </div>
         </div>

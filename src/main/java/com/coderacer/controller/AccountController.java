@@ -53,7 +53,7 @@ public class AccountController {
 
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
-    public ResponseEntity<String> attemptLogin(@RequestBody @Valid AccountLoginDTO accountLoginDTO) {
+    public ResponseEntity<LoginResponseDTO> attemptLogin(@RequestBody @Valid AccountLoginDTO accountLoginDTO) {
         return ResponseEntity.ok(accountService.attemptLogin(accountLoginDTO));
     }
 

@@ -9,6 +9,7 @@ const useLevelLogic = () => {
         codeSnippet,
         userInput,
         endTime,
+        startTime,
         totalTyped,
         mistakes,
         speedLog,
@@ -17,7 +18,7 @@ const useLevelLogic = () => {
         calculateCPM,
         calculateAccuracy,
         focusContainer,
-    } = useTypingTest(Lorem);
+    } = useTypingTest(useLocation().state?.level.codeSnippet);
 
     const { saveSession } = useLevelContext() || {};
 
@@ -28,6 +29,7 @@ const useLevelLogic = () => {
         state,
         codeSnippet,
         userInput,
+        startTime,
         endTime,
         totalTyped,
         mistakes,

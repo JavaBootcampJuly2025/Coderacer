@@ -83,7 +83,7 @@
 .inputForm {
     margin-top: 10px;
     font-size: 20px;
-    color: var(--text); /* Added for consistency */
+    color: black;
 }
 
 .message {
@@ -144,4 +144,9 @@ footer {
     text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); /* Softer shadow for subtlety */
     margin-bottom: 1rem; /* Consistent with .header */
     text-align: center; /* Align with chart's centered content */
+}
+
+.message {
+    font-size: 35px;
+    font-weight: bold;
 }

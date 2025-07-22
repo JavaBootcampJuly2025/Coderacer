@@ -1,7 +1,9 @@
 import React from 'react';
+import { getRandomLevelWithParameters } from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import LevelSwitch from './ui/LevelSwitch';
 import LanguageGrid from './LanguageGrid';
+import { useState } from 'react';
 import { useTheme } from '../styles/ThemeContext';
 
 // Configuration constants
@@ -37,9 +39,21 @@ const PANEL_CONFIG = {
 };
 
 const RightPanel = () => {
+    const [selectedLanguage, setSelectedLanguage] = useState(null);
+    const [selectedDifficulty, setSelectedDifficulty] = useState('MEDIUM');
+
     const navigate = useNavigate();
 
-    const handlePlayClick = () => navigate('/level?id=1');
+    const handlePlayClick = async () => {
+        try {
+            console.log(selectedLanguage);
+            const levelData = await getRandomLevelWithParameters(selectedLanguage, selectedDifficulty);
+            navigate("/level", { state: { level: levelData } });
+        } catch (error) {
+            
+        }
+    };
+                   
     const handleThinkerClick = () => navigate('/GameMode');
 
     const buttons = [
@@ -58,7 +72,14 @@ const RightPanel = () => {
                 flex flex-col
             `}
         >
-            <LevelSwitch />
+            <LevelSwitch 
+                selectedDifficulty={selectedDifficulty}
+                setSelectedDifficulty={setSelectedDifficulty}
+            />
+            <LanguageGrid
+                selectedLanguage={selectedLanguage}
+                setSelectedLanguage={setSelectedLanguage}
+            />
             <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
                 <div className={`flex justify-center space-x-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
