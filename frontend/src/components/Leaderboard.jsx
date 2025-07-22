@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import React from 'react';
 import '../App.css';
 import { useEffect } from 'react';
 import {getTop} from "../services/apiService";
@@ -31,6 +30,7 @@ const Leaderboard = () => {
             <div className="h-24 flex items-center justify-center">
                 <span className="text-[var(--accent)] text-5xl font-montserrat font-light">
                     Top 10
+                </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">
                 {leaderboard.map((entry, index) => (
