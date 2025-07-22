@@ -1,9 +1,9 @@
-// src/components/Leaderboard.jsx
 import React, {useState} from 'react';
+import React from 'react';
 import '../App.css';
 import { useEffect } from 'react';
 import {getTop} from "../services/apiService";
-import colors from '../styles/colors'; // Import colors
+import colors from '../styles/colors';
 
 const Leaderboard = () => {
     const [leaderboard, setLeaderboard] = useState([]);
@@ -19,13 +19,18 @@ const Leaderboard = () => {
 
         loadLeaderboard();
     }, []);
+    const titleConfig = {
+        color: 'var(--accent)',
+        font: 'montserrat',
+        boldness: 'bold',
+        size: '4xl'
+    };
 
     return (
-        <div className="w-[300px] h-[705px] bg-[var(--border-gray)] rounded-3xl flex flex-col">
+        <div className="w-[300px] h-[705px] bg-[var(--inbetween)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
                 <span className="text-[var(--accent)] text-5xl font-montserrat font-light">
                     Top 10
-                </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">
                 {leaderboard.map((entry, index) => (

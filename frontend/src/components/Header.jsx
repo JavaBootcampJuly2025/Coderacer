@@ -20,12 +20,12 @@ const Header = () => {
 
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
-            <text style={{color: "white"}}>{username}</text>
-            <text style={{color: "white"}}>{rating}</text>
             <Link to="/home" className="w-64 flex flex-row items-center space-x-3 hover:opacity-80 transition">
                 <Logo className="logo" alt="Coderacer logo" />
                 <Title />
             </Link>
+            {/*<text style={{color: "white"}}>username</text>*/}
+            {/*<text style={{color: "white"}}>rating</text>*/}
             <div className="flex justify-center space-x-5">
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
