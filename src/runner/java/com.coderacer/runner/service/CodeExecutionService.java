@@ -12,6 +12,19 @@ import java.util.concurrent.TimeUnit;
 /**
  * Refactored service for compiling and executing Java code with optional Docker isolation.
  * Now automatically wraps standalone solution snippets in the template.
+ *
+ * Example working request:
+ * {
+ *   "code": "static void solution(int n, int[] arr) { System.out.println(\"hello world\"); }",
+ *   "inputData": [1, 23, 2]
+ * }
+ *
+ * OR
+ *
+ * {
+ *   "code": "static void solution(int n, int[] arr) { System.out.println(n); }",
+ *   "inputData": [1, 23, 2]
+ * }
  */
 @Service
 public class CodeExecutionService {
@@ -34,11 +47,11 @@ public class CodeExecutionService {
     @Value("${code.execution.use-docker:true}")
     private boolean useDocker;
     @Value("${code.execution.docker.memory:64m}")
-    private String dockerMemoryLimit;
+    private String dockerMemoryLimit= "64m";
     @Value("${code.execution.docker.cpu:0.2}")
-    private String dockerCpuLimit;
+    private String dockerCpuLimit = "0.2";
     @Value("${code.execution.docker.seccomp-profile:}")
-    private String seccompProfilePath;
+    private String seccompProfilePath = "src/runner/java/com.coderacer/runner/security/seccomp.json";
 
     /**
      * Default entry: always wrap snippet in template so standalone methods compile.
