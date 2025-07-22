@@ -28,17 +28,16 @@ public class CodeExecutionService {
     @Value("${code.execution.docker.cpu:0.2}")
     private String dockerCpuLimit;
 
-    // Overloaded in case of need for execution without specific input data passed
-    public ExecutionResult compileAndRun(String javaCode) {
-        return compileAndRun(javaCode, null);
-    }
-
     public ExecutionResult compileAndRun(String javaCode, List<Integer> inputData) {
         if (useDocker && isDockerAvailable()) {
             return executeCode(javaCode, inputData, true);
         } else {
             return executeCode(javaCode, inputData, false);
         }
+    }
+
+    public ExecutionResult compileAndRun(String javaCode) {
+        return compileAndRun(javaCode, null);
     }
 
     private ExecutionResult executeCode(String javaCode, List<Integer> inputData, boolean withDocker) {
@@ -105,11 +104,19 @@ public class CodeExecutionService {
     private Process createDockerCompileProcess(Path tempDir, String className) throws IOException {
         return new ProcessBuilder(
                 "docker", "run", "--rm",
-                "--memory=128m", "--cpus=0.5",
+                "--memory=256m", "--memory-swap=256m",
+                "--cpus=0.5",
                 "--network=none",
-                "-v", tempDir.toAbsolutePath() + ":/workspace",
+                "--read-only",
+                "--tmpfs", "/tmp:exec,size=50m,mode=1777",
+                "--security-opt", "no-new-privileges",
+                "--cap-drop=ALL",
+                "--pids-limit=16",
+                "--ulimit", "nofile=128:128",
+                "-v", tempDir.toAbsolutePath() + ":/workspace", // Keep writable for compilation
+                "-w", "/workspace",
                 "openjdk:11-jdk-slim",
-                "javac", "/workspace/" + className + ".java"
+                "sh", "-c", "timeout " + EXECUTION_TIMEOUT_SECONDS + "s javac " + className + ".java"
         ).redirectErrorStream(true).start();
     }
 
@@ -176,20 +183,33 @@ public class CodeExecutionService {
         List<String> runCommand = new ArrayList<>(Arrays.asList(
                 "docker", "run", "--rm",
                 "--memory=" + dockerMemoryLimit,
+                "--memory-swap=" + dockerMemoryLimit, // Prevent swap usage
                 "--cpus=" + dockerCpuLimit,
-                "--network=none",
-                "-v", tempDir.toAbsolutePath() + ":/workspace"
+                "--network=none", // No network access
+                "--read-only", // Read-only root filesystem
+                "--tmpfs", "/tmp:exec,size=10m,mode=1777", // Limited tmp space
+                "--security-opt", "no-new-privileges", // Prevent privilege escalation
+                "--cap-drop=ALL", // Drop all capabilities
+                "--pids-limit=32", // Limit number of processes
+                "--ulimit", "nofile=64:64", // Limit open files
+                "--ulimit", "nproc=16:16", // Limit processes
+                "-v", tempDir.toAbsolutePath() + ":/workspace:ro", // Read-only mount
+                "-w", "/tmp" // Set working directory to writable tmp
         ));
 
         if (inputData != null && !inputData.isEmpty()) {
             runCommand.addAll(Arrays.asList(
                     "openjdk:11-jre-slim",
-                    "sh", "-c", "cd /workspace && java " + className + " < input.txt"
+                    "sh", "-c",
+                    "cp /workspace/" + className + ".class /tmp/ && " +
+                            "timeout " + EXECUTION_TIMEOUT_SECONDS + "s java " + className + " < /workspace/input.txt"
             ));
         } else {
             runCommand.addAll(Arrays.asList(
                     "openjdk:11-jre-slim",
-                    "java", "-cp", "/workspace", className
+                    "sh", "-c",
+                    "cp /workspace/" + className + ".class /tmp/ && " +
+                            "timeout " + EXECUTION_TIMEOUT_SECONDS + "s java " + className
             ));
         }
 
