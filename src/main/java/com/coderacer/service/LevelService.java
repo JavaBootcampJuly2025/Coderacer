@@ -62,6 +62,17 @@ public class LevelService {
         return LevelDTO.fromEntity(random);
     }
 
+    @Transactional(readOnly = true)
+    public LevelDTO getRandomLevel(Difficulty difficulty) {
+        List<Level> list = levelRepository.findByDifficulty(difficulty);
+        if (list.isEmpty()) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "No levels found for " + difficulty);
+        }
+        Level random = list.get(ThreadLocalRandom.current().nextInt(list.size()));
+        return LevelDTO.fromEntity(random);
+    }
+
     @Transactional
     public LevelDTO createLevel(LevelModifyDTO dto) {
         Level level = new Level();

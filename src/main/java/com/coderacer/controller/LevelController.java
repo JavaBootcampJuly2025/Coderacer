@@ -34,13 +34,13 @@ public class LevelController {
         return ResponseEntity.ok(levelService.getAllLevels());
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/language/{language}")
     public ResponseEntity<List<LevelDTO>> getByLanguage(@PathVariable ProgrammingLanguage language) {
         return ResponseEntity.ok(levelService.getLevelsByLanguage(language));
     }
 
-    @PreAuthorize("permitAll()")
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/difficulty/{difficulty}")
     public ResponseEntity<List<LevelDTO>> getByDifficulty(@PathVariable Difficulty difficulty) {
         return ResponseEntity.ok(levelService.getLevelsByDifficulty(difficulty));
@@ -52,6 +52,12 @@ public class LevelController {
             @RequestParam ProgrammingLanguage language,
             @RequestParam Difficulty difficulty) {
         return ResponseEntity.ok(levelService.getRandomLevel(language, difficulty));
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/random/difficulty/{difficulty}")
+    public ResponseEntity<LevelDTO> getRandomLevel(@PathVariable Difficulty difficulty) {
+        return ResponseEntity.ok(levelService.getRandomLevel(difficulty));
     }
 
     @PreAuthorize("hasRole('ADMIN')")

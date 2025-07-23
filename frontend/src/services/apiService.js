@@ -86,6 +86,12 @@ export const getRandomLevelWithParameters = async (language, difficulty) => {
     return response.data;
 };
 
+// Get a random level with difficulty
+export const getRandomLevelWithDifficulty = async (difficulty) => {
+    const response = await api.get(`/api/levels/random/difficulty/${difficulty}`);
+    return response.data;
+};
+
 // Fetch account gameplay metrics
 export const getGameplayMetrics = async (id, authToken) => {
     const response = await api.get(`/api/metrics/gameplayMetrics/${id}`, {
