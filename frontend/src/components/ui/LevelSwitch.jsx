@@ -7,7 +7,7 @@ const CONFIG = {
     panel: {
         width: '450px',
         height: '12',
-        backgroundColor: 'var(--black)',
+        backgroundColor: 'var(--background)',
         borderRadius: '12px 12px 0 0', // Rounded top corners, square bottom
     },
     slider: {
@@ -63,7 +63,7 @@ const LevelSwitch = ({ selectedDifficulty, setSelectedDifficulty }) => {
                 <button
                     key={option}
                     onClick={() => setSelectedDifficulty(option)}
-                    className={`relative flex-1 h-full flex items-center justify-center text-[${CONFIG.button.textColor}] font-${CONFIG.button.font} text-${CONFIG.button.fontSize} font-${CONFIG.button.fontWeight} z-${CONFIG.button.zIndex}`}
+                    className={`level-switch-button relative flex-1 h-full flex items-center justify-center text-[${CONFIG.button.textColor}] font-${CONFIG.button.font} text-${CONFIG.button.fontSize} font-${CONFIG.button.fontWeight} z-${CONFIG.button.zIndex}`}
                 >
                     <div
                         className={`absolute inset-0 opacity-0 hover:opacity-100 ${CONFIG.hoverOverlay.transition} ${option === selectedDifficulty ? 'pointer-events-none' : ''}`}
