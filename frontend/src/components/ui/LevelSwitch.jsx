@@ -5,9 +5,9 @@ import { useTheme } from '../../styles/ThemeContext';
 const CONFIG = {
     cornerRadius: 12,
     panel: {
-        width: '450px',
+        width: '452px',
         height: '12',
-        backgroundColor: 'var(--background)',
+        backgroundColor: 'var(--black)',
         borderRadius: '12px 12px 0 0', // Rounded top corners, square bottom
     },
     slider: {

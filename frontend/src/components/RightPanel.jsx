@@ -9,9 +9,9 @@ import { useTheme } from '../styles/ThemeContext';
 // Configuration constants
 const PANEL_CONFIG = {
     panel: {
-        width: '450px',
+        width: '452px',
         height: '300px',
-        borderRadius: '12px',
+        borderRadius: '15px',
         background: 'var(--inbetween)',
         paddingX: '5',
     },

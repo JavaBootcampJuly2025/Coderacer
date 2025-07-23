@@ -44,24 +44,24 @@ const themes = {
     },
     mentor: {
         defaultChar: '#888',
-        correctChar: '#e3e1c1',
+        correctChar: '#ffcb25',
         incorrectChar: '#cd0b0b',
-        unwrittenChar: '#806850', // Added for unwritten text
+        unwrittenChar: '#395b9f', // Added for unwritten text
         caret: '#ffbe26',
-        primaryButton: '#806850',
-        primaryButtonHover: '#8c745f',
-        background: '#ff6900',
-        text: '#f8e5d3',
-        accent: '#f8e5d3',
+        primaryButton: '#2e5295',
+        primaryButtonHover: '#395b9f',
+        background: '#040e40',
+        text: '#ffcb25',
+        accent: '#ffcb25',
         leaderboardBg: 'rgba(0, 0, 0, 0.25)',
         border: 'rgba(255, 255, 255, 1)',
         footerText: '#ccc',
         borderGray: '#988a80',
-        inbetween: '#754008',
+        inbetween: '#12205e',
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#50443a'
+        sliderhover: '#212f6a'
     },
     light: {
         defaultChar: '#aaa',
