@@ -9,14 +9,16 @@ import { ReactComponent as UserIcon } from '../assets/user.svg';
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
 import { Link } from 'react-router-dom';
 import ProfilePopup from './ProfilePopup';
+import SettingsPopup from './SettingsPopup';
 
 const Header = () => {
     const { theme, applyTheme } = useTheme();
-    const { username, email, rating, avgCpm, avgAccuracy, loggedOn } = useAccountInfo();
-    const [showUserMenu, setShowUserMenu] = useState(false);
+    const { username, email, rating, avgCpm, avgAccuracy, loggedOn, updateAccountInfo } = useAccountInfo();
+    const [selectedPopup, setSelectedPopup] = useState(null);
 
-    const toggleUserMenu = () => {
-        setShowUserMenu(prev => !prev);
+    const selectPopup = (newPopup) => {
+        if(selectedPopup === newPopup) setSelectedPopup(null);
+        else setSelectedPopup(newPopup);
     };
 
     const toggleTheme = () => {
@@ -41,20 +43,27 @@ const Header = () => {
                 </button>
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
-                    onClick={toggleUserMenu}
+                    onClick={() => selectPopup("Profile")}
                     title="User Info"
                 >
                     <UserIcon className="theme-icon" alt="Profile" />
                 </button>
 
-                {showUserMenu && (
-                    <ProfilePopup username={username} rating={rating} email={email} avgCpm={avgCpm} avgAccuracy={avgAccuracy} loggedOn={loggedOn} />
+                {(selectedPopup === "Profile") && (
+                    <ProfilePopup username={username} rating={rating} email={email} avgCpm={avgCpm}
+                                  avgAccuracy={avgAccuracy} loggedOn={loggedOn} updateAccountInfo={updateAccountInfo} />
                 )}
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
+                    onClick={() => selectPopup("Settings")}
+                    title="Settings"
                 >
                     <SettingsIcon className="theme-icon" alt="Settings"/>
                 </button>
+
+                {(selectedPopup === "Settings") && (
+                    <SettingsPopup loggedOn={loggedOn} updateAccountInfo={updateAccountInfo} />
+                )}
             </div>
         </div>
     );
