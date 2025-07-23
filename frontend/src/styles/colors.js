@@ -42,6 +42,27 @@ const themes = {
         black: 'rgba(0,0,0,0.5)',
         sliderhover: '#50443a'
     },
+    mentor: {
+        defaultChar: '#888',
+        correctChar: '#e3e1c1',
+        incorrectChar: '#cd0b0b',
+        unwrittenChar: '#806850', // Added for unwritten text
+        caret: '#ffbe26',
+        primaryButton: '#806850',
+        primaryButtonHover: '#8c745f',
+        background: '#988a80',
+        text: '#f8e5d3',
+        accent: '#f8e5d3',
+        leaderboardBg: 'rgba(0, 0, 0, 0.25)',
+        border: 'rgba(255, 255, 255, 1)',
+        footerText: '#ccc',
+        borderGray: '#988a80',
+        inbetween: '#715f4d',
+        light: '#164270',
+        transparent: 'rgba(0,0,0,0)',
+        black: 'rgba(0,0,0,0.5)',
+        sliderhover: '#50443a'
+    },
     light: {
         defaultChar: '#aaa',
         correctChar: '#78095a',

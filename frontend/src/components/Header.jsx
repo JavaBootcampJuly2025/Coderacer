@@ -22,14 +22,14 @@ const Header = () => {
     };
 
     const toggleTheme = () => {
-        const themes = ['light', 'dark', 'brown'];
+        const themes = ['light', 'dark', 'brown', 'mentor'];
         const currentIndex = themes.indexOf(theme);
         const nextIndex = (currentIndex + 1) % themes.length;
         applyTheme(themes[nextIndex]);
     };
 
     const getNextThemeLabel = () => {
-        const themes = ['light', 'dark', 'brown'];
+        const themes = ['light', 'dark', 'brown', 'mentor'];
         const currentIndex = themes.indexOf(theme);
         const nextIndex = (currentIndex + 1) % themes.length;
         return themes[nextIndex];
