@@ -19,45 +19,38 @@ const UserMetrics = () => {
     }
 
     return (
-        <div className="w-[280px] h-[180px] bg-[var(--inbetween)] border border-[var(--border-gray)] rounded-2xl shadow-lg overflow-hidden">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--primary-button)] p-3">
-                <h3 className="text-sm font-bold text-white text-center tracking-wide">
+        <div className="w-[320px] h-[300px] bg-[var(--inbetween)] border border-[var(--border-gray)] rounded-2xl shadow-lg flex flex-col">
+            <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--primary-button)] p-4 rounded-t-2xl">
+                <h3 className="text-base font-bold text-white text-center tracking-wide">
                     📊 YOUR STATS
                 </h3>
             </div>
 
-            {/* Content */}
-            <div className="p-4 h-full flex flex-col justify-center">
-                <div className="space-y-3">
-                    {/* Average CPM */}
-                    <div className="flex items-center justify-between p-2 bg-[var(--light)] rounded-lg border border-[var(--border-gray)]">
-                        <div className="flex flex-col">
-                            <span className="text-xs text-[var(--text)] opacity-70 font-medium">
-                                AVG CPM
-                            </span>
-                            <span className="text-xl font-bold text-[var(--accent)] font-mono">
-                                {avgCpm ? avgCpm.toFixed(0) : '0'}
-                            </span>
-                        </div>
-                        <div className="text-lg">⚡</div>
+            <div className="p-6 flex-1 flex flex-col justify-center space-y-6">
+                <div className="flex items-center justify-between p-4 bg-[var(--light)] rounded-lg border border-[var(--border-gray)]">
+                    <div className="flex flex-col">
+                        <span className="text-sm text-[var(--text)] opacity-80 font-medium">
+                            AVG CPM
+                        </span>
+                        <span className="text-2xl font-bold text-[var(--accent)] font-mono">
+                            {avgCpm ? avgCpm.toFixed(0) : '0'}
+                        </span>
                     </div>
-
-                    {/* Average Accuracy */}
-                    <div className="flex items-center justify-between p-2 bg-[var(--light)] rounded-lg border border-[var(--border-gray)]">
-                        <div className="flex flex-col">
-                            <span className="text-xs text-[var(--text)] opacity-70 font-medium">
+                    <div className="text-2xl">⚡</div>
+                    </div>
+                        <div className="flex items-center justify-between p-4 bg-[var(--light)] rounded-lg border border-[var(--border-gray)]">
+                            <div className="flex flex-col">
+                            <span className="text-sm text-[var(--text)] opacity-80 font-medium">
                                 ACCURACY
                             </span>
-                            <span className="text-xl font-bold text-[var(--accent)] font-mono">
-                                {avgAccuracy ? (avgAccuracy * 100).toFixed(1) : '0.0'}%
+                            <span className="text-2xl font-bold text-[var(--accent)] font-mono">
+                                {avgAccuracy ? avgAccuracy.toFixed(1) : '0.0'}%
                             </span>
-                        </div>
-                        <div className="text-lg">🎯</div>
+                            </div>
+                        <div className="text-2xl">🎯</div>
                     </div>
                 </div>
             </div>
-        </div>
     );
 };
 
