@@ -19,17 +19,18 @@ const Leaderboard = () => {
         loadLeaderboard();
     }, []);
     const titleConfig = {
-        color: 'var(--accent)',
+        textSize: '26px',
+        fontWeight: 'bold',
         font: 'montserrat',
-        boldness: 'bold',
-        size: '4xl'
+        letterSpacing: '0.15em',
+        textColor: 'var(--text)'
     };
 
     return (
         <div className="w-[300px] h-[705px] bg-[var(--inbetween)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
-                <span className="text-[var(--accent)] text-4xl font-montserrat font-medium">
-                    Leaderboard
+                <span className="text-[30px] font-montserrat font-bold tracking-[0.15em] text-[var(--text)]">
+                    TOP 10
                 </span>
             </div>
             <div className="flex-grow overflow-y-auto px-4">

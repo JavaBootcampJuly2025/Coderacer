@@ -21,7 +21,6 @@ const Header = () => {
         else setSelectedPopup(newPopup);
     };
 
-    // Toggle between light and dark themes
     const toggleTheme = () => {
         applyTheme(theme === 'light' ? 'dark' : 'light');
     };

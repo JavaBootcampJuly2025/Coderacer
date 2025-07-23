@@ -10,7 +10,7 @@ import { useTheme } from '../styles/ThemeContext';
 const PANEL_CONFIG = {
     panel: {
         width: '450px',
-        height: '270px',
+        height: '300px',
         borderRadius: '12px',
         background: 'var(--inbetween)',
         paddingX: '5',
@@ -20,7 +20,7 @@ const PANEL_CONFIG = {
         default: {
             width: '410px',
             height: '20',
-            textSize: '30px',
+            textSize: '26px',
             fontWeight: 'bold',
             font: 'montserrat',
             background: 'var(--primary-button)',
@@ -28,14 +28,8 @@ const PANEL_CONFIG = {
             textColor: 'var(--text)',
             borderRadius: 'full',
             transitionDuration: '200ms',
-            letterSpacing: '0.15em', // Added letter spacing
+            letterSpacing: '0.15em',
         },
-        // Individual button overrides (optional)
-        variants: {
-            Play: {},
-            Challenges: {},
-            Statistics: {},
-        }
     }
 };
 
@@ -51,16 +45,15 @@ const RightPanel = () => {
             const levelData = await getRandomLevelWithParameters(selectedLanguage, selectedDifficulty);
             navigate("/level", { state: { level: levelData } });
         } catch (error) {
-
+            console.error('Error loading level:', error);
         }
     };
 
     const handleThinkerClick = () => navigate('/GameMode');
 
     const buttons = [
-        // { label: 'Challenges', onClick: handleChallengesClick },
-        { label: 'THINKER', onClick: handleThinkerClick },
-        { label: 'SPEEDER', onClick: handlePlayClick },
+        { label: 'THINKER MODE', onClick: handleThinkerClick },
+        { label: 'SPEEDER MODE', onClick: handlePlayClick },
     ];
 
     return (
@@ -72,22 +65,18 @@ const RightPanel = () => {
                 bg-[${PANEL_CONFIG.panel.background}] 
                 flex flex-col
             `}
+            style={{
+                boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            }}
         >
             <LevelSwitch
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            {/*<LanguageGrid
-                selectedLanguage={selectedLanguage}
-                setSelectedLanguage={setSelectedLanguage}
-            />*/}
             <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
                 <div className={`flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
-                        const buttonConfig = {
-                            ...PANEL_CONFIG.buttons.default,
-                            ...PANEL_CONFIG.buttons.variants[label]
-                        };
+                        const buttonConfig = PANEL_CONFIG.buttons.default;
                         return (
                             <button
                                 key={index}
@@ -104,9 +93,14 @@ const RightPanel = () => {
                                     tracking-[${buttonConfig.letterSpacing}] 
                                     cursor-pointer 
                                     hover:bg-[${buttonConfig.hoverBackground}] 
-                                    transition-colors duration-${buttonConfig.transitionDuration}
+                                    transition-all duration-${buttonConfig.transitionDuration}
+                                    hover:shadow-lg
+                                    hover:scale-[1.02]
                                 `}
-                                style={{ fontSize: buttonConfig.textSize }} // Apply textSize as fontSize
+                                style={{
+                                    fontSize: buttonConfig.textSize,
+                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+                                }}
                                 onClick={onClick}
                             >
                                 {label}
