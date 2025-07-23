@@ -1,9 +1,16 @@
 import { createAccount } from '../services/apiService';
+import { useState } from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import { useTheme } from '../styles/ThemeContext';
 
 function Register() {
+  const { theme } = useTheme();
+  const [message, setMessage] = useState("");
+  const [messageColor, setMessageColor] = useState("");
+
   const submit = async (e) => {
     e.preventDefault();
-
     const form = e.target;
     const accountData = {
       email: form.email.value,
@@ -12,43 +19,65 @@ function Register() {
     };
 
     try {
-      const result = await createAccount(accountData);
+      await createAccount(accountData);
+      setMessageColor("text-green-400");
+      setMessage("Registration successful. Check your email to verify your account.");
     } catch (error) {
-      // Handle error appropriately (e.g., display error message)
+      setMessageColor("text-red-400");
+      setMessage(error.response?.data?.message || "Registration failed.");
     }
   };
 
   return (
-      <div className="home-wrapper">
-        <div className="content-glass">
-          <h1 className="header">Register</h1>
-          <form onSubmit={submit}>
-            <input
-                className="inputForm"
-                type="email"
-                id="email"
-                name="email"
-                placeholder="Enter your email"
-                required
-            />
-            <input
-                className="inputForm"
-                type="text"
-                id="username"
-                name="username"
-                placeholder="Enter your username"
-                required
-            />
-            <input
-                className="inputForm"
-                type="password"
-                id="password"
-                name="password"
-                placeholder="Enter your password"
-                required
-            />
-            <input className="action" type="submit" value="Register" />
-          </form>
+      <div className={`home-wrapper min-h-screen bg-[#13223A] flex flex-col items-center font-montserrat ${
+          theme === 'light' ? 'bg-white text-black' : 'bg-[#13223A] text-white'
+      }`}>
+        <div className="w-full h-[80px] border border-[#59000000]">
+          <Header />
+        </div>
+
+        <div className="flex-grow flex items-center justify-center py-12 w-full max-w-2xl">
+          <div className={`w-full p-10 rounded-2xl shadow-xl transition-colors duration-300 border-4 border-black-400 rounded-lg ${
+              theme === 'light' ? 'bg-gray-100' : 'bg-[#1C2B47]'
+          }`}>
+            <h2 className="text-2xl font-semibold mb-6 text-center text-[var(--accent)]">Create Your Account</h2>
+            <form onSubmit={submit} className="space-y-6">
+              <input
+                  className="w-full p-3 rounded-xl bg-[var(--input-bg)] text-[var(--text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  type="email"
+                  name="email"
+                  placeholder="Enter your email"
+                  required
+              />
+              <input
+                  className="w-full p-3 rounded-xl bg-[var(--input-bg)] text-[var(--text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  type="text"
+                  name="username"
+                  placeholder="Enter your username"
+                  required
+              />
+              <input
+                  className="w-full p-3 rounded-xl bg-[var(--input-bg)] text-[var(--text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                  type="password"
+                  name="password"
+                  placeholder="Enter your password"
+                  required
+              />
+              <button
+                  type="submit"
+                  className="w-full py-3 rounded-xl bg-[var(--primary-button)] text-[var(--primary-button-text)] font-semibold hover:bg-[var(--primary-button-hover)] transition duration-300"
+              >
+                Register
+              </button>
+            </form>
+            {message && (
+                <p className={`mt-4 text-center ${messageColor}`}>{message}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="w-full h-[80px] border border-[#59000000]">
+          <Footer />
         </div>
       </div>
   );

@@ -83,7 +83,7 @@
 .inputForm {
     margin-top: 10px;
     font-size: 20px;
-    color: var(--text); /* Added for consistency */
+    color: black;
 }
 
 .message {
@@ -95,6 +95,14 @@
 .logo {
     width: 200px;
     margin: 1rem 0 2rem 0;
+    color: var(--accent);
+}
+
+.theme-icon {
+    width: 29px;
+    height: 29px;
+    cursor: pointer;
+    color: var(--accent);
 }
 
 .header {
@@ -126,4 +134,23 @@ footer {
 
 .main-body {
     padding-left: 3rem;
+}
+
+.title {
+    font-size: 2rem; /* Slightly smaller than .header (3rem) for chart context */
+    font-weight: 700;
+    font-family: 'Montserrat', sans-serif;
+    color: var(--accent);
+    /*text-shadow: 0 0 8px rgba(255, 255, 255, 0.3); !* Softer shadow for subtlety *!*/
+    margin-bottom: 1rem; /* Consistent with .header */
+    text-align: center; /* Align with chart's centered content */
+}
+
+.message {
+    font-size: 35px;
+    font-weight: bold;
+}
+
+.strong-shadow {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); /* More intense and tighter shadow */
 }

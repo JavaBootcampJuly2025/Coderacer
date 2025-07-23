@@ -9,6 +9,7 @@ const useLevelLogic = () => {
         codeSnippet,
         userInput,
         endTime,
+        startTime,
         totalTyped,
         mistakes,
         speedLog,
@@ -20,18 +21,13 @@ const useLevelLogic = () => {
         focusContainer,
     } = useTypingTest(aaaaa);
 
-    // Safely access saveSession from context with fallback
-    const { saveSession = () => {} } = useLevelContext() || {};
-
-    // Save session data when endTime is set
-    if (endTime && speedLog && speedLog.length > 1) {
-        saveSession(speedLog, endTime);
-    }
+    const { saveSession } = useLevelContext() || {};
 
     return {
         state,
         codeSnippet,
         userInput,
+        startTime,
         endTime,
         totalTyped,
         mistakes,
@@ -42,7 +38,8 @@ const useLevelLogic = () => {
         calculateCPM,
         calculateAccuracy,
         focusContainer,
-    };
+        saveSession: () => saveSession(speedLog, endTime, totalTyped, mistakes, userInput, codeSnippet),
+};
 };
 
 export default useLevelLogic;

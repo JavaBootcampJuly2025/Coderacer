@@ -1,86 +1,134 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-const useTypingTest = (initialCodeSnippet) => {
+const useTypingTest = (initialCodeSnippet = '') => {
     const [codeSnippet, setCodeSnippet] = useState(initialCodeSnippet);
     const [userInput, setUserInput] = useState('');
     const [startTime, setStartTime] = useState(null);
     const [endTime, setEndTime] = useState(null);
     const [totalTyped, setTotalTyped] = useState(0);
     const [mistakes, setMistakes] = useState(0);
-    const [correctCharsCount, setCorrectCharsCount] = useState(0);
-    const speedLogRef =  useRef([]);
+    // const [correctCharsCount, setCorrectCharsCount] = useState(0);
+    const [speedLog, setSpeedLog] = useState([]);
     const containerRef = useRef(null);
+    const isCompleted = useRef(false);
+    const lastLoggedTime = useRef(0);
 
+    // Focus the container on mount
     useEffect(() => {
         if (containerRef.current) {
-            containerRef.current.focus();
-            const range = document.createRange();
-            const selection = window.getSelection();
-            if (containerRef.current.firstChild) {
-                range.setStart(containerRef.current.firstChild, 0);
-                range.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(range);
+            try {
+                containerRef.current.focus();
+                const range = document.createRange();
+                const selection = window.getSelection();
+                if (containerRef.current.firstChild) {
+                    range.setStart(containerRef.current.firstChild, 0);
+                    range.collapse(true);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
+            } catch (error) {
+                console.error('Error focusing container:', error);
             }
         }
     }, []);
 
     const handleKeyDown = (e) => {
-        if (endTime) return;
+        if (endTime || isCompleted.current || !codeSnippet) return;
 
         if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter' || e.key === 'Tab') {
             e.preventDefault();
 
             const now = Date.now();
             const elapsedSec = startTime ? (now - startTime) / 1000 : 0;
-            let newInput = userInput;
 
-            if (!startTime && userInput.length === 0) {
+            if (!startTime && userInput.length === 0 && e.key !== 'Backspace') {
                 setStartTime(now);
+                console.log('Start time set:', now);
             }
 
+            let newInput = userInput;
             if (e.key === 'Backspace') {
                 const lastIndex = userInput.length - 1;
-                if (userInput[lastIndex] === codeSnippet[lastIndex]) {
-                    setCorrectCharsCount((prev) => prev - 1);
-                }
+                // if (userInput[lastIndex] === codeSnippet[lastIndex]) {
+                //     setCorrectCharsCount((prev) => prev - 1);
+                // }
                 newInput = userInput.slice(0, -1);
             } else {
-                const expectedChar = codeSnippet[userInput.length];
-                const actualChar = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '  ' : e.key;
-                const charsAdded = actualChar === '  ' ? 2 : actualChar.length;
+                const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '    ' : e.key;
+                newInput = userInput + charsToAdd;
+                const charsAdded = e.key === 'Tab' ? 4 : 1;
 
-                newInput += actualChar;
-                setTotalTyped((prev) => prev + charsAdded);
+                setTotalTyped((prev) => {
+                    const newTotal = prev + charsAdded;
+                    console.log('Total typed updated:', newTotal);
+                    return newTotal;
+                });
 
-                const isMistake = actualChar !== expectedChar;
+                // Only check for mistakes if within codeSnippet bounds
+                if (userInput.length < codeSnippet.length) {
+                    const expectedChar = codeSnippet[userInput.length];
+                    const isMistake = charsToAdd !== expectedChar;
 
-                if (isMistake) {
-                    setMistakes((prev) => prev + 1);
-                } else {
-                    setCorrectCharsCount((prev) => prev + 1);
-                    const cpm = elapsedSec > 0 ? Math.round((correctCharsCount + 1) / elapsedSec * 60) : 0;
-                    speedLogRef.current.push({ time: elapsedSec.toFixed(1), cpm });
-
-                    // Check completion within this scope
-                    const normalizedInput = newInput.replace(/\s+/g, ' ').trim();
-                    const normalizedSnippet = codeSnippet.replace(/\s+/g, ' ').trim();
-                    if (normalizedInput === normalizedSnippet || (newInput.length >= codeSnippet.length && !isMistake)) {
-                        setEndTime(now);
-                        console.log('Typing complete, endTime set:', now); // Debug log
+                    if (isMistake) {
+                        setMistakes((prev) => prev + 1);
                     }
+                }
+
+                // Log speed data every second
+                if (elapsedSec >= lastLoggedTime.current + 1) {
+                    const correctChars = [...newInput].filter((ch, i) => {
+                        return i < codeSnippet.length && ch === codeSnippet[i];
+                    }).length;
+                    const rawWpm = elapsedSec > 0 ? Math.round((newInput.length / 5 / elapsedSec) * 60) : 0;
+                    const accurateWpm = elapsedSec > 0 ? Math.round((correctChars / 5 / elapsedSec) * 60) : 0;
+
+                    setSpeedLog((prev) => [
+                        ...prev,
+                        {
+                            time: Math.floor(elapsedSec),
+                            rawWpm,
+                            accurateWpm,
+                            startTime: startTime || now,
+                        },
+                    ]);
+                    lastLoggedTime.current = Math.floor(elapsedSec);
                 }
             }
 
             setUserInput(newInput);
-            console.log('userInput:', newInput, 'codeSnippet:', codeSnippet); // Debug log
+            console.log('userInput updated:', newInput, 'codeSnippet:', codeSnippet, 'length match:', newInput.length >= codeSnippet.length);
+
+            // Trigger completion when userInput length reaches codeSnippet length
+            if (!isCompleted.current && newInput.length >= codeSnippet.length) {
+                isCompleted.current = true;
+                const now = Date.now();
+                setEndTime(now);
+
+                // Log final data point
+                const correctChars = [...newInput].filter((ch, i) => {
+                    return i < codeSnippet.length && ch === codeSnippet[i];
+                }).length;
+                const rawWpm = elapsedSec > 0 ? Math.round((newInput.length / 5 / elapsedSec) * 60) : 0;
+                const accurateWpm = elapsedSec > 0 ? Math.round((correctChars / 5 / elapsedSec) * 60) : 0;
+                setSpeedLog((prev) => [
+                    ...prev,
+                    {
+                        time: Math.floor(elapsedSec),
+                        rawWpm,
+                        accurateWpm,
+                        startTime: startTime || now,
+                    },
+                ]);
+
+                console.log('Typing completed! endTime set to:', now);
+            }
         }
     };
 
     const calculateCPM = () => {
-        if (!startTime || !endTime) return 0;
+        if (!startTime || !endTime || !codeSnippet) return 0;
         const duration = (endTime - startTime) / 1000 / 60;
-        return Math.round(codeSnippet.length / duration);
+        return duration > 0 ? Math.round(codeSnippet.length / duration) : 0;
     };
 
     const calculateAccuracy = () => {
@@ -89,7 +137,24 @@ const useTypingTest = (initialCodeSnippet) => {
     };
 
     const focusContainer = () => {
-        containerRef.current?.focus();
+        try {
+            containerRef.current?.focus();
+        } catch (error) {
+            console.error('Error focusing container:', error);
+        }
+    };
+
+    // Reset function to restart the typing test
+    const reset = () => {
+        setUserInput('');
+        setStartTime(null);
+        setEndTime(null);
+        setTotalTyped(0);
+        setMistakes(0);
+        setSpeedLog([]);
+        isCompleted.current = false;
+        lastLoggedTime.current = 0;
+        focusContainer();
     };
 
     return {
@@ -101,12 +166,13 @@ const useTypingTest = (initialCodeSnippet) => {
         endTime,
         totalTyped,
         mistakes,
-        speedLogRef,
+        speedLog,
         containerRef,
         handleKeyDown,
         calculateCPM,
         calculateAccuracy,
         focusContainer,
+        reset,
     };
 };
 

@@ -10,6 +10,7 @@ import com.coderacer.repository.AccountRepository;
 import com.coderacer.repository.LevelRepository;
 import com.coderacer.model.EmailVerificationToken;
 import com.coderacer.repository.EmailVerificationTokenRepository;
+import com.coderacer.repository.LevelSessionRepository;
 import com.coderacer.security.JWTUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +31,9 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final LevelRepository levelRepository; // for rating calc only
-    private final RatingAlgorithm ratingAlgo; // for rating calc only
+    private final LevelSessionRepository levelSessionRepository;
     private final EmailVerificationTokenRepository emailVerificationTokenRepository;
+    private final RatingAlgorithm ratingAlgo; // for rating calc only
     private final EmailService emailService;
     private final JWTUtil jwtUtil;
 
@@ -117,6 +119,10 @@ public class AccountService {
         if (!accountRepository.existsById(id)) {
             throw new AccountNotFoundException(id);
         }
+
+        levelSessionRepository.deleteByAccountId(id);
+        emailVerificationTokenRepository.deleteByAccountId(id);
+
         accountRepository.deleteById(id);
     }
 
@@ -151,7 +157,7 @@ public class AccountService {
     }
 
     @Transactional
-    public String attemptLogin(AccountLoginDTO accountLoginDTO) {
+    public LoginResponseDTO attemptLogin(AccountLoginDTO accountLoginDTO) {
         Optional<Account> temp = accountRepository.findByUsername(accountLoginDTO.getUsername());
         if(temp.isEmpty()) {
             throw new AccountNotFoundException(accountLoginDTO.getUsername());
@@ -167,7 +173,9 @@ public class AccountService {
             throw new PasswordVerificationException();
         }
 
-        return jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
+        String token =  jwtUtil.generateToken(account.getUsername(), account.getRole().toString());
+
+        return new LoginResponseDTO(token, account.getId());
     }
 
 
