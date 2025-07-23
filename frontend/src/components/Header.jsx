@@ -12,8 +12,8 @@ import ProfilePopup from './ProfilePopup';
 import SettingsPopup from './SettingsPopup';
 
 const Header = () => {
-    const { theme, applyTheme } = useTheme(); // Access theme and applyTheme
-    const { username, email, rating, avgCpm, avgAccuracy, loggedOn, updateAccountInfo } = useAccountInfo(); // Access account info if logged in
+    const { theme, applyTheme } = useTheme();
+    const { username, email, rating, avgCpm, avgAccuracy, loggedOn, updateAccountInfo } = useAccountInfo();
     const [selectedPopup, setSelectedPopup] = useState(null);
 
     const selectPopup = (newPopup) => {
