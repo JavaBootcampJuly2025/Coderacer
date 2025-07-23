@@ -18,13 +18,13 @@ public class AccountMetricsController {
     private final AccountMetricsService accountMetricsService;
 
     @GetMapping("/gameplayMetrics/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public ResponseEntity<GameplayMetricsDTO> getAccountMetrics(@PathVariable UUID id) {
         return ResponseEntity.ok(accountMetricsService.getAccountMetrics(id));
     }
 
-    @PostMapping("/gameplayMetricsWithParameters/{id}")
-    @PreAuthorize("hasRole('ADMIN') or #id == principal")
+    @GetMapping("/gameplayMetricsWithParameters/{id}")
+    @PreAuthorize("hasRole('ADMIN') or #id == principal.id")
     public ResponseEntity<GameplayMetricsDTO> getAccountMetricsWithParameters(
             @PathVariable UUID id,
             @RequestBody @Valid SessionLookupParametersDTO requestDTO) {
