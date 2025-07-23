@@ -73,7 +73,7 @@ const RightPanel = () => {
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
+            <div className={`flex-grow flex border-l border-r border-b border-[var(--border-gray)] rounded-b-2xl shadow-lg flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
                 <div className={`flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
                         const buttonConfig = PANEL_CONFIG.buttons.default;

@@ -32,7 +32,7 @@ const CodeInputArea = ({
 
     return (
         <div className="code-input-container h-full">
-            <div className="bg-[var(--sliderhover)] rounded-lg p-4 h-full strong-shadow border-2 border-[var(--accent)]">
+            <div className="bg-[var(--sliderhover)] rounded-lg p-4 h-full border border-[var(--border-gray)] rounded-2xl shadow-lg">
                 <div className="flex justify-between items-center mb-4">
                     <h3 className="text-xl font-bold text-[var(--text)]">Your Code</h3>
                     <div className="text-base text-[var(--text)]">
@@ -59,15 +59,14 @@ const CodeInputArea = ({
                             fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
                             backgroundColor: 'var(--inbetween)', // Use 'inbetween' for shading
                             color: 'var(--text)',
-                            border: '1px solid var(--accent)',
+                            border: '1px solid var(--border-gray)',
                             borderRadius: '0.5rem'
                         }}
                     />
-                </div>
-
-                <div className="mt-2 text-base text-[var(--text)]">
-                    Lines: {userCode.split('\n').length} |
-                    Characters: {userCode.length}
+                    <div className="mt-2 text-base text-[var(--text)]">
+                        Lines: {userCode.split('\n').length} |
+                        Characters: {userCode.length}
+                    </div>
                 </div>
             </div>
         </div>

@@ -52,7 +52,7 @@ const LevelSwitch = ({ selectedDifficulty, setSelectedDifficulty }) => {
 
     return (
         <div
-            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden`}
+            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden border-l border-r border-t border-[var(--border-gray)] rounded-b-2xl`}
             style={{ borderRadius: CONFIG.panel.borderRadius }}
         >
             <div
