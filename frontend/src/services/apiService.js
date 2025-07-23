@@ -37,6 +37,16 @@ export const login = async loginData => {
     return response.data;
 };
 
+// Change password for an account
+export const changePassword = async (id, passwordData, authToken) => {
+    const response = await api.put(`/api/accounts/${id}/password`, passwordData, {
+        headers: {
+            Authorization: `Bearer ${authToken}`,
+        },
+    });
+    return response.data;
+}
+
 // Fetch all levels
 export const getAllLevels = async () => {
     const response = await api.get('/api/levels');
