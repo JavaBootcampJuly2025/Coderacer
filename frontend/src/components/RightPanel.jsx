@@ -1,5 +1,5 @@
 import React from 'react';
-import { getRandomLevelWithParameters } from '../services/apiService';
+import {getRandomLevelWithDifficulty, getRandomLevelWithParameters} from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import LevelSwitch from './ui/LevelSwitch';
 import LanguageGrid from './LanguageGrid';
@@ -34,15 +34,13 @@ const PANEL_CONFIG = {
 };
 
 const RightPanel = () => {
-    const [selectedLanguage, setSelectedLanguage] = useState(null);
     const [selectedDifficulty, setSelectedDifficulty] = useState('MEDIUM');
 
     const navigate = useNavigate();
 
     const handlePlayClick = async () => {
         try {
-            console.log(selectedLanguage);
-            const levelData = await getRandomLevelWithParameters(selectedLanguage, selectedDifficulty);
+            const levelData = await getRandomLevelWithDifficulty(selectedDifficulty);
             navigate("/level", { state: { level: levelData } });
         } catch (error) {
             console.error('Error loading level:', error);
