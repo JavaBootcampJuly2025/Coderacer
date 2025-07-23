@@ -52,7 +52,7 @@ const useGameModeLogic = () => {
         } catch (error) {
             console.error('Error loading level:', error);
         }
-    }, [focusContainer, title, description, exampleOutput, exampleInput]);
+    }, [focusContainer, title, description, exampleOutput, isSubmitted, exampleInput]);
 
     return {
         title,
