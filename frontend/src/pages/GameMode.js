@@ -7,9 +7,11 @@ import { useNavigate } from 'react-router-dom';
 
 const GameMode = () => {
     const {
-        currentPrompt,
+        title,
+        description,
         userCode,
-        expectedOutput,
+        exampleOutput,
+        exampleInput,
         isSubmitted,
         submissionResult,
         containerRef,
@@ -36,9 +38,9 @@ const GameMode = () => {
                         {/* Prompt Display Area */}
                         <div className="prompt-section mb-4 h-32">
                             <div className="bg-[var(--sliderhover)] rounded-lg p-4 strong-shadow border-2 border-[var(--accent)] h-full">
-                                <h2 className="text-xl font-bold text-[var(--text)] mb-3">Coding Challenge</h2>
+                                <h2 className="text-xl font-bold text-[var(--text)] mb-3">{title}</h2>
                                 <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
-                                    {currentPrompt}
+                                    {description}
                                 </p>
                             </div>
                         </div>
@@ -58,14 +60,19 @@ const GameMode = () => {
                     {/* Right Side - Expected Output, Score, and Controls (1/3 width) */}
                     <div className="right-panel flex flex-col col-span-1 h-full">
                         {/* Expected Console Output */}
-                        <div className="expected-output-section mb-8 h-64"> {}
-                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Expected Console Output</h3>
-                            <div className="expected-output-content h-full">
-                                <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow h-full overflow-y-auto">
-                                    {expectedOutput || 'No expected output available for this challenge.'}
+                        <div className="expected-output-section mb-8 h-64">
+                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Input</h3>
+                            <div className="expected-output-content flex flex-col gap-4 h-full">
+                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
+                                    {exampleInput || 'No example input available for this challenge.'}
+                                </pre>
+                                <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Output</h3>
+                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
+                                    {exampleOutput || 'No expected output available for this challenge.'}
                                 </pre>
                             </div>
                         </div>
+
 
                         {/* Submission Result - Always visible, static size */}
                         <div className="result-section mt-6 h-40"> {}
