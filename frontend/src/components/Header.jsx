@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { useTheme } from '../styles/ThemeContext';
 import useAccountInfo from '../hooks/useAccountInfo';
 import Title from './ui/Title';
@@ -22,7 +22,17 @@ const Header = () => {
     };
 
     const toggleTheme = () => {
-        applyTheme(theme === 'light' ? 'dark' : 'light');
+        const themes = ['light', 'dark', 'brown', 'mentor'];
+        const currentIndex = themes.indexOf(theme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        applyTheme(themes[nextIndex]);
+    };
+
+    const getNextThemeLabel = () => {
+        const themes = ['light', 'dark', 'brown', 'mentor'];
+        const currentIndex = themes.indexOf(theme);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        return themes[nextIndex];
     };
 
     return (
@@ -35,10 +45,16 @@ const Header = () => {
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
                     onClick={toggleTheme}
-                    title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+                    title={`Switch to ${getNextThemeLabel()} theme`}
                 >
                     <span className="text-[var(--text)] text-2xl font-montserrat">
-                        {theme === 'light' ? <SunIcon className="theme-icon" /> : <MoonIcon className="theme-icon" />}
+                        {theme === 'light' ? (
+                            <SunIcon className="theme-icon" />
+                        ) : theme === 'dark' ? (
+                            <MoonIcon className="theme-icon" />
+                        ) : (
+                            <span className="theme-icon">🌑</span>
+                        )}
                     </span>
                 </button>
                 <button
