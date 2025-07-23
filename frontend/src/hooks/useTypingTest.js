@@ -7,6 +7,7 @@ const useTypingTest = (initialCodeSnippet = '') => {
     const [endTime, setEndTime] = useState(null);
     const [totalTyped, setTotalTyped] = useState(0);
     const [mistakes, setMistakes] = useState(0);
+    // const [correctCharsCount, setCorrectCharsCount] = useState(0);
     const [speedLog, setSpeedLog] = useState([]);
     const containerRef = useRef(null);
     const isCompleted = useRef(false);
@@ -47,6 +48,10 @@ const useTypingTest = (initialCodeSnippet = '') => {
 
             let newInput = userInput;
             if (e.key === 'Backspace') {
+                const lastIndex = userInput.length - 1;
+                // if (userInput[lastIndex] === codeSnippet[lastIndex]) {
+                //     setCorrectCharsCount((prev) => prev - 1);
+                // }
                 newInput = userInput.slice(0, -1);
             } else {
                 const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '    ' : e.key;

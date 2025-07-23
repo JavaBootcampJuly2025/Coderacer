@@ -1,20 +1,28 @@
 package com.coderacer.integration;
 
+import com.coderacer.dto.AccountLoginDTO;
 import com.coderacer.dto.LevelDTO;
 import com.coderacer.dto.LevelModifyDTO;
 import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.ProgrammingLanguage;
+import com.coderacer.enums.Role;
+import com.coderacer.model.Account;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -44,6 +52,26 @@ class LevelApiIT {
         registry.add("spring.datasource.username", postgres::getUsername);
         registry.add("spring.datasource.password", postgres::getPassword);
         registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        // disable real email
+        registry.add("spring.mail.host", () -> "localhost");
+        registry.add("spring.mail.port", () -> 3025);
+    }
+
+    /**
+     * Test config that provides a no-op EmailService bean, replacing the real one.
+     */
+    @TestConfiguration
+    static class NoOpEmailConfig {
+        @Bean
+        @Primary
+        public com.coderacer.service.EmailService emailService() {
+            return new com.coderacer.service.EmailService() {
+                @Override
+                public void sendVerificationEmail(com.coderacer.model.Account account, String token) {
+                    // nothing :)
+                }
+            };
+        }
     }
 
     @Autowired
@@ -56,14 +84,61 @@ class LevelApiIT {
     private ObjectMapper objectMapper;
 
     private String baseUrl;
+    private String accountsBaseUrl;
 
     @Autowired
     private com.coderacer.repository.LevelRepository levelRepository;
 
+    @Autowired
+    private com.coderacer.repository.AccountRepository accountRepository;
+
+    @Autowired
+    private com.coderacer.repository.EmailVerificationTokenRepository tokenRepository;
+
+    private String adminToken;
+
     @BeforeEach
     void setUp() {
         baseUrl = "http://localhost:" + port + "/api/levels";
+        accountsBaseUrl = "http://localhost:" + port + "/api/accounts";
         levelRepository.deleteAll();
+        tokenRepository.deleteAll();
+        accountRepository.deleteAll();
+
+        // Set up admin for authentication
+        setupAdmin();
+    }
+
+    private void setupAdmin() {
+        // Create admin account
+        Account admin = new Account();
+        admin.setUsername("admin");
+        admin.setEmail("admin@example.com");
+        admin.setRole(Role.ADMIN);
+        admin.setVerified(true);
+        admin.setPassword("adminPassword123");
+        accountRepository.saveAndFlush(admin);
+
+        // Get JWT token
+        AccountLoginDTO login = new AccountLoginDTO("admin", "adminPassword123");
+        ResponseEntity<String> resp = restTemplate.postForEntity(
+                accountsBaseUrl + "/login", login, String.class);
+
+        if (resp.getStatusCode() == HttpStatus.OK) {
+            adminToken = resp.getBody();
+        }
+    }
+
+    /**
+     * Helper to create headers with admin authentication
+     */
+    private HttpHeaders authHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        if (adminToken != null && !adminToken.isEmpty()) {
+            headers.setBearerAuth(adminToken);
+        }
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        return headers;
     }
 
     @Test
@@ -76,9 +151,13 @@ class LevelApiIT {
                 Arrays.asList("beginner", "hello")
         );
 
-        // When - Create level
-        ResponseEntity<LevelDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, newLevel, LevelDTO.class);
+        // When - Create level with auth
+        ResponseEntity<LevelDTO> createResponse = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(newLevel, authHeaders()),
+                LevelDTO.class
+        );
 
         // Then - Verify creation
         assertThat(createResponse.getStatusCode()).isEqualTo(HttpStatus.CREATED);
@@ -89,10 +168,14 @@ class LevelApiIT {
         assertThat(createResponse.getBody().difficulty()).isEqualTo(newLevel.difficulty());
         assertThat(createResponse.getBody().tags()).containsExactlyInAnyOrder("beginner", "hello");
 
-        // When - Retrieve level
+        // When - Retrieve level with auth
         UUID levelId = createResponse.getBody().id();
-        ResponseEntity<LevelDTO> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + levelId, LevelDTO.class);
+        ResponseEntity<LevelDTO> getResponse = restTemplate.exchange(
+                baseUrl + "/" + levelId,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelDTO.class
+        );
 
         // Then - Verify retrieval
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -115,11 +198,16 @@ class LevelApiIT {
                 Arrays.asList("test")
         );
 
-        restTemplate.postForEntity(baseUrl, level1, LevelDTO.class);
-        restTemplate.postForEntity(baseUrl, level2, LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(level1, authHeaders()), LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(level2, authHeaders()), LevelDTO.class);
 
         // When
-        ResponseEntity<LevelDTO[]> response = restTemplate.getForEntity(baseUrl, LevelDTO[].class);
+        ResponseEntity<LevelDTO[]> response = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelDTO[].class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -145,12 +233,16 @@ class LevelApiIT {
                 Arrays.asList("python")
         );
 
-        restTemplate.postForEntity(baseUrl, javaLevel, LevelDTO.class);
-        restTemplate.postForEntity(baseUrl, pythonLevel, LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(javaLevel, authHeaders()), LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(pythonLevel, authHeaders()), LevelDTO.class);
 
         // When
-        ResponseEntity<LevelDTO[]> response = restTemplate.getForEntity(
-                baseUrl + "/language/JAVA", LevelDTO[].class);
+        ResponseEntity<LevelDTO[]> response = restTemplate.exchange(
+                baseUrl + "/language/JAVA",
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelDTO[].class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -174,12 +266,16 @@ class LevelApiIT {
                 Arrays.asList("hard")
         );
 
-        restTemplate.postForEntity(baseUrl, easyLevel, LevelDTO.class);
-        restTemplate.postForEntity(baseUrl, hardLevel, LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(easyLevel, authHeaders()), LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(hardLevel, authHeaders()), LevelDTO.class);
 
         // When
-        ResponseEntity<LevelDTO[]> response = restTemplate.getForEntity(
-                baseUrl + "/difficulty/EASY", LevelDTO[].class);
+        ResponseEntity<LevelDTO[]> response = restTemplate.exchange(
+                baseUrl + "/difficulty/EASY",
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelDTO[].class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -203,12 +299,16 @@ class LevelApiIT {
                 Arrays.asList("random")
         );
 
-        restTemplate.postForEntity(baseUrl, level1, LevelDTO.class);
-        restTemplate.postForEntity(baseUrl, level2, LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(level1, authHeaders()), LevelDTO.class);
+        restTemplate.exchange(baseUrl, HttpMethod.POST, new HttpEntity<>(level2, authHeaders()), LevelDTO.class);
 
         // When
-        ResponseEntity<LevelDTO> response = restTemplate.getForEntity(
-                baseUrl + "/random?language=JAVA&difficulty=EASY", LevelDTO.class);
+        ResponseEntity<LevelDTO> response = restTemplate.exchange(
+                baseUrl + "/random?language=JAVA&difficulty=EASY",
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                LevelDTO.class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -227,8 +327,12 @@ class LevelApiIT {
                 Arrays.asList("original")
         );
 
-        ResponseEntity<LevelDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, originalLevel, LevelDTO.class);
+        ResponseEntity<LevelDTO> createResponse = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(originalLevel, authHeaders()),
+                LevelDTO.class
+        );
         UUID levelId = createResponse.getBody().id();
 
         // When - Update the level
@@ -242,7 +346,7 @@ class LevelApiIT {
         ResponseEntity<LevelDTO> updateResponse = restTemplate.exchange(
                 baseUrl + "/" + levelId,
                 HttpMethod.PUT,
-                new HttpEntity<>(updatedLevel),
+                new HttpEntity<>(updatedLevel, authHeaders()),
                 LevelDTO.class
         );
 
@@ -264,15 +368,19 @@ class LevelApiIT {
                 Arrays.asList("delete")
         );
 
-        ResponseEntity<LevelDTO> createResponse = restTemplate.postForEntity(
-                baseUrl, level, LevelDTO.class);
+        ResponseEntity<LevelDTO> createResponse = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(level, authHeaders()),
+                LevelDTO.class
+        );
         UUID levelId = createResponse.getBody().id();
 
         // When
         ResponseEntity<Void> deleteResponse = restTemplate.exchange(
                 baseUrl + "/" + levelId,
                 HttpMethod.DELETE,
-                null,
+                new HttpEntity<>(authHeaders()),
                 Void.class
         );
 
@@ -280,8 +388,12 @@ class LevelApiIT {
         assertThat(deleteResponse.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
         // Verify level is deleted
-        ResponseEntity<String> getResponse = restTemplate.getForEntity(
-                baseUrl + "/" + levelId, String.class);
+        ResponseEntity<String> getResponse = restTemplate.exchange(
+                baseUrl + "/" + levelId,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class
+        );
         assertThat(getResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
@@ -289,8 +401,12 @@ class LevelApiIT {
     void shouldReturn404ForNonExistentLevel() {
         // When
         UUID nonExistentId = UUID.randomUUID();
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/" + nonExistentId, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/" + nonExistentId,
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -299,8 +415,12 @@ class LevelApiIT {
     @Test
     void shouldReturn404ForRandomLevelWithNoMatches() {
         // When - Try to get random level with no data
-        ResponseEntity<String> response = restTemplate.getForEntity(
-                baseUrl + "/random?language=JAVA&difficulty=EASY", String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl + "/random?language=JAVA&difficulty=EASY",
+                HttpMethod.GET,
+                new HttpEntity<>(authHeaders()),
+                String.class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -317,8 +437,12 @@ class LevelApiIT {
         );
 
         // When
-        ResponseEntity<String> response = restTemplate.postForEntity(
-                baseUrl, invalidLevel, String.class);
+        ResponseEntity<String> response = restTemplate.exchange(
+                baseUrl,
+                HttpMethod.POST,
+                new HttpEntity<>(invalidLevel, authHeaders()),
+                String.class
+        );
 
         // Then
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);

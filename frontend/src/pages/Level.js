@@ -13,6 +13,9 @@ const Level = () => {
         userInput,
         startTime,
         endTime,
+        totalTyped,
+        mistakes,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         focusContainer,
@@ -20,8 +23,6 @@ const Level = () => {
         saveSession,
         calculateCPM,
         calculateAccuracy,
-        totalTyped,
-        mistakes,
     } = useLevelLogic();
 
     const location = useLocation();
@@ -56,7 +57,7 @@ const Level = () => {
                         startTime: new Date(startTime).toISOString().slice(0, -1),
                         endTime: new Date(endTime).toISOString().slice(0, -1),
                     };
-                    const response = createLevelSession(sessionData, token);
+                    // const response = createLevelSession(sessionData, token);
                 } catch (error) {
                     console.error('Error creating level session:', error);
                 }
