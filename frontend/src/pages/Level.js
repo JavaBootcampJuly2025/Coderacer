@@ -4,19 +4,28 @@ import TypingArea from '../components/TypingArea';
 import '../App.css';
 import Header from '../components/Header';
 import { useNavigate } from 'react-router-dom';
+import { createLevelSession } from '../services/apiService';
+import { useLocation } from 'react-router-dom';
 
 const Level = () => {
     const {
         codeSnippet,
         userInput,
+        startTime,
         endTime,
+        totalTyped,
+        mistakes,
+        speedLogRef,
         containerRef,
         handleKeyDown,
         focusContainer,
         speedLog,
-        saveSession
+        saveSession,
+        calculateCPM,
+        calculateAccuracy,
     } = useLevelLogic();
 
+    const location = useLocation();
     const navigate = useNavigate();
     const hasNavigated = useRef(false);
 
@@ -32,13 +41,32 @@ const Level = () => {
 
             if (speedLog?.length > 1) {
                 console.log('Saving session data...');
-                saveSession(speedLog, endTime);
+                saveSession();
+            }
+
+            const token = localStorage.getItem('loginToken');
+            const accountId = localStorage.getItem('loginId');
+
+            if (accountId != null) {
+                try {
+                    const sessionData = {
+                        accountId: accountId,
+                        levelId: location.state?.level.id,
+                        cpm: calculateCPM(),
+                        accuracy: calculateAccuracy(),
+                        startTime: new Date(startTime).toISOString().slice(0, -1),
+                        endTime: new Date(endTime).toISOString().slice(0, -1),
+                    };
+                    // const response = createLevelSession(sessionData, token);
+                } catch (error) {
+                    console.error('Error creating level session:', error);
+                }
             }
 
             console.log('Navigating to /home');
-            navigate('/home', { replace: true }); // Added replace to prevent back navigation
+            navigate('/home', { replace: true });
         }
-    }, [endTime, navigate, speedLog, saveSession]);
+    }, [endTime, navigate, speedLog, saveSession, calculateCPM, calculateAccuracy, startTime, location.state?.level.id]);
 
     return (
         <div className="home-wrapper min-h-screen bg-[#13223A] flex flex-col font-montserrat">

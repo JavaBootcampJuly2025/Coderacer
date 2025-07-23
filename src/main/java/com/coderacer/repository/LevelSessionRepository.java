@@ -30,6 +30,7 @@ public interface LevelSessionRepository extends JpaRepository<LevelSession, UUID
     );
     List<LevelSession> findByAccountId(UUID accountId);
     List<LevelSession> findByLevelId(UUID levelId);
+    void deleteByAccountId(UUID accountId);
     List<LevelSession> findByLevelIdOrderByCpmDesc(UUID levelId);
     List<LevelSession> findByLevelIdOrderByAccuracyDesc(UUID levelId);
 }

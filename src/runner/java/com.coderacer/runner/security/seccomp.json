@@ -1,0 +1,144 @@
+{
+  "defaultAction": "SCMP_ACT_ERRNO",
+  "archMap": [
+    {
+      "architecture": "SCMP_ARCH_X86_64",
+      "subArchitectures": [
+        "SCMP_ARCH_X86",
+        "SCMP_ARCH_X32"
+      ]
+    }
+  ],
+  "syscalls": [
+    {
+      "names": [
+        "access",
+        "arch_prctl",
+        "brk",
+        "close",
+        "clone",
+        "execve",
+        "exit",
+        "exit_group",
+        "fadvise64",
+        "fcntl",
+        "fstat",
+        "futex",
+        "getcwd",
+        "getdents64",
+        "getegid",
+        "geteuid",
+        "getgid",
+        "getpid",
+        "getppid",
+        "getrandom",
+        "getrlimit",
+        "getuid",
+        "lseek",
+        "madvise",
+        "mmap",
+        "mprotect",
+        "munmap",
+        "newfstatat",
+        "openat",
+        "pread64",
+        "prlimit64",
+        "read",
+        "readlink",
+        "rt_sigaction",
+        "rt_sigprocmask",
+        "rt_sigreturn",
+        "set_robust_list",
+        "set_tid_address",
+        "sigaltstack",
+        "stat",
+        "uname",
+        "write",
+        "writev"
+      ],
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "comment": "Allow specific time-related syscalls",
+      "names": [
+        "clock_getres",
+        "clock_gettime",
+        "gettimeofday",
+        "nanosleep"
+      ],
+      "action": "SCMP_ACT_ALLOW"
+    },
+    {
+      "comment": "Allow thread creation but limit capabilities",
+      "names": [
+        "clone3",
+        "futex_waitv"
+      ],
+      "action": "SCMP_ACT_ALLOW",
+      "args": []
+    },
+    {
+      "comment": "Block dangerous syscalls that could be used for privilege escalation",
+      "names": [
+        "mount",
+        "umount",
+        "umount2",
+        "pivot_root",
+        "chroot",
+        "sethostname",
+        "setdomainname",
+        "ptrace",
+        "process_vm_readv",
+        "process_vm_writev",
+        "init_module",
+        "delete_module",
+        "kexec_load",
+        "kexec_file_load",
+        "reboot",
+        "syslog",
+        "acct",
+        "settimeofday",
+        "stime",
+        "adjtimex",
+        "clock_adjtime"
+      ],
+      "action": "SCMP_ACT_KILL"
+    },
+    {
+      "comment": "Block network syscalls since --network=none should handle this",
+      "names": [
+        "socket",
+        "connect",
+        "accept",
+        "accept4",
+        "bind",
+        "listen",
+        "sendto",
+        "recvfrom",
+        "sendmsg",
+        "recvmsg",
+        "shutdown",
+        "socketpair"
+      ],
+      "action": "SCMP_ACT_KILL"
+    },
+    {
+      "comment": "Block file system modification syscalls (read-only fs should handle most)",
+      "names": [
+        "chmod",
+        "fchmod",
+        "chown",
+        "fchown",
+        "lchown",
+        "mkdir",
+        "rmdir",
+        "unlink",
+        "rename",
+        "link",
+        "symlink",
+        "mknod"
+      ],
+      "action": "SCMP_ACT_KILL"
+    }
+  ]
+}

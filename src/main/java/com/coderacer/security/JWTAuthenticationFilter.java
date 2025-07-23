@@ -54,7 +54,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
                 Account account = temp.get();
                 UsernamePasswordAuthenticationToken authToken =
                         new UsernamePasswordAuthenticationToken(
-                                account.getId(),
+                                account,
                                 null,
                                 List.of(new SimpleGrantedAuthority("ROLE_" + role))
                         );

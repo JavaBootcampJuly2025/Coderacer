@@ -58,7 +58,28 @@ public class GlobalExceptionHandler {
             InvalidPasswordException ex,
             HttpServletRequest request) {
         return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
-        }
+    }
+
+    @ExceptionHandler(CodingProblemNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleCodingProblemNotFound(
+            CodingProblemNotFoundException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.NOT_FOUND, request);
+    }
+
+    @ExceptionHandler(TestCaseIndexOutOfBoundsException.class)
+    public ResponseEntity<ErrorResponse> handleTestCaseIndexOutOfBounds(
+            TestCaseIndexOutOfBoundsException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(CodeExecutionClientException.class)
+    public ResponseEntity<ErrorResponse> handleCodeExecutionException(
+            CodeExecutionClientException ex,
+            HttpServletRequest request) {
+        return buildErrorResponse(ex, HttpStatus.BAD_GATEWAY, request);
+    }
 
     // Other exceptions
     @ExceptionHandler(ResponseStatusException.class)

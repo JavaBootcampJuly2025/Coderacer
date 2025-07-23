@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const useTypingTest = (initialCodeSnippet = '') => {
     const [codeSnippet, setCodeSnippet] = useState(initialCodeSnippet);
@@ -7,11 +7,13 @@ const useTypingTest = (initialCodeSnippet = '') => {
     const [endTime, setEndTime] = useState(null);
     const [totalTyped, setTotalTyped] = useState(0);
     const [mistakes, setMistakes] = useState(0);
+    // const [correctCharsCount, setCorrectCharsCount] = useState(0);
     const [speedLog, setSpeedLog] = useState([]);
     const containerRef = useRef(null);
     const isCompleted = useRef(false);
+    const lastLoggedTime = useRef(0);
 
-    // Focus the container on the mount
+    // Focus the container on mount
     useEffect(() => {
         if (containerRef.current) {
             try {
@@ -46,11 +48,15 @@ const useTypingTest = (initialCodeSnippet = '') => {
 
             let newInput = userInput;
             if (e.key === 'Backspace') {
+                const lastIndex = userInput.length - 1;
+                // if (userInput[lastIndex] === codeSnippet[lastIndex]) {
+                //     setCorrectCharsCount((prev) => prev - 1);
+                // }
                 newInput = userInput.slice(0, -1);
             } else {
-                const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '  ' : e.key;
+                const charsToAdd = e.key === 'Enter' ? '\n' : e.key === 'Tab' ? '    ' : e.key;
                 newInput = userInput + charsToAdd;
-                const charsAdded = e.key === 'Tab' ? 2 : 1;
+                const charsAdded = e.key === 'Tab' ? 4 : 1;
 
                 setTotalTyped((prev) => {
                     const newTotal = prev + charsAdded;
@@ -65,25 +71,56 @@ const useTypingTest = (initialCodeSnippet = '') => {
 
                     if (isMistake) {
                         setMistakes((prev) => prev + 1);
-                    } else {
-                        const correctChars = [...newInput].filter((ch, i) => {
-                            return i < codeSnippet.length && ch === codeSnippet[i];
-                        }).length;
-                        const cpm = elapsedSec > 0 ? Math.round((correctChars / elapsedSec) * 60) : 0;
-                        setSpeedLog((prev) => [...prev, { time: elapsedSec.toFixed(1), cpm }]);
                     }
+                }
+
+                // Log speed data every second
+                if (elapsedSec >= lastLoggedTime.current + 1) {
+                    const correctChars = [...newInput].filter((ch, i) => {
+                        return i < codeSnippet.length && ch === codeSnippet[i];
+                    }).length;
+                    const rawWpm = elapsedSec > 0 ? Math.round((newInput.length / 5 / elapsedSec) * 60) : 0;
+                    const accurateWpm = elapsedSec > 0 ? Math.round((correctChars / 5 / elapsedSec) * 60) : 0;
+
+                    setSpeedLog((prev) => [
+                        ...prev,
+                        {
+                            time: Math.floor(elapsedSec),
+                            rawWpm,
+                            accurateWpm,
+                            startTime: startTime || now,
+                        },
+                    ]);
+                    lastLoggedTime.current = Math.floor(elapsedSec);
                 }
             }
 
             setUserInput(newInput);
             console.log('userInput updated:', newInput, 'codeSnippet:', codeSnippet, 'length match:', newInput.length >= codeSnippet.length);
 
-            // In the handleKeyDown function:
-            if (!isCompleted.current && newInput === codeSnippet) {
+            // Trigger completion when userInput length reaches codeSnippet length
+            if (!isCompleted.current && newInput.length >= codeSnippet.length) {
                 isCompleted.current = true;
                 const now = Date.now();
                 setEndTime(now);
-                console.log('Typing completed! endTime set to:', now); // Add this log
+
+                // Log final data point
+                const correctChars = [...newInput].filter((ch, i) => {
+                    return i < codeSnippet.length && ch === codeSnippet[i];
+                }).length;
+                const rawWpm = elapsedSec > 0 ? Math.round((newInput.length / 5 / elapsedSec) * 60) : 0;
+                const accurateWpm = elapsedSec > 0 ? Math.round((correctChars / 5 / elapsedSec) * 60) : 0;
+                setSpeedLog((prev) => [
+                    ...prev,
+                    {
+                        time: Math.floor(elapsedSec),
+                        rawWpm,
+                        accurateWpm,
+                        startTime: startTime || now,
+                    },
+                ]);
+
+                console.log('Typing completed! endTime set to:', now);
             }
         }
     };
@@ -116,6 +153,7 @@ const useTypingTest = (initialCodeSnippet = '') => {
         setMistakes(0);
         setSpeedLog([]);
         isCompleted.current = false;
+        lastLoggedTime.current = 0;
         focusContainer();
     };
 
