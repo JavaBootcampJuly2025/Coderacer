@@ -4,8 +4,85 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useTheme } from '../styles/ThemeContext';
 
+const CONFIG = {
+    root: {
+        minHeight: 'min-h-screen',
+        backgroundColor: 'bg-[var(--background)]',
+        flexDirection: 'flex-col',
+        alignItems: 'items-center',
+        fontFamily: 'font-montserrat',
+        textColor: 'text-[var(--text)]',
+    },
+    header: {
+        width: 'w-full',
+        height: 'h-[80px]',
+        border: 'border border-[var(--border)]',
+    },
+    main: {
+        flex: 'flex-grow',
+        justifyContent: 'justify-center',
+        alignItems: 'items-center',
+        padding: 'py-12',
+        width: 'w-full',
+        maxWidth: 'max-w-2xl',
+    },
+    card: {
+        width: 'w-full',
+        padding: 'p-10',
+        borderRadius: 'rounded-2xl',
+        shadow: 'shadow-xl',
+        transition: 'transition-colors duration-300',
+        border: 'border border-[var(--border-gray)]',
+        backgroundColor: 'bg-[var(--inbetween)]',
+    },
+    form: {
+        gap: 'space-y-6',
+    },
+    input: {
+        width: 'w-full',
+        padding: 'p-3',
+        borderRadius: 'rounded-xl',
+        backgroundColor: 'bg-[var(--sliderhover)]',
+        textColor: 'text-[var(--text)]',
+        placeholder: 'placeholder-[var(--placeholder)]',
+        focus: 'focus:outline-none focus:ring-2 focus:ring-[var(--accent)]',
+    },
+    button: {
+        width: 'w-full',
+        padding: 'py-3',
+        borderRadius: 'rounded-xl',
+        backgroundColor: 'bg-[var(--primary-button)]',
+        textColor: 'text-[var(--primary-button-text)]',
+        fontWeight: 'font-semibold',
+        hover: 'hover:bg-[var(--primary-button-hover)]',
+        transition: 'transition duration-300',
+    },
+    text: {
+        fontSize: 'text-base',
+        textColor: 'text-[var(--text)]',
+        lineHeight: 'leading-relaxed',
+        overflow: 'overflow-y-auto',
+        textAlign: 'text-center',
+    },
+    link: {
+        textColor: 'text-[var(--link)]',
+        decoration: 'underline',
+    },
+    title: {
+        fontSize: 'text-2xl',
+        fontWeight: 'font-semibold',
+        margin: 'mb-6',
+        textAlign: 'text-center',
+        textColor: 'text-[var(--accent)]',
+    },
+    message: {
+        margin: 'mt-4',
+        textAlign: 'text-center',
+    },
+};
+
 function Login() {
-    const { theme } = useTheme();
+    const { theme, themeConfig } = useTheme();
     const [message, setMessage] = useState("");
     const [messageColor, setMessageColor] = useState("");
 
@@ -20,7 +97,7 @@ function Login() {
 
         try {
             const response = await login(loginData);
-            setMessageColor("text-green-400");
+            setMessageColor('text-[var(--success-message)]');
             setMessage("Login successful. Redirecting to home");
             localStorage.setItem('loginToken', response.token);
             localStorage.setItem('loginId', response.id);
@@ -29,34 +106,30 @@ function Login() {
                 window.location.href = "/";
             }, 1000);
         } catch (error) {
-            setMessageColor("text-red-400");
+            setMessageColor('text-[var(--error-message)]');
             setMessage(error.response?.data?.message || "Login failed.");
         }
     };
 
     return (
-        <div className={`home-wrapper min-h-screen bg-[#13223A] flex flex-col items-center font-montserrat ${
-            theme === 'light' ? 'bg-white text-black' : 'bg-[#13223A] text-white'
-        }`}>
-            <div className="w-full h-[80px] border border-[#59000000]">
+        <div className={`home-wrapper ${CONFIG.root.minHeight} flex ${CONFIG.root.flexDirection} ${CONFIG.root.alignItems} ${CONFIG.root.fontFamily} ${CONFIG.root.backgroundColor} ${CONFIG.root.textColor}`}>
+            <div className={`${CONFIG.header.width} ${CONFIG.header.height}`}>
                 <Header />
             </div>
 
-            <div className="flex-grow flex items-center justify-center py-12 w-full max-w-2xl">
-                <div className={`w-full p-10 rounded-2xl shadow-xl transition-colors duration-300 border-4 border-black-400 rounded-lg ${
-                    theme === 'light' ? 'bg-gray-100' : 'bg-[#1C2B47]'
-                }`}>
-                    <h2 className="text-2xl font-semibold mb-6 text-center text-[var(--accent)]">Login Into Your Account</h2>
-                    <form onSubmit={submit} className="space-y-6">
+            <div className={`${CONFIG.main.flex} flex ${CONFIG.main.justifyContent} ${CONFIG.main.alignItems} ${CONFIG.main.padding} ${CONFIG.main.width} ${CONFIG.main.maxWidth}`}>
+                <div className={`${CONFIG.card.width} ${CONFIG.card.padding} ${CONFIG.card.borderRadius} ${CONFIG.card.shadow} ${CONFIG.card.transition} ${CONFIG.card.border} ${CONFIG.card.backgroundColor}`}>
+                    <h2 className={`${CONFIG.title.fontSize} ${CONFIG.title.fontWeight} ${CONFIG.title.margin} ${CONFIG.title.textAlign} ${CONFIG.title.textColor}`}>Login Into Your Account</h2>
+                    <form onSubmit={submit} className={`${CONFIG.form.gap}`}>
                         <input
-                            className="w-full p-3 rounded-xl bg-[var(--input-bg)] text-[var(--text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                            className={`${CONFIG.input.width} ${CONFIG.input.padding} ${CONFIG.input.borderRadius} ${CONFIG.input.backgroundColor} ${CONFIG.input.textColor} ${CONFIG.input.placeholder} ${CONFIG.input.focus}`}
                             type="text"
                             name="username"
                             placeholder="Enter your username"
                             required
                         />
                         <input
-                            className="w-full p-3 rounded-xl bg-[var(--input-bg)] text-[var(--text)] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[var(--accent)]"
+                            className={`${CONFIG.input.width} ${CONFIG.input.padding} ${CONFIG.input.borderRadius} ${CONFIG.input.backgroundColor} ${CONFIG.input.textColor} ${CONFIG.input.placeholder} ${CONFIG.input.focus}`}
                             type="password"
                             name="password"
                             placeholder="Enter your password"
@@ -64,21 +137,21 @@ function Login() {
                         />
                         <button
                             type="submit"
-                            className="w-full py-3 rounded-xl bg-[var(--primary-button)] text-[var(--primary-button-text)] font-semibold hover:bg-[var(--primary-button-hover)] transition duration-300"
+                            className={`${CONFIG.button.width} ${CONFIG.button.padding} ${CONFIG.button.borderRadius} ${CONFIG.button.backgroundColor} ${CONFIG.button.textColor} ${CONFIG.button.fontWeight} ${CONFIG.button.hover} ${CONFIG.button.transition}`}
                         >
                             Login
                         </button>
-                        <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto text-center">
-                            Don't a have an account? <a href="/register" className="underline">Register</a> here.
+                        <p className={`${CONFIG.text.fontSize} ${CONFIG.text.textColor} ${CONFIG.text.lineHeight} ${CONFIG.text.overflow} ${CONFIG.text.textAlign}`}>
+                            Don't a have an account? <a href="/register" className={`${CONFIG.link.decoration} ${CONFIG.link.textColor}`}>Register</a> here.
                         </p>
                     </form>
                     {message && (
-                        <p className={`mt-4 text-center ${messageColor}`}>{message}</p>
+                        <p className={`${CONFIG.message.margin} ${CONFIG.message.textAlign} ${messageColor}`}>{message}</p>
                     )}
                 </div>
             </div>
 
-            <div className="w-full h-[80px] border border-[#59000000]">
+            <div className={`${CONFIG.header.width} ${CONFIG.header.height}`}>
                 <Footer />
             </div>
         </div>

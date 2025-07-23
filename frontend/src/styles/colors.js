@@ -57,7 +57,7 @@ const themes = {
         border: 'rgba(255, 255, 255, 1)',
         footerText: '#ccc',
         borderGray: '#988a80',
-        inbetween: '#715f4d',
+        inbetween: '#754008',
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',

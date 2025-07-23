@@ -6,6 +6,7 @@ import { ReactComponent as Logo } from '../assets/icon.svg';
 import { ReactComponent as SunIcon } from '../assets/sun.svg';
 import { ReactComponent as MoonIcon } from '../assets/moon.svg';
 import { ReactComponent as UserIcon } from '../assets/user.svg';
+// import { ReactComponent as StarIcon } from '../assets/mentor.svg';
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
 import { Link } from 'react-router-dom';
 import ProfilePopup from './ProfilePopup';
@@ -48,14 +49,18 @@ const Header = () => {
                     title={`Switch to ${getNextThemeLabel()} theme`}
                 >
                     <span className="text-[var(--text)] text-2xl font-montserrat">
-                        {theme === 'light' ? (
-                            <SunIcon className="theme-icon" />
-                        ) : theme === 'dark' ? (
-                            <MoonIcon className="theme-icon" />
-                        ) : (
-                            <span className="theme-icon">🌑</span>
-                        )}
-                    </span>
+    {theme === 'light' ? (
+        <SunIcon className="theme-icon" />
+    ) : theme === 'dark' ? (
+        <MoonIcon className="theme-icon" />
+    ) : theme === 'brown' ? (
+        <span className="theme-icon">🌑</span>
+    ) : theme === 'mentor' ? (
+        <span className="theme-icon">🎃</span>
+    ) : (
+        <SunIcon className="theme-icon" />
+    )}
+  </span>
                 </button>
                 <button
                     className="round-button w-12 h-12 bg-[var(--primary-button)] rounded-full hover:bg-[var(--primary-button-hover)] transition flex items-center justify-center p-0"
