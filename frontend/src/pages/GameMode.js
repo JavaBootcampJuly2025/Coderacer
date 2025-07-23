@@ -35,7 +35,7 @@ const GameMode = () => {
                     <div className="left-panel flex flex-col col-span-2 h-full">
                         {/* Prompt Display Area */}
                         <div className="prompt-section mb-4 h-32">
-                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 strong-shadow border-2 border-[var(--accent)] h-full">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border border-[var(--border-gray)] rounded-2xl shadow-lg h-full">
                                 <h2 className="text-xl font-bold text-[var(--text)] mb-3">Coding Challenge</h2>
                                 <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
                                     {currentPrompt}
@@ -61,7 +61,7 @@ const GameMode = () => {
                         <div className="expected-output-section mb-8 h-64"> {}
                             <h3 className="text-xl font-bold text-[var(--text)] mb-3">Expected Console Output</h3>
                             <div className="expected-output-content h-full">
-                                <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow h-full overflow-y-auto">
+                                <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border border-[var(--border-gray)] rounded-2xl shadow-lg h-full overflow-y-auto">
                                     {expectedOutput || 'No expected output available for this challenge.'}
                                 </pre>
                             </div>
@@ -69,7 +69,7 @@ const GameMode = () => {
 
                         {/* Submission Result - Always visible, static size */}
                         <div className="result-section mt-6 h-40"> {}
-                            <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border-2 border-[var(--accent)] strong-shadow h-full flex flex-col`}>
+                            <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border border-[var(--border-gray)] rounded-2xl shadow-lg h-full flex flex-col`}>
                                 <h3 className={`font-bold mb-2 text-[var(--text)]`}>Your Score</h3> {}
                                 <div className="flex-1 flex flex-col justify-center">
                                     {isSubmitted && submissionResult ? (
@@ -104,7 +104,7 @@ const GameMode = () => {
                             <button
                                 onClick={handleSubmit}
                                 disabled={!userCode.trim() || isSubmitted}
-                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
+                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
                                            disabled:opacity-50 disabled:cursor-not-allowed"
                             >
@@ -113,14 +113,14 @@ const GameMode = () => {
 
                             <button
                                 onClick={generateNewPrompt}
-                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
+                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
                             >
                                 New Challenge
                             </button>
                             <button
                                 onClick={handleBackToHome}
-                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
+                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
                             >
                                 Back to Home

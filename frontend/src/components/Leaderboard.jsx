@@ -27,7 +27,7 @@ const Leaderboard = () => {
     };
 
     return (
-        <div className="w-[300px] h-[705px] bg-[var(--inbetween)] rounded-3xl flex flex-col">
+        <div className="border border-[var(--border-gray)] rounded-2xl shadow-lg w-[300px] h-[705px] bg-[var(--inbetween)] rounded-3xl flex flex-col">
             <div className="h-24 flex items-center justify-center">
                 <span className="text-[30px] font-montserrat font-bold tracking-[0.15em] text-[var(--text)]">
                     TOP 10

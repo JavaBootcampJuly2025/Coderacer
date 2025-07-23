@@ -38,7 +38,7 @@ const Header = () => {
 
     return (
         <div className="w-full h-24 flex justify-between items-center px-5">
-            <Link to="/home" className="w-64 flex flex-row items-center space-x-3 hover:opacity-80 transition">
+            <Link to="/home" className="w-64 h-20 flex flex-row items-center space-x-3 hover:opacity-80 transition">
                 <Logo className="logo" alt="Coderacer logo" />
                 <Title />
             </Link>
