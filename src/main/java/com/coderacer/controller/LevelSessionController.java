@@ -1,6 +1,7 @@
 package com.coderacer.controller;
 
 import com.coderacer.dto.LevelSessionDTO;
+import com.coderacer.model.Account;
 import com.coderacer.model.LevelSession;
 import com.coderacer.service.AccountService;
 import com.coderacer.service.LevelSessionService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -38,15 +40,25 @@ public class LevelSessionController {
      */
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     @PostMapping
-    public ResponseEntity<LevelSession> createLevelSession(@RequestBody LevelSessionCreateDto createDto) {
+    public ResponseEntity<LevelSession> createLevelSession(@RequestBody LevelSessionCreateDto createDto,
+                                                           Authentication authentication) {
         try {
+            Account authenticatedAccount = (Account) authentication.getPrincipal();
+            UUID userId = authenticatedAccount.getId();
+
+            boolean isAdmin = authentication.getAuthorities().stream()
+                    .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+
+            // Check ownership or admin
+            if (!createDto.getAccountId().equals(userId) && !isAdmin) {
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
+
             LevelSession newSession = levelSessionService.createLevelSession(createDto);
             accountService.updateRating(createDto);
             return new ResponseEntity<>(newSession, HttpStatus.CREATED);
+
         } catch (EntityNotFoundException e) {
-            // Return a 400 Bad Request if a referenced Level or Account is not found.
-            // In a production application, you might return a custom error response DTO
-            // with more details about what went wrong.
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
