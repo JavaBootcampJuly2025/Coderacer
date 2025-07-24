@@ -102,24 +102,22 @@ const GameMode = () => {
                     </div>
 
                     {/* Right Side - Compact Examples and Enhanced Results (1/3 width) */}
-                    <div className="right-panel flex flex-col col-span-1 h-full">
+                    <div className="examples-section mb-4">
                         {/* Compact Example Input/Output - Horizontal Layout */}
-                        <div className="examples-section mb-4 h-24">
-                            <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow h-full">
-                                <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
-                                <div className="flex gap-2 h-full overflow-hidden">
-                                    <div className="flex-1">
-                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Input:</p>
-                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 overflow-y-auto h-10">
-                                            {exampleInput || 'No input'}
-                                        </pre>
-                                    </div>
-                                    <div className="flex-1">
-                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Output:</p>
-                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 overflow-y-auto h-10">
-                                            {exampleOutput || 'No output'}
-                                        </pre>
-                                    </div>
+                        <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow">
+                            <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
+                            <div className="flex gap-2 overflow-hidden">
+                                <div className="flex-1">
+                                    <p className="text-xs font-semibold text-[var(--text)] mb-1">Input:</p>
+                                    <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
+                                        {exampleInput || 'No input'}
+                                    </pre>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-xs font-semibold text-[var(--text)] mb-1">Output:</p>
+                                    <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
+                                        {exampleOutput || 'No output'}
+                                    </pre>
                                 </div>
                             </div>
                         </div>
