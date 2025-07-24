@@ -36,7 +36,7 @@ public class CodeExecutionClient {
      */
     public ExecutionResultDTO executeCode(String code, List<Integer> inputToPass) {
         try {
-            String url = codeExecutionServiceUrl + "/api/code";
+            String url = codeExecutionServiceUrl + "/api/code/execute";
 
             // Set headers
             HttpHeaders headers = new HttpHeaders();
