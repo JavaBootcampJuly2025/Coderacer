@@ -1,89 +1,65 @@
-import React from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Header from '../components/Header';
 import SpeedChart from '../components/SpeedChart';
 import RightPanel from '../components/RightPanel';
 import Footer from '../components/Footer';
 import Leaderboard from '../components/Leaderboard';
 import UserMetrics from '../components/UserMetrics';
+import ParticleSystem from '../components/ParticleSystem';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
-
-const CONFIG = {
-    root: {
-        minHeight: 'min-h-screen',
-        backgroundColor: 'bg-[#13223A]',
-        flexDirection: 'flex-col',
-        alignItems: 'items-center',
-    },
-    header: {
-        width: 'w-full',
-        height: 'h-[80px]',
-        border: 'border border-[#59000000]',
-    },
-    mainBody: {
-        width: 'w-full',
-        maxWidth: 'max-w-7xl',
-        flex: 'flex-grow',
-        flexDirection: 'flex-col',
-        justifyContent: 'justify-between',
-        padding: 'py-6',
-    },
-    mainRow: {
-        flexDirection: 'flex-row',
-        justifyContent: 'justify-center',
-        alignItems: 'items-start',
-        gap: 'gap-6',
-    },
-    chartPanelCol: {
-        flexDirection: 'flex-col',
-        justifyContent: 'justify-center',
-        alignItems: 'items-start',
-        gap: 'gap-6',
-    },
-    buttonStatsRow: {
-        flexDirection: 'flex-row',
-        justifyContent: 'justify-center',
-        alignItems: 'items-start',
-        gap: 'gap-6',
-    },
-    speedChart: {
-        width: 'w-5/5',
-        height: 'h-[380px]',
-        borderRadius: 'rounded-2xl',
-    },
-    rightPanel: {
-        width: 'w-5/5',
-        height: 'h-[300px]',
-        borderRadius: 'rounded-2xl',
-    },
-    UserMetrics: {
-        width: 'w-5/5',
-        height: 'h-[300px]',
-        borderRadius: 'rounded-2xl',
-    },
-    leaderboard: {
-        width: 'w-[300px]',
-        borderRadius: 'rounded-2xl',
-    },
-    footer: {
-        width: 'w-full',
-        height: 'h-[80px]',
-        border: 'border border-[#59000000]',
-    },
-    typography: {
-        fontFamily: 'font-montserrat',
-        titleColor: 'text-[#24E5B7]',
-        titleFontSize: 'text-2xl',
-        titleFontWeight: 'font-medium',
-    },
-};
+import { useTheme } from '../styles/ThemeContext';
+import LevelSwitch from "../components/ui/LevelSwitch";
 
 const Home = () => {
     const { latestSession } = useLevelContext();
+    const { theme, themes } = useTheme();
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+    const [ripples, setRipples] = useState([]);
+    const [scrollY, setScrollY] = useState(0);
+    const rippleTimeoutRef = useRef();
 
-    const handleClick = () => {
+    useEffect(() => {
+        setIsLoaded(true);
+        
+        const handleMouseMove = (e) => {
+            setMousePosition({ x: e.clientX, y: e.clientY });
+        };
+
+        const handleScroll = () => {
+            setScrollY(window.scrollY);
+        };
+
+        window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('scroll', handleScroll);
+        
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    const handleClick = (e) => {
         document.activeElement.blur();
+        
+        // Create ripple effect
+        const newRipple = {
+            id: Date.now(),
+            x: e.clientX,
+            y: e.clientY,
+        };
+        
+        setRipples(prev => [...prev, newRipple]);
+        
+        // Remove ripple after animation
+        setTimeout(() => {
+            setRipples(prev => prev.filter(ripple => ripple.id !== newRipple.id));
+        }, 1000);
     };
+
+    // Get current theme colors
+    const currentTheme = themes[theme];
 
     const speedLog = latestSession?.speedLog || [{ time: 0, rawCpm: 0, accurateWpm: 0 }, { time: 10, rawCpm: 50, accurateWpm: 40 }];
     const endTime = latestSession?.endTime || 10;
@@ -94,31 +70,123 @@ const Home = () => {
 
     return (
         <div
-            className={`home-wrapper ${CONFIG.root.minHeight} ${CONFIG.root.backgroundColor} flex ${CONFIG.root.flexDirection} ${CONFIG.root.alignItems} ${CONFIG.typography.fontFamily}`}
+            className="home-wrapper-enhanced"
             onClick={handleClick}
+            data-theme={theme}
         >
-            <div className={`${CONFIG.header.width} ${CONFIG.header.height} ${CONFIG.header.border}`}>
+            {/* Particle System */}
+            <ParticleSystem />
+
+            {/* Dynamic background with theme-aware animations */}
+            <div className="background-layer">
+                {/* Animated orbs with parallax */}
+                <div 
+                    className="bg-orb bg-orb-1"
+                    style={{
+                        transform: `translateY(${scrollY * 0.1}px)`,
+                        background: `radial-gradient(circle, ${currentTheme.accent}20, transparent)`
+                    }}
+                ></div>
+                <div 
+                    className="bg-orb bg-orb-2"
+                    style={{
+                        transform: `translateY(${scrollY * 0.15}px)`,
+                        background: `radial-gradient(circle, ${currentTheme.accent}15, transparent)`
+                    }}
+                ></div>
+                <div 
+                    className="bg-orb bg-orb-3"
+                    style={{
+                        transform: `translateY(${scrollY * 0.2}px)`,
+                        background: `radial-gradient(circle, ${currentTheme.accent}25, transparent)`
+                    }}
+                ></div>
+                
+                {/* Animated grid with theme colors */}
+                <div 
+                    className="bg-grid"
+                    style={{
+                        backgroundImage: `
+                            linear-gradient(${currentTheme.borderGray}40 1px, transparent 1px),
+                            linear-gradient(90deg, ${currentTheme.borderGray}40 1px, transparent 1px)
+                        `
+                    }}
+                ></div>
+                
+                {/* Enhanced mouse follower with theme colors */}
+                <div 
+                    className="mouse-glow"
+                    style={{
+                        left: mousePosition.x - 100,
+                        top: mousePosition.y - 100,
+                        background: `radial-gradient(circle, ${currentTheme.accent}10, transparent)`,
+                        transition: 'all 0.1s ease'
+                    }}
+                ></div>
+
+                {/* Floating geometric shapes */}
+                <div className="floating-shapes">
+                    {[...Array(6)].map((_, i) => (
+                        <div
+                            key={i}
+                            className={`floating-shape shape-${i + 1}`}
+                            style={{
+                                background: `${currentTheme.accent}15`,
+                                border: `1px solid ${currentTheme.accent}30`,
+                                animationDelay: `${i * 2}s`
+                            }}
+                        />
+                    ))}
+                </div>
+            </div>
+
+            {/* Click ripple effects */}
+            {ripples.map(ripple => (
+                <div
+                    key={ripple.id}
+                    className="click-ripple"
+                    style={{
+                        left: ripple.x - 25,
+                        top: ripple.y - 25,
+                        borderColor: currentTheme.accent
+                    }}
+                />
+            ))}
+
+            {/* Header with enhanced animations */}
+            <div className={`header-container ${isLoaded ? 'loaded' : ''}`}>
+                <div className="header-glow" style={{ background: `${currentTheme.accent}05` }}></div>
                 <Header />
             </div>
-            <div
-                className={`main-body ${CONFIG.mainBody.width} ${CONFIG.mainBody.maxWidth} ${CONFIG.mainBody.flex} flex ${CONFIG.mainBody.flexDirection} ${CONFIG.mainBody.justifyContent} ${CONFIG.mainBody.padding}`}
-            >
-                <div className={`flex ${CONFIG.mainRow.flexDirection} ${CONFIG.mainRow.justifyContent} ${CONFIG.mainRow.alignItems} ${CONFIG.mainRow.gap}`}>
-                    <div className={`${CONFIG.leaderboard.width} ${CONFIG.leaderboard.borderRadius}`}>
+
+            {/* Main Content - Clean Layout with enhanced effects */}
+            <div className="main-content-wrapper">
+                <div className={`content-grid ${isLoaded ? 'loaded' : ''}`}>
+                    
+                    {/* Left Column - Leaderboard with hover effects */}
+                    <div className="leaderboard-section">
+                        <div className="section-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                         <Leaderboard />
                     </div>
-                    <div className={`flex ${CONFIG.chartPanelCol.flexDirection} ${CONFIG.chartPanelCol.justifyContent} ${CONFIG.chartPanelCol.alignItems} ${CONFIG.chartPanelCol.gap}`}>
-                        <div className={`flex flex-row ${CONFIG.chartPanelCol.gap}`}>
-                            <div className={`${CONFIG.rightPanel.width} ${CONFIG.rightPanel.height} ${CONFIG.rightPanel.borderRadius}`}>
+
+                    {/* Center Column */}
+                    <div className="center-column">
+                        
+                        {/* Top Row - Game Panels with stagger animation */}
+                        <div className="game-panels-row">
+                            <div className="game-panel">
+                                <div className="panel-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                                 <RightPanel />
                             </div>
-
-                            <div className={`${CONFIG.UserMetrics.width} ${CONFIG.UserMetrics.height} ${CONFIG.UserMetrics.borderRadius}`}>
+                            <div className="metrics-panel">
+                                <div className="panel-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                                 <UserMetrics />
                             </div>
                         </div>
 
-                        <div className={`${CONFIG.speedChart.width} ${CONFIG.speedChart.height} ${CONFIG.speedChart.borderRadius}`}>
+                        {/* Bottom Row - Chart with enhanced effects */}
+                        <div className="chart-section">
+                            <div className="chart-glow" style={{ background: `${currentTheme.accent}02` }}></div>
                             <SpeedChart
                                 endTime={endTime}
                                 speedLog={speedLog}
@@ -131,11 +199,18 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <div className={`${CONFIG.footer.width} ${CONFIG.footer.height} ${CONFIG.footer.border}`}>
+
+            {/* Footer with enhanced styling */}
+            <div className={`footer-container ${isLoaded ? 'loaded' : ''}`}>
+                <div className="footer-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                 <Footer />
             </div>
+
+            {/* Theme transition overlay */}
+            <div className="theme-transition-overlay"></div>
         </div>
     );
 };
 
 export default Home;
+

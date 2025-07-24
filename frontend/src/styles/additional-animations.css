@@ -1,0 +1,348 @@
+/* Additional animations and interactive effects */
+
+/* Floating shapes */
+.floating-shapes {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.floating-shape {
+    position: absolute;
+    opacity: 0.1;
+    animation: floatShape 15s ease-in-out infinite;
+}
+
+.shape-1 {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 20%;
+    left: 5%;
+    animation-duration: 20s;
+}
+
+.shape-2 {
+    width: 40px;
+    height: 40px;
+    top: 70%;
+    right: 10%;
+    animation-duration: 25s;
+    animation-delay: -5s;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+}
+
+.shape-3 {
+    width: 80px;
+    height: 80px;
+    top: 40%;
+    right: 20%;
+    animation-duration: 30s;
+    animation-delay: -10s;
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+}
+
+.shape-4 {
+    width: 50px;
+    height: 50px;
+    top: 10%;
+    right: 40%;
+    animation-duration: 18s;
+    animation-delay: -3s;
+    transform: rotate(45deg);
+}
+
+.shape-5 {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    bottom: 30%;
+    left: 20%;
+    animation-duration: 22s;
+    animation-delay: -8s;
+}
+
+.shape-6 {
+    width: 35px;
+    height: 35px;
+    bottom: 10%;
+    right: 30%;
+    animation-duration: 28s;
+    animation-delay: -12s;
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+}
+
+@keyframes floatShape {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg) scale(1);
+        opacity: 0.1;
+    }
+    25% {
+        transform: translateY(-30px) rotate(90deg) scale(1.1);
+        opacity: 0.2;
+    }
+    50% {
+        transform: translateY(20px) rotate(180deg) scale(0.9);
+        opacity: 0.15;
+    }
+    75% {
+        transform: translateY(-10px) rotate(270deg) scale(1.05);
+        opacity: 0.25;
+    }
+}
+
+/* Click ripple effect */
+.click-ripple {
+    position: fixed;
+    width: 50px;
+    height: 50px;
+    border: 2px solid;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000;
+    animation: rippleExpand 1s ease-out forwards;
+}
+
+@keyframes rippleExpand {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Section glow effects */
+.section-glow,
+.panel-glow,
+.chart-glow,
+.header-glow,
+.footer-glow {
+    position: absolute;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    border-radius: 20px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.leaderboard-section:hover .section-glow,
+.game-panel:hover .panel-glow,
+.metrics-panel:hover .panel-glow,
+.chart-section:hover .chart-glow,
+.header-container:hover .header-glow,
+.footer-container:hover .footer-glow {
+    opacity: 1;
+}
+
+/* Enhanced content sections */
+.leaderboard-section,
+.game-panel,
+.metrics-panel,
+.chart-section {
+    position: relative;
+    transition: all 0.3s ease;
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.leaderboard-section:hover,
+.game-panel:hover,
+.metrics-panel:hover,
+.chart-section:hover {
+    transform: translateY(-5px);
+}
+
+/* Theme transition overlay */
+.theme-transition-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--background);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+/* Pulsing elements */
+@keyframes gentlePulse {
+    0%, 100% {
+        opacity: 0.8;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.02);
+    }
+}
+
+.pulse-element {
+    animation: gentlePulse 3s ease-in-out infinite;
+}
+
+/* Breathing animation for background elements */
+@keyframes breathe {
+    0%, 100% {
+        transform: scale(1);
+        opacity: 0.1;
+    }
+    50% {
+        transform: scale(1.1);
+        opacity: 0.2;
+    }
+}
+
+.bg-orb-1 {
+    animation: breathe 8s ease-in-out infinite, float 25s ease-in-out infinite;
+}
+
+.bg-orb-2 {
+    animation: breathe 10s ease-in-out infinite, float 30s ease-in-out infinite;
+    animation-delay: -3s, -8s;
+}
+
+.bg-orb-3 {
+    animation: breathe 12s ease-in-out infinite, float 35s ease-in-out infinite;
+    animation-delay: -6s, -15s;
+}
+
+/* Enhanced button animations */
+.action {
+    position: relative;
+    overflow: hidden;
+}
+
+.action::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.action:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* Smooth theme transitions */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Loading animations */
+.content-grid.loaded .leaderboard-section {
+    animation: slideInLeft 0.8s ease forwards;
+    animation-delay: 0.6s;
+}
+
+.content-grid.loaded .game-panel {
+    animation: slideInUp 0.8s ease forwards;
+    animation-delay: 0.8s;
+}
+
+.content-grid.loaded .metrics-panel {
+    animation: slideInUp 0.8s ease forwards;
+    animation-delay: 1s;
+}
+
+.content-grid.loaded .chart-section {
+    animation: slideInRight 0.8s ease forwards;
+    animation-delay: 1.2s;
+}
+
+/* Micro-interactions */
+.interactive-element {
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.interactive-element:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+}
+
+.interactive-element:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+/* Scroll-based animations */
+@keyframes scrollFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.scroll-animate {
+    opacity: 0;
+    animation: scrollFade 0.6s ease forwards;
+}
+
+/* Performance optimizations for animations */
+.bg-orb,
+.floating-shape,
+.mouse-glow,
+.bg-grid {
+    will-change: transform, opacity;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .floating-shape,
+    .bg-orb,
+    .mouse-glow {
+        animation: none !important;
+    }
+    
+    .click-ripple {
+        display: none;
+    }
+    
+    * {
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .bg-orb,
+    .floating-shape,
+    .mouse-glow {
+        opacity: 0.3 !important;
+    }
+    
+    .section-glow,
+    .panel-glow,
+    .chart-glow,
+    .header-glow,
+    .footer-glow {
+        display: none;
+    }
+}
+
