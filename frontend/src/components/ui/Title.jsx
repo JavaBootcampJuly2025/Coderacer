@@ -12,7 +12,7 @@ const Title = ({ fontWeight = 'bold', fontSize = '4xl' }) => {
             className={`text-[var(--accent)] font-montserrat ${sizeClass}`}
             style={{ fontWeight }}
         >
-            codegobrr
+            Coderacer
         </span>
     );
 };
