@@ -124,7 +124,7 @@ const GameMode = () => {
 
                         {/* Enhanced Submission Result Display */}
                         <div className="result-section flex-1">
-                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border-2 border-[var(--accent)] strong-shadow h-full flex flex-col">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border-2 border-[var(--accent)] strong-shadow h-96 flex flex-col">
                                 <h3 className="text-lg font-bold text-[var(--text)] mb-3">Results</h3>
 
                                 {isSubmitted && testResult ? (
@@ -184,6 +184,7 @@ const GameMode = () => {
                                 )}
                             </div>
                         </div>
+
 
                         {/* Action Buttons */}
                         <div className="action-buttons-right flex flex-col gap-3 mt-4">
