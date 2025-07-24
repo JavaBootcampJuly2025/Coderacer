@@ -45,7 +45,7 @@ const useGameModeLogic = () => {
 
             setTestsPassed(response.passedTests);
             setTotalTests(response.totalTests);
-            setIsSubmitted(true);
+            if(response.allPassed) setIsSubmitted(true);
         } catch (error) {
             console.error('Error submitting code:', error);
         }
