@@ -27,7 +27,7 @@ WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
 # Expose port for main app
-EXPOSE 8000
+EXPOSE 8000 3000
 
 # Run the main application
 ENTRYPOINT ["java", "-jar", "app.jar"]
