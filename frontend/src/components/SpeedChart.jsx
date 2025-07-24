@@ -65,7 +65,7 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
     console.log('Duration:', duration, 'StartTime:', startTime, 'EndTime:', endTime);
 
     return (
-        <div className="w-[800px] h-[380px] p-4 bg-[var(--inbetween)] rounded-2xl">
+        <div className="border border-[var(--border-gray)] rounded-2xl shadow-lg w-[800px] h-[380px] p-4 bg-[var(--inbetween)] rounded-2xl">
             <h3 className="text-[28px] font-montserrat font-bold tracking-[0.15em] text-[var(--text)] pl-10">TYPING SPEED OVER TIME (WPM)</h3>
             <div className="mt-6">
                 <ResponsiveContainer width="100%" height={260}>

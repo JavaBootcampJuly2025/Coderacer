@@ -77,7 +77,6 @@ const GameMode = () => {
                                 </pre>
                                 <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Output</h3>
                                 <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
-                                    {exampleOutput || 'No expected output available for this challenge.'}
                                 </pre>
                             </div>
                         </div>
@@ -85,7 +84,7 @@ const GameMode = () => {
 
                         {/* Submission Result - Always visible, static size */}
                         <div className="result-section mt-6 h-40"> {}
-                            <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border-2 border-[var(--accent)] strong-shadow h-full flex flex-col`}>
+                            <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border border-[var(--border-gray)] rounded-2xl shadow-lg h-full flex flex-col`}>
                                 <h3 className={`font-bold mb-2 text-[var(--text)]`}>Your Score</h3> {}
                                 <div className="flex-1 flex flex-col justify-center">
                                     {isSubmitted ? (
@@ -115,13 +114,12 @@ const GameMode = () => {
                                 onClick={generateNewPrompt}
                                 className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
-                                           disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 New Challenge
                             </button>
                             <button
                                 onClick={handleBackToHome}
-                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
+                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
                             >
                                 Back to Home

@@ -1,5 +1,5 @@
 import React from 'react';
-import {getRandomLevelWithParameters, getRandomProblemWithDifficulty} from '../services/apiService';
+import {getRandomLevelWithDifficulty, getRandomProblemWithDifficulty} from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import LevelSwitch from './ui/LevelSwitch';
 import LanguageGrid from './LanguageGrid';
@@ -9,9 +9,9 @@ import { useTheme } from '../styles/ThemeContext';
 // Configuration constants
 const PANEL_CONFIG = {
     panel: {
-        width: '450px',
+        width: '452px',
         height: '300px',
-        borderRadius: '12px',
+        borderRadius: '15px',
         background: 'var(--inbetween)',
         paddingX: '5',
     },
@@ -34,15 +34,13 @@ const PANEL_CONFIG = {
 };
 
 const RightPanel = () => {
-    const [selectedLanguage, setSelectedLanguage] = useState(null);
     const [selectedDifficulty, setSelectedDifficulty] = useState('MEDIUM');
 
     const navigate = useNavigate();
 
     const handlePlayClick = async () => {
         try {
-            console.log(selectedLanguage);
-            const levelData = await getRandomLevelWithParameters(selectedLanguage, selectedDifficulty);
+            const levelData = await getRandomLevelWithDifficulty(selectedDifficulty);
             navigate("/level", { state: { level: levelData } });
         } catch (error) {
             console.error('Error loading level:', error);
@@ -80,7 +78,7 @@ const RightPanel = () => {
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            <div className={`flex-grow flex flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
+            <div className={`flex-grow flex border-l border-r border-b border-[var(--border-gray)] rounded-b-2xl shadow-lg flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
                 <div className={`flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing}`}>
                     {buttons.map(({ label, onClick }, index) => {
                         const buttonConfig = PANEL_CONFIG.buttons.default;

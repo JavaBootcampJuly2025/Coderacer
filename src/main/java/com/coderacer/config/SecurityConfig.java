@@ -30,6 +30,12 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/accounts/login", "/api/accounts").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/accounts/verify").permitAll()
                         .requestMatchers("/api/accounts/**").authenticated()
+                        .requestMatchers(HttpMethod.GET,
+                                "/api/problems/{id}",
+                                "/api/problems/search",
+                                "/api/problems/random",
+                                "/api/problems/random/difficulty/**").permitAll()
+                        .requestMatchers("/api/problems/**").hasRole("ADMIN")
                         .requestMatchers("/api/metrics/**").authenticated()
                         .requestMatchers("/api/leaderboard/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/levels/**").permitAll()
@@ -38,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PUT, "/api/levels/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/levels/**").authenticated()
                         .requestMatchers("/api/v1/level-sessions/**").authenticated()
+                        .requestMatchers("/api/test/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);

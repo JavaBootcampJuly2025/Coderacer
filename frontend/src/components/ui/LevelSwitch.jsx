@@ -5,7 +5,7 @@ import { useTheme } from '../../styles/ThemeContext';
 const CONFIG = {
     cornerRadius: 12,
     panel: {
-        width: '450px',
+        width: '452px',
         height: '12',
         backgroundColor: 'var(--black)',
         borderRadius: '12px 12px 0 0', // Rounded top corners, square bottom
@@ -52,7 +52,7 @@ const LevelSwitch = ({ selectedDifficulty, setSelectedDifficulty }) => {
 
     return (
         <div
-            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden`}
+            className={`flex w-[${CONFIG.panel.width}] h-${CONFIG.panel.height} bg-[${CONFIG.panel.backgroundColor}] overflow-hidden border-l border-r border-t border-[var(--border-gray)] rounded-b-2xl`}
             style={{ borderRadius: CONFIG.panel.borderRadius }}
         >
             <div
@@ -63,7 +63,7 @@ const LevelSwitch = ({ selectedDifficulty, setSelectedDifficulty }) => {
                 <button
                     key={option}
                     onClick={() => setSelectedDifficulty(option)}
-                    className={`relative flex-1 h-full flex items-center justify-center text-[${CONFIG.button.textColor}] font-${CONFIG.button.font} text-${CONFIG.button.fontSize} font-${CONFIG.button.fontWeight} z-${CONFIG.button.zIndex}`}
+                    className={`level-switch-button relative flex-1 h-full flex items-center justify-center text-[${CONFIG.button.textColor}] font-${CONFIG.button.font} text-${CONFIG.button.fontSize} font-${CONFIG.button.fontWeight} z-${CONFIG.button.zIndex}`}
                 >
                     <div
                         className={`absolute inset-0 opacity-0 hover:opacity-100 ${CONFIG.hoverOverlay.transition} ${option === selectedDifficulty ? 'pointer-events-none' : ''}`}

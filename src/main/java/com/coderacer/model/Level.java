@@ -25,6 +25,7 @@ public class Level {
     @Column(nullable = false)
     private UUID id;
 
+
     @NotBlank
     @Size(min = 100, max = 2000)
     @Column(nullable = false, length = 2000)

@@ -88,6 +88,22 @@ public class AccountService {
     }
 
     @Transactional
+    public void createSuperUser(String username, String email, String rawPassword) {
+        if (accountRepository.existsByUsername(username) || accountRepository.existsByEmail(email) ) {
+            return;
+        }
+        Account superUser = new Account();
+        superUser.setUsername(username);
+        superUser.setEmail(email);
+        superUser.setRole(Role.ADMIN);
+        superUser.setPassword(rawPassword);
+        superUser.setVerified(true);
+        superUser.setRating(0);
+
+        accountRepository.save(superUser);
+    }
+
+    @Transactional
     public AccountDTO updateAccount(UUID id, AccountUpdateDTO dto) {
         Account account = accountRepository.findById(id)
                 .orElseThrow(() -> new AccountNotFoundException(id));

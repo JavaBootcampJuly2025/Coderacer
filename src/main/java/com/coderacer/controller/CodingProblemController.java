@@ -46,6 +46,7 @@ public class CodingProblemController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<CodingProblemDTO> getProblemById(@PathVariable UUID id) {
         CodingProblemDTO problem = codingProblemService.getProblemById(id);
         return ResponseEntity.ok(problem);
