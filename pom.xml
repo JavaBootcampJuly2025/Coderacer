@@ -37,6 +37,19 @@
                     <target>17</target>
                 </configuration>
             </plugin>
+            <!-- Add the Spring Boot Maven Plugin HERE -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <!-- Version is typically managed by spring-boot-starter-parent -->
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal> <!-- This is CRUCIAL -->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

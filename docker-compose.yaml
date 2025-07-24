@@ -1,17 +1,53 @@
 version: '3.8'
 
 services:
-  db:
-    image: postgres:16-alpine
-    container_name: coderacer-postgres
+  # Main Coderacer Application Service
+  coderacer-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final-main-app
+    container_name: coderacer-main-app
+    depends_on:
+      - db
     environment:
-      POSTGRES_DB: ${SQL_DATABASE}
-      POSTGRES_USER: ${SQL_USERNAME}
-      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      # Configure database connection for the main app
+      SPRING_DATASOURCE_URL: jdbc:postgresql://<your-azure-database-server>.postgres.database.azure.com:5432/<database-name>
+      SPRING_DATASOURCE_USERNAME: <azure-db-username>
+      SPRING_DATASOURCE_PASSWORD: <azure-db-password>
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update # Adjust based on your needs
+      # Other environment variables as needed
+
     ports:
-      - "5332:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - "8000:8000"
+    networks:
+      - coderacer-network
+
+  # Coderacer Runner Microservice
+  coderacer-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final-runner-service
+    container_name: coderacer-runner-service
+    depends_on:
+      - db
+    environment:
+      # Configure database connection for the runner (if needed)
+      SPRING_DATASOURCE_URL: jdbc:postgresql://<your-azure-database-server>.postgres.database.azure.com:5432/<database-name>
+      SPRING_DATASOURCE_USERNAME: <azure-db-username>
+      SPRING_DATASOURCE_PASSWORD: <azure-db-password>
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      # Other environment variables as needed
+
+    ports:
+      - "8001:8001"
+    networks:
+      - coderacer-network
+networks:
+  coderacer-network:
+    driver: bridge
 
 volumes:
   postgres_data:
