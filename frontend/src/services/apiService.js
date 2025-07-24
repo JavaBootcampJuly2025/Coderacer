@@ -108,12 +108,10 @@ export const getTop = async () => {
 };
 
 export const submitCode = async (id, code) => {
-    const response = await api.post(`/api/test/problem/${id}`, code,
-        {
-            headers: {
-                'Content-Type': 'text/plain'
-            }
-        }
-    );
+    const response = await api.post(`/api/test/problem/${id}`, code, {
+        headers: {
+            'Content-Type': 'text/plain',
+        },
+    });
     return response.data;
 }
