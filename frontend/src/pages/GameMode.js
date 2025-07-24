@@ -13,12 +13,14 @@ const GameMode = () => {
         exampleOutput,
         exampleInput,
         isSubmitted,
-        submissionResult,
         containerRef,
         handleCodeChange,
         handleSubmit,
         generateNewPrompt,
-        focusContainer
+        focusContainer,
+        testsPassed,
+        totalTests,
+        isLoading
     } = useGameModeLogic();
 
     const navigate = useNavigate();
@@ -79,26 +81,10 @@ const GameMode = () => {
                             <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border-2 border-[var(--accent)] strong-shadow h-full flex flex-col`}>
                                 <h3 className={`font-bold mb-2 text-[var(--text)]`}>Your Score</h3> {}
                                 <div className="flex-1 flex flex-col justify-center">
-                                    {isSubmitted && submissionResult ? (
-                                        <>
-                                            <p className="text-sm text-[var(--text)] mb-2">{submissionResult.message}</p>
-                                            {submissionResult.details && (
-                                                <div className="grid grid-cols-3 gap-2 text-sm text-[var(--text)]">
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Structure</p>
-                                                        <p className="text-base">{submissionResult.details.structureScore}%</p>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Output</p>
-                                                        <p className="text-base">{submissionResult.details.outputScore}%</p>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Total</p>
-                                                        <p className="text-base font-bold">{submissionResult.details.totalScore}%</p>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
+                                    {isSubmitted ? (
+                                        <p className="text-xl text-center text-[var(--accent)] font-semibold">
+                                            {testsPassed} / {totalTests} Tests Passed
+                                        </p>
                                     ) : (
                                         <p className="text-base text-[var(--text)] text-center">Submit your code to see your score!</p>
                                     )}
@@ -120,8 +106,10 @@ const GameMode = () => {
 
                             <button
                                 onClick={generateNewPrompt}
+                                disabled={isLoading}
                                 className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
-                                           hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
+                                           hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
+                                           disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 New Challenge
                             </button>

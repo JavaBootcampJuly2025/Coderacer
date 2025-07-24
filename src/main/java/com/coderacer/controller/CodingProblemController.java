@@ -12,13 +12,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/problems")
-@CrossOrigin(origins = "*")
 public class CodingProblemController {
 
     private final CodingProblemService codingProblemService;
@@ -29,6 +29,7 @@ public class CodingProblemController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<CodingProblemDTO>> getAllProblems(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
@@ -51,6 +52,7 @@ public class CodingProblemController {
     }
 
     @GetMapping("/difficulty/{difficulty}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<CodingProblemDTO>> getProblemsByDifficulty(
             @PathVariable Difficulty difficulty,
             @RequestParam(defaultValue = "0") int page,
@@ -62,6 +64,7 @@ public class CodingProblemController {
     }
 
     @GetMapping("/search")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<Page<CodingProblemDTO>> searchProblemsByTitle(
             @RequestParam String title,
             @RequestParam(defaultValue = "0") int page,
@@ -73,24 +76,28 @@ public class CodingProblemController {
     }
 
     @GetMapping("/random")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<CodingProblemDTO> getRandomProblem() {
         CodingProblemDTO problem = codingProblemService.getRandomProblem();
         return ResponseEntity.ok(problem);
     }
 
     @GetMapping("/random/difficulty/{difficulty}")
+    @PreAuthorize("permitAll()")
     public ResponseEntity<CodingProblemDTO> getRandomProblemByDifficulty(@PathVariable Difficulty difficulty) {
         CodingProblemDTO problem = codingProblemService.getRandomProblemByDifficulty(difficulty);
         return ResponseEntity.ok(problem);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CodingProblemDTO> createProblem(@Valid @RequestBody CodingProblemRequestDTO requestDTO) {
         CodingProblemDTO createdProblem = codingProblemService.createProblem(requestDTO);
         return new ResponseEntity<>(createdProblem, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<CodingProblemDTO> updateProblem(
             @PathVariable UUID id,
             @Valid @RequestBody CodingProblemRequestDTO requestDTO) {
@@ -99,12 +106,14 @@ public class CodingProblemController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteProblem(@PathVariable UUID id) {
         codingProblemService.deleteProblem(id);
         return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/stats/count")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Long> getProblemsCountByDifficulty(@RequestParam Difficulty difficulty) {
         long count = codingProblemService.getProblemsCountByDifficulty(difficulty);
         return ResponseEntity.ok(count);

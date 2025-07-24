@@ -106,3 +106,8 @@ export const getTop = async () => {
     const response = await api.get('/api/leaderboard/top');
     return response.data;
 };
+
+export const submitCode = async (id, code) => {
+    const response = await api.post(`/api/test/problem/${id}`, { code });
+    return response.data;
+}
