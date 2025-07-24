@@ -1,50 +1,50 @@
-# Multi-stage Dockerfile with separate builds
+# Multi-stage Dockerfile for Coderacer Application
 
 # ================================
-# Main Application Build Stage
+# Build Stage
 # ================================
-FROM eclipse-temurin:17-jdk-alpine AS main-builder
+FROM eclipse-temurin:17-jdk AS builder
 
 WORKDIR /app
+
+# Copy Maven files and source code
 COPY pom.xml .
 COPY src ./src
 
-# Build only the main application (you might need to adjust this based on your Maven setup)
+# Install Maven and build the application (Ubuntu uses apt-get)
 RUN apt-get update && apt-get install -y maven
 RUN mvn clean package -DskipTests
 
 
 # ================================
-# Runner Service Build Stage
+# Main Application Stage
 # ================================
-FROM eclipse-temurin:17-jdk-alpine AS runner-builder
+FROM eclipse-temurin:17-jre AS final-main-app
 
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
 
-# Build only the runner service (adjust based on your Maven setup)
-RUN apt-get update && apt-get install -y maven
-RUN mvn clean package -DskipTests
+# Copy the built JAR file from builder stage
+COPY --from=builder /app/target/*.jar app.jar
 
-
-# ================================
-# Main Application Runtime Stage
-# ================================
-FROM eclipse-temurin:17-jdk-alpine AS final-main-app
-
-WORKDIR /app
-COPY --from=main-builder /app/target/*.jar app.jar
+# Expose port for main app
 EXPOSE 8000
+
+# Run the main application
 ENTRYPOINT ["java", "-jar", "app.jar"]
 
 
 # ================================
-# Runner Service Runtime Stage
+# Runner Service Stage
 # ================================
-FROM eclipse-temurin:17-jdk-alpine AS final-runner-service
+FROM eclipse-temurin:17-jre AS final-runner-service
 
 WORKDIR /app
-COPY --from=runner-builder /app/target/*.jar runner.jar
+
+# Copy the built JAR file from builder stage
+COPY --from=builder /app/target/*.jar runner.jar
+
+# Expose port for runner service
 EXPOSE 8001
+
+# Run the runner service
 ENTRYPOINT ["java", "-jar", "runner.jar"]
