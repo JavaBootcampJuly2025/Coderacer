@@ -32,7 +32,7 @@ const GameMode = () => {
     const getStatusText = (status) => {
         switch (status) {
             case 'SUCCESS':
-                return 'Success';
+                return 'Successful compilation';
             case 'COMPILATION_ERROR':
                 return 'Compilation Error';
             case 'RUNTIME_ERROR':
@@ -121,7 +121,7 @@ const GameMode = () => {
                                         </div>
 
                                         <div className="bg-[var(--background)] rounded p-3">
-                                            <p className="text-sm font-semibold text-[var(--text)] mb-1">Compilation status:</p>
+                                            <p className="text-sm font-semibold text-[var(--text)] mb-1">Status:</p>
                                             <p className={`text-sm font-bold text-[var(--text)]`}>
                                                 {getStatusText(testResult.executionStatus)}
                                             </p>
