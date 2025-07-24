@@ -77,6 +77,7 @@ const GameMode = () => {
                                 </pre>
                                 <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Output</h3>
                                 <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
+                                    {exampleOutput || 'No example output available for this challenge.'}
                                 </pre>
                             </div>
                         </div>
