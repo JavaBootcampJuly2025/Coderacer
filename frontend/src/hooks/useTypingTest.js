@@ -99,14 +99,17 @@ const useTypingTest = (initialCodeSnippet = '') => {
 
             // Trigger completion when userInput length reaches codeSnippet length
             if (!isCompleted.current && newInput.length >= codeSnippet.length) {
+                // Skip if there are any errors made
+                const correctChars = [...newInput].filter((ch, i) => {
+                    return i < codeSnippet.length && ch === codeSnippet[i];
+                }).length;
+                if(correctChars !== codeSnippet.length) return;
+
                 isCompleted.current = true;
                 const now = Date.now();
                 setEndTime(now);
 
                 // Log final data point
-                const correctChars = [...newInput].filter((ch, i) => {
-                    return i < codeSnippet.length && ch === codeSnippet[i];
-                }).length;
                 const rawWpm = elapsedSec > 0 ? Math.round((newInput.length / 5 / elapsedSec) * 60) : 0;
                 const accurateWpm = elapsedSec > 0 ? Math.round((correctChars / 5 / elapsedSec) * 60) : 0;
                 setSpeedLog((prev) => [
