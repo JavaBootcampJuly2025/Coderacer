@@ -21,11 +21,6 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set Lowercase Repo Name
-        run: |
-          REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]' | tr '/' '-')
-          echo "LOWER_REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
-
       - name: Setup JDK 17
         uses: actions/setup-java@v4
         with:
@@ -55,8 +50,8 @@ jobs:
           target: final-main-app
           push: true
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ env.LOWER_REPO_NAME }}/coderacer-app:${{ github.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ env.LOWER_REPO_NAME }}/coderacer-app:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-app:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-app:latest
           build-args: |
             APP_PORT=8000
             SQL_DATABASE=${{ secrets.SQL_DATABASE }}
@@ -76,8 +71,8 @@ jobs:
           target: final-runner-service
           push: true
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ env.LOWER_REPO_NAME }}/coderacer-runner:${{ github.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ env.LOWER_REPO_NAME }}/coderacer-runner:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-runner:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-runner:latest
           build-args: |
             APP_PORT=8001
             SQL_DATABASE=${{ secrets.SQL_DATABASE }}
