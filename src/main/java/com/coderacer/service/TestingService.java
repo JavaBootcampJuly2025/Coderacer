@@ -30,15 +30,21 @@ public class TestingService {
 
         ExecutionResultDTO result = codeExecutionClient.executeCode(code, inputs);
 
+        // Handle non-success cases (compilation error, runtime error, timeout)
         if (result.getResult() != ExecutionResultDTO.Result.SUCCESS) {
             return TestResultDTO.builder()
                     .problemId(problemId)
                     .totalTests(expectedOutputs.size())
                     .passedTests(0)
                     .allPassed(false)
+                    .executionStatus(result.getResult())
+                    .actualOutput(result.getOutputLines()) // May contain error messages
+                    .expectedOutput(expectedOutputs)
+                    .errorMessage(getErrorMessage(result))
                     .build();
         }
 
+        // Handle successful execution
         List<String> actualOutputs = result.getOutputLines();
         int total = expectedOutputs.size();
         int passed = countMatchingOutputs(expectedOutputs, actualOutputs);
@@ -48,6 +54,10 @@ public class TestingService {
                 .totalTests(total)
                 .passedTests(passed)
                 .allPassed(passed == total)
+                .executionStatus(result.getResult())
+                .actualOutput(actualOutputs)
+                .expectedOutput(expectedOutputs)
+                .errorMessage(null) // No error for successful execution
                 .build();
     }
 
@@ -67,5 +77,21 @@ public class TestingService {
         }
 
         return passed;
+    }
+
+    private String getErrorMessage(ExecutionResultDTO result) {
+        // Extract meaningful error message from output lines if available
+        if (result.getOutputLines() != null && !result.getOutputLines().isEmpty()) {
+            return String.join("\n", result.getOutputLines());
+        }
+
+        // Fallback to generic message based on result type
+        return switch (result.getResult()) {
+            case COMPILATION_ERROR -> "Code compilation failed";
+            case RUNTIME_ERROR -> "Runtime error occurred during execution";
+            case TIMEOUT -> "Code execution timed out";
+            case OUTPUT_MISMATCH -> "Output does not match expected results";
+            default -> "Unknown error occurred";
+        };
     }
 }
