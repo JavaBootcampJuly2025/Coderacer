@@ -22,6 +22,10 @@ const Level = () => {
         calculateAccuracy,
         totalTyped,
         mistakes,
+        words,
+        currentWordIndex,
+        currentWordInput,
+        wordStates,
     } = useLevelLogic();
 
     const location = useLocation();
@@ -77,6 +81,10 @@ const Level = () => {
                     containerRef={containerRef}
                     handleKeyDown={handleKeyDown}
                     focusContainer={focusContainer}
+                    words={words}
+                    currentWordIndex={currentWordIndex}
+                    currentWordInput={currentWordInput}
+                    wordStates={wordStates}
                 />
             </div>
         </div>

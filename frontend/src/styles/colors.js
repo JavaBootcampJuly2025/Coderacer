@@ -19,12 +19,13 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#222e45'
+        sliderhover: '#222e45',
+        extraText: '#cb5d5d',
     },
     brown: {
         defaultChar: '#888',
         correctChar: '#e3e1c1',
-        incorrectChar: '#cd0b0b',
+        incorrectChar: '#4f2121',
         unwrittenChar: '#806850', // Added for unwritten text
         caret: '#ffbe26',
         primaryButton: '#806850',
@@ -40,7 +41,8 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#50443a'
+        sliderhover: '#50443a',
+        extraText: '#864949',
     },
     mentor: {
         defaultChar: '#888',
@@ -61,12 +63,13 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#50443a'
+        sliderhover: '#50443a',
+        extraText: '#ff6b6b',
     },
     light: {
         defaultChar: '#aaa',
         correctChar: '#78095a',
-        incorrectChar: '#cd0b0b',
+        incorrectChar: '#c02851',
         unwrittenChar: '#b19bac', // Lighter green for dark theme
         caret: '#293a75',
         primaryButton: '#d5c1e8',
@@ -82,7 +85,8 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.22)',
-        sliderhover: '#b598ba'
+        sliderhover: '#b598ba',
+        extraText: '#ca8df1',
     },
 };
 

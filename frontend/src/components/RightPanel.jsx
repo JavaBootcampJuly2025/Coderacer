@@ -51,9 +51,11 @@ const RightPanel = () => {
 
     const handleThinkerClick = () => navigate('/GameMode');
 
+    const handleSpeederClick = () => navigate('/level');
+
     const buttons = [
         { label: 'THINKER MODE', onClick: handleThinkerClick },
-        { label: 'SPEEDER MODE', onClick: handlePlayClick },
+        { label: 'SPEEDER MODE', onClick: handleSpeederClick },
     ];
 
     return (

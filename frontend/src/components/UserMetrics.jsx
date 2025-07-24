@@ -19,7 +19,7 @@ const UserMetrics = () => {
     }
 
     return (
-        <div className="w-[280px] h-[180px] bg-[var(--inbetween)] border border-[var(--border-gray)] rounded-2xl shadow-lg overflow-hidden">
+        <div className="w-[280px] h-[180px] bg-[var(--inbetween)] border-2 border-[var(--border-gray)] rounded-2xl shadow-lg overflow-hidden">
             {/* Header */}
             <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--primary-button)] p-3">
                 <h3 className="text-sm font-bold text-white text-center tracking-wide">
