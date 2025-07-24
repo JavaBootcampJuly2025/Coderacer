@@ -7,9 +7,6 @@ import Leaderboard from '../components/Leaderboard';
 import UserMetrics from '../components/UserMetrics';
 import '../App.css';
 import { useLevelContext } from '../context/LevelContext';
-import colors from '../styles/colors';
-import { useTheme } from '../styles/ThemeContext';
-import LevelSwitch from "../components/ui/LevelSwitch";
 
 const CONFIG = {
     root: {

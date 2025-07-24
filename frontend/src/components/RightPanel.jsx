@@ -2,9 +2,7 @@ import React from 'react';
 import {getRandomLevelWithDifficulty, getRandomProblemWithDifficulty} from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import LevelSwitch from './ui/LevelSwitch';
-import LanguageGrid from './LanguageGrid';
 import { useState } from 'react';
-import { useTheme } from '../styles/ThemeContext';
 
 // Configuration constants
 const PANEL_CONFIG = {

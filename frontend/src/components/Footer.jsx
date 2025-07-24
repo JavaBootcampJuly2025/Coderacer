@@ -1,4 +1,3 @@
-// src/components/Footer.jsx
 import React from 'react';
 import colors from '../styles/colors'; // Import colors
 

@@ -71,7 +71,7 @@ const useGameModeLogic = () => {
             console.error('Error loading level:', error);
         }
         setIsLoading(false);
-    }, [focusContainer, location.state?.problem.difficulty]);
+    }, [location.state?.problem.difficulty]);
 
     return {
         title,
