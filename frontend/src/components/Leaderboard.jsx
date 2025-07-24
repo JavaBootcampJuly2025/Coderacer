@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import '../App.css';
 import { useEffect } from 'react';
 import {getTop} from "../services/apiService";
-import colors from '../styles/colors';
 
 const Leaderboard = () => {
     const [leaderboard, setLeaderboard] = useState([]);

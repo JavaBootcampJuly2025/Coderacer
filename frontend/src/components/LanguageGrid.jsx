@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { useTheme } from '../styles/ThemeContext';
 
 // Configuration constants for the grid

@@ -1,4 +1,3 @@
-import React, { useEffect, useRef } from 'react';
 import useGameModeLogic from '../hooks/UseGameModeLogic';
 import CodeInputArea from '../components/CodeInputArea';
 import '../App.css';

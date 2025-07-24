@@ -6,7 +6,6 @@ import { ReactComponent as Logo } from '../assets/icon.svg';
 import { ReactComponent as SunIcon } from '../assets/sun.svg';
 import { ReactComponent as MoonIcon } from '../assets/moon.svg';
 import { ReactComponent as UserIcon } from '../assets/user.svg';
-// import { ReactComponent as StarIcon } from '../assets/mentor.svg';
 import { ReactComponent as SettingsIcon } from '../assets/settings.svg';
 import { Link } from 'react-router-dom';
 import ProfilePopup from './ProfilePopup';
