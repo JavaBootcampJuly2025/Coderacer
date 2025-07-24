@@ -12,7 +12,6 @@ const GameMode = () => {
         userCode,
         exampleOutput,
         exampleInput,
-        isSubmitted,
         containerRef,
         handleCodeChange,
         handleSubmit,
@@ -20,7 +19,8 @@ const GameMode = () => {
         focusContainer,
         testsPassed,
         totalTests,
-        isLoading
+        isLoading,
+        isSubmitted
     } = useGameModeLogic();
 
     const navigate = useNavigate();
@@ -31,6 +31,14 @@ const GameMode = () => {
 
     return (
         <div className="home-wrapper min-h-screen bg-[var(--background)] flex flex-col font-montserrat">
+            {isLoading && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="h-16 w-16 border-4 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+            )}
+
             <Header />
             <div className="main-body flex-1 flex flex-col p-6">
                 {/* Main Content Area - Split Layout */}
@@ -54,7 +62,6 @@ const GameMode = () => {
                                 containerRef={containerRef}
                                 handleCodeChange={handleCodeChange}
                                 focusContainer={focusContainer}
-                                isSubmitted={isSubmitted}
                             />
                         </div>
                     </div>
@@ -96,7 +103,7 @@ const GameMode = () => {
                         <div className="action-buttons-right flex flex-col gap-3 flex-1 mt-6"> {/* Added mt-6 for separation from score box */}
                             <button
                                 onClick={handleSubmit}
-                                disabled={!userCode.trim() || isSubmitted}
+                                disabled={!userCode.trim()}
                                 className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
                                            disabled:opacity-50 disabled:cursor-not-allowed"
@@ -106,7 +113,6 @@ const GameMode = () => {
 
                             <button
                                 onClick={generateNewPrompt}
-                                disabled={isLoading}
                                 className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
                                            disabled:opacity-50 disabled:cursor-not-allowed"

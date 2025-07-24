@@ -5,7 +5,6 @@ const CodeInputArea = ({
                            containerRef,
                            handleCodeChange,
                            focusContainer,
-                           isSubmitted
                        }) => {
     const handleTextareaChange = (e) => {
         handleCodeChange(e.target.value);
@@ -50,7 +49,6 @@ const CodeInputArea = ({
                         onChange={handleTextareaChange}
                         onKeyDown={handleKeyDown}
                         placeholder="Write your code here..."
-                        disabled={isSubmitted}
                         className="w-full h-96 p-4 rounded-lg resize-none font-mono text-base leading-relaxed focus:outline-none disabled:cursor-not-allowed
                                    focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
                         style={{

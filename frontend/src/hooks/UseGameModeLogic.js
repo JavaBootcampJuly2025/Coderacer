@@ -12,9 +12,9 @@ const useGameModeLogic = () => {
     const [exampleOutput, setExampleOutput] = useState(location.state?.problem.exampleOutputs);
     const [exampleInput, setExampleInput] = useState(location.state?.problem.exampleInputs);
     const [userCode, setUserCode] = useState("static void solution(int n, int[] arr) {  }");
+    const [isSubmitted, setIsSubmitted] = useState(false);
     const [testsPassed, setTestsPassed] = useState(0);
     const [totalTests, setTotalTests] = useState(0);
-    const [isSubmitted, setIsSubmitted] = useState(false);
 
     const containerRef = useRef(null);
 
@@ -30,14 +30,13 @@ const useGameModeLogic = () => {
 
     // Handle code input changes
     const handleCodeChange = useCallback((newCode) => {
-        if (!isSubmitted) {
-            setUserCode(newCode);
-        }
-    }, [isSubmitted]);
+        setUserCode(newCode);
+    }, []);
 
     // Handle code submission
     const handleSubmit = useCallback(async () => {
-        if (!userCode.trim() || isSubmitted) return;
+        if (!userCode.trim()) return;
+        setIsLoading(true);
 
         try {
             const codeToSubmit = userCode.replace(/[\r\n]/g, '');
@@ -45,11 +44,12 @@ const useGameModeLogic = () => {
 
             setTestsPassed(response.passedTests);
             setTotalTests(response.totalTests);
-            if(response.allPassed) setIsSubmitted(true);
+            setIsSubmitted(true);
         } catch (error) {
             console.error('Error submitting code:', error);
         }
-    }, [userCode, isSubmitted, testsPassed, totalTests]);
+        setIsLoading(false);
+    }, [userCode, testsPassed, totalTests, isLoading]);
 
 
     // Generate a new prompt
@@ -57,18 +57,18 @@ const useGameModeLogic = () => {
         setIsLoading(true);
         try {
             const problemData = await getRandomProblemWithDifficulty(location.state?.problem.difficulty);
+            setIsSubmitted(false);
             setCurrentProblemId(problemData.id);
             setTitle(problemData.title);
             setDescription(problemData.description);
             setExampleOutput(problemData.exampleOutputs);
             setExampleInput(problemData.exampleInputs);
-            setIsSubmitted(false);
             setUserCode("static void solution(int n, int[] arr) {  }");
         } catch (error) {
             console.error('Error loading level:', error);
         }
         setIsLoading(false);
-    }, [focusContainer, currentProblemId, title, description, exampleOutput, isSubmitted, userCode, exampleInput, isLoading]);
+    }, [focusContainer, currentProblemId, title, description, exampleOutput, userCode, exampleInput, isLoading]);
 
     return {
         title,
@@ -76,7 +76,6 @@ const useGameModeLogic = () => {
         exampleOutput,
         exampleInput,
         userCode,
-        isSubmitted,
         containerRef,
         handleCodeChange,
         handleSubmit,
@@ -84,7 +83,8 @@ const useGameModeLogic = () => {
         focusContainer,
         testsPassed,
         totalTests,
-        isLoading
+        isLoading,
+        isSubmitted,
     };
 };
 
