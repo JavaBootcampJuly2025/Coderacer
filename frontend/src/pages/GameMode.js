@@ -129,7 +129,6 @@ const GameMode = () => {
 
                                 {isSubmitted && testResult ? (
                                     <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
-                                        {/* Score */}
                                         <div className="bg-[var(--background)] rounded p-3">
                                             <p className="text-sm font-semibold text-[var(--text)] mb-1">Score:</p>
                                             <p className="text-xl font-bold text-[var(--accent)]">
@@ -137,7 +136,6 @@ const GameMode = () => {
                                             </p>
                                         </div>
 
-                                        {/* Execution Status */}
                                         <div className="bg-[var(--background)] rounded p-3">
                                             <p className="text-sm font-semibold text-[var(--text)] mb-1">Status:</p>
                                             <p className={`text-sm font-bold ${getStatusColor(testResult.executionStatus)}`}>
@@ -145,7 +143,6 @@ const GameMode = () => {
                                             </p>
                                         </div>
 
-                                        {/* Actual Output */}
                                         {testResult.actualOutput && testResult.actualOutput.length > 0 && (
                                             <div className="bg-[var(--background)] rounded p-3 flex-1">
                                                 <p className="text-sm font-semibold text-[var(--text)] mb-2">Your Output:</p>
@@ -155,7 +152,6 @@ const GameMode = () => {
                                             </div>
                                         )}
 
-                                        {/* Expected Output */}
                                         {testResult.expectedOutput && testResult.expectedOutput.length > 0 && (
                                             <div className="bg-[var(--background)] rounded p-3">
                                                 <p className="text-sm font-semibold text-[var(--text)] mb-2">Expected:</p>
@@ -165,7 +161,6 @@ const GameMode = () => {
                                             </div>
                                         )}
 
-                                        {/* Error Message */}
                                         {testResult.errorMessage && (
                                             <div className="bg-red-50 border border-red-200 rounded p-3">
                                                 <p className="text-sm font-semibold text-red-700 mb-2">Error:</p>
