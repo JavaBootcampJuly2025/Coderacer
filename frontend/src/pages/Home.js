@@ -155,7 +155,6 @@ const Home = () => {
 
             {/* Header with enhanced animations */}
             <div className={`header-container ${isLoaded ? 'loaded' : ''}`}>
-                <div className="header-glow" style={{ background: `${currentTheme.accent}05` }}></div>
                 <Header />
             </div>
 
@@ -165,7 +164,6 @@ const Home = () => {
                     
                     {/* Left Column - Leaderboard with hover effects */}
                     <div className="leaderboard-section">
-                        <div className="section-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                         <Leaderboard />
                     </div>
 
@@ -175,18 +173,15 @@ const Home = () => {
                         {/* Top Row - Game Panels with stagger animation */}
                         <div className="game-panels-row">
                             <div className="game-panel">
-                                <div className="panel-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                                 <RightPanel />
                             </div>
                             <div className="metrics-panel">
-                                <div className="panel-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                                 <UserMetrics />
                             </div>
                         </div>
 
                         {/* Bottom Row - Chart with enhanced effects */}
                         <div className="chart-section">
-                            <div className="chart-glow" style={{ background: `${currentTheme.accent}02` }}></div>
                             <SpeedChart
                                 endTime={endTime}
                                 speedLog={speedLog}
@@ -202,7 +197,6 @@ const Home = () => {
 
             {/* Footer with enhanced styling */}
             <div className={`footer-container ${isLoaded ? 'loaded' : ''}`}>
-                <div className="footer-glow" style={{ background: `${currentTheme.accent}03` }}></div>
                 <Footer />
             </div>
 

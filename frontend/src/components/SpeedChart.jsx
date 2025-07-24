@@ -3,7 +3,7 @@ import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContai
 import { useTheme } from '../styles/ThemeContext';
 import themes from '../styles/colors';
 
-// Custom Tooltip component
+// Custom Tooltip component with stable positioning
 const CustomTooltip = ({ active, payload, label }) => {
     const { theme } = useTheme();
     const selectedTheme = themes[theme];
@@ -18,6 +18,8 @@ const CustomTooltip = ({ active, payload, label }) => {
                     borderRadius: '5px',
                     border: `1px solid ${selectedTheme.border}`,
                     boxShadow: '0 2px 8px rgba(0, 0, 0, 0.2)',
+                    position: 'relative',
+                    pointerEvents: 'none',
                 }}
             >
                 <p style={{ margin: '0 0 5px 0', fontWeight: 'bold' }}>Time: {label} s</p>
@@ -66,20 +68,51 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
 
     return (
         <div className="border border-[var(--border-gray)] rounded-2xl shadow-lg w-[800px] h-[380px] p-4 bg-[var(--inbetween)] rounded-2xl">
-            <h3 className="text-[28px] font-montserrat font-bold tracking-[0.15em] text-[var(--text)] pl-10">TYPING SPEED OVER TIME (WPM)</h3>
+            <h3 
+                className="text-[28px] font-montserrat font-bold tracking-[0.15em] text-[var(--text)] pl-10"
+                style={{ 
+                    position: 'relative',
+                    transform: 'translateZ(0)', // Force hardware acceleration to prevent twitching
+                    backfaceVisibility: 'hidden', // Prevent text flickering
+                    WebkitFontSmoothing: 'antialiased', // Smooth font rendering
+                }}
+            >
+                TYPING SPEED OVER TIME (WPM)
+            </h3>
             <div className="mt-6">
                 <ResponsiveContainer width="100%" height={260}>
-                    <LineChart data={validatedSpeedLog}>
-                        <CartesianGrid stroke={selectedTheme.border.replace('1)', '0.1)')} strokeDasharray="0" />
+                    <LineChart 
+                        data={validatedSpeedLog}
+                        style={{
+                            transform: 'translateZ(0)', // Prevent twitching
+                            backfaceVisibility: 'hidden',
+                        }}
+                    >
+                        <CartesianGrid 
+                            stroke={selectedTheme.border.replace('1)', '0.1)')} 
+                            strokeDasharray="0" 
+                        />
                         <XAxis
                             dataKey="time"
                             label={{
                                 value: 'Time (seconds)',
                                 position: 'insideBottom',
                                 dy: 10,
-                                fill: selectedTheme.text
+                                fill: selectedTheme.text,
+                                style: {
+                                    textAnchor: 'middle',
+                                    transform: 'translateZ(0)',
+                                    backfaceVisibility: 'hidden',
+                                }
                             }}
-                            tick={{ fill: selectedTheme.text, fontSize: 12 }}
+                            tick={{ 
+                                fill: selectedTheme.text, 
+                                fontSize: 12,
+                                style: {
+                                    transform: 'translateZ(0)',
+                                    backfaceVisibility: 'hidden',
+                                }
+                            }}
                             ticks={ticks}
                             type="number"
                             domain={[1, duration]}
@@ -90,12 +123,28 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
                                 angle: -90,
                                 position: 'insideLeft',
                                 dy: 60,
-                                fill: selectedTheme.text
+                                fill: selectedTheme.text,
+                                style: {
+                                    textAnchor: 'middle',
+                                    transform: 'translateZ(0)',
+                                    backfaceVisibility: 'hidden',
+                                }
                             }}
-                            tick={{ fill: selectedTheme.text, fontSize: 12 }}
+                            tick={{ 
+                                fill: selectedTheme.text, 
+                                fontSize: 12,
+                                style: {
+                                    transform: 'translateZ(0)',
+                                    backfaceVisibility: 'hidden',
+                                }
+                            }}
                             domain={[0, 'auto']}
                         />
-                        <Tooltip content={<CustomTooltip />} />
+                        <Tooltip 
+                            content={<CustomTooltip />}
+                            animationDuration={0}
+                            isAnimationActive={false}
+                        />
                         <Line
                             type="monotone"
                             dataKey="rawWpm"
@@ -104,6 +153,7 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
                             strokeWidth={2}
                             dot={false}
                             isAnimationActive={false}
+                            animationDuration={0}
                         />
                         <Line
                             type="monotone"
@@ -113,6 +163,7 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
                             strokeWidth={2}
                             dot={false}
                             isAnimationActive={false}
+                            animationDuration={0}
                         />
                         {ticks.map((sec) => (
                             <ReferenceLine
@@ -131,3 +182,4 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
 };
 
 export default SpeedChart;
+

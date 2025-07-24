@@ -22,10 +22,8 @@ const PANEL_CONFIG = {
             fontWeight: 'bold',
             font: 'montserrat',
             background: 'var(--primary-button)',
-            hoverBackground: 'var(--primary-button-hover)',
             textColor: 'var(--text)',
             borderRadius: 'full',
-            transitionDuration: '200ms',
             letterSpacing: '0.15em',
         },
     }
@@ -61,13 +59,7 @@ const RightPanel = () => {
 
     return (
         <div
-            className={`
-                w-[${PANEL_CONFIG.panel.width}] 
-                h-[${PANEL_CONFIG.panel.height}] 
-                rounded-[${PANEL_CONFIG.panel.borderRadius}] 
-                bg-[${PANEL_CONFIG.panel.background}] 
-                flex flex-col
-            `}
+            className="w-[452px] h-[300px] rounded-2xl bg-[var(--inbetween)] flex flex-col"
             style={{
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             }}
@@ -76,32 +68,17 @@ const RightPanel = () => {
                 selectedDifficulty={selectedDifficulty}
                 setSelectedDifficulty={setSelectedDifficulty}
             />
-            <div className={`flex-grow flex border-l border-r border-b border-[var(--border-gray)] rounded-b-2xl shadow-lg flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing} px-${PANEL_CONFIG.panel.paddingX}`}>
-                <div className={`flex-col justify-center space-y-${PANEL_CONFIG.buttons.spacing}`}>
+            <div className="flex-grow flex border-l border-r border-b border-[var(--border-gray)] rounded-b-2xl shadow-lg flex-col justify-center items-center space-y-5 px-5">
+                <div className="flex flex-col justify-center items-center space-y-5 w-full">
                     {buttons.map(({ label, onClick }, index) => {
                         const buttonConfig = PANEL_CONFIG.buttons.default;
                         return (
                             <button
                                 key={index}
-                                className={`
-                                    w-[${buttonConfig.width}]
-                                    h-${buttonConfig.height} 
-                                    bg-[${buttonConfig.background}] 
-                                    rounded-${buttonConfig.borderRadius} 
-                                    flex items-center justify-center 
-                                    text-[${buttonConfig.textColor}] 
-                                    text-${buttonConfig.textSize} 
-                                    font-${buttonConfig.font} 
-                                    font-${buttonConfig.fontWeight}
-                                    tracking-[${buttonConfig.letterSpacing}] 
-                                    cursor-pointer 
-                                    hover:bg-[${buttonConfig.hoverBackground}] 
-                                    transition-all duration-${buttonConfig.transitionDuration}
-                                    hover:shadow-lg
-                                    hover:scale-[1.02]
-                                `}
+                                className="w-[410px] h-20 bg-[var(--primary-button)] rounded-full flex items-center justify-center text-[var(--text)] font-montserrat font-bold cursor-pointer"
                                 style={{
                                     fontSize: buttonConfig.textSize,
+                                    letterSpacing: buttonConfig.letterSpacing,
                                     boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
                                 }}
                                 onClick={onClick}
@@ -117,3 +94,4 @@ const RightPanel = () => {
 };
 
 export default RightPanel;
+
