@@ -15,6 +15,7 @@ const useGameModeLogic = () => {
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [testsPassed, setTestsPassed] = useState(0);
     const [totalTests, setTotalTests] = useState(0);
+    const [testResult, setTestResult] = useState(null); // New state for detailed test results
 
     const containerRef = useRef(null);
 
@@ -44,6 +45,7 @@ const useGameModeLogic = () => {
 
             setTestsPassed(response.passedTests);
             setTotalTests(response.totalTests);
+            setTestResult(response); // Set the full test result
             setIsSubmitted(true);
         } catch (error) {
             console.error('Error submitting code:', error);
@@ -58,6 +60,7 @@ const useGameModeLogic = () => {
         try {
             const problemData = await getRandomProblemWithDifficulty(location.state?.problem.difficulty);
             setIsSubmitted(false);
+            setTestResult(null); // Clear previous test results
             setCurrentProblemId(problemData.id);
             setTitle(problemData.title);
             setDescription(problemData.description);
@@ -85,7 +88,9 @@ const useGameModeLogic = () => {
         totalTests,
         isLoading,
         isSubmitted,
+        testResult // Return testResult
     };
 };
 
 export default useGameModeLogic;
+

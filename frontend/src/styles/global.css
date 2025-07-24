@@ -19,6 +19,10 @@
     --transparent: rgba(0,0,0,0);
     --black: rgba(0,0,0,0.5);
     --sliderhover: #293750;
+    --error: #3fa9f5;
+    --error-message: #a7d6ff;
+    --error-background: rgba(63, 169, 245, 0.15);
+    --error-box-background: rgba(63, 169, 245, 0.35);
     --comment: #6A737D; /* Default comment color for dark theme */
 }
 

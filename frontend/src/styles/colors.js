@@ -19,6 +19,10 @@ const themes = {
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
         sliderhover: '#222e45',
+        error: '#3fa9f5',
+        errorMessage: '#a7d6ff',
+        errorBackground: 'rgba(63, 169, 245, 0.15)',
+        errorBoxBackground: 'rgba(63, 169, 245, 0.35)',
         comment: '#6A737D' // Gray for dark theme
     },
     brown: {
@@ -41,6 +45,10 @@ const themes = {
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
         sliderhover: '#50443a',
+        error: '#a34141',
+        errorMessage: '#e7c9c9',
+        errorBackground: 'rgba(163, 65, 65, 0.15)',
+        errorBoxBackground: 'rgba(163, 65, 65, 0.35)',
         comment: '#9e968c' // Muted brown-gray for brown theme
     },
     mentor: {
@@ -63,6 +71,10 @@ const themes = {
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
         sliderhover: '#212f6a',
+        error: '6#d6363',
+        errorMessage: '#ffbaba',
+        errorBackground: 'rgba(214, 54, 54, 0.15)',
+        errorBoxBackground: 'rgba(214, 54, 54, 0.35)',
         comment: '#6973A5' // Soft blue-gray for mentor theme
     },
     light: {
@@ -85,6 +97,10 @@ const themes = {
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.22)',
         sliderhover: '#b598ba',
+        error: '#a0002a',
+        errorMessage: '#d37b87',
+        errorBackground: '#f4d6db',
+        errorBoxBackground: '#f0bcc3',
         comment: '#666666' // Dark gray for light theme
     },
 };
