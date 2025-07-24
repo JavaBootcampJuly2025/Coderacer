@@ -8,7 +8,7 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  OWNER_NAME: JavaBootcampJuly2025  # Using exact organization name with capital letters
+  OWNER_NAME: javabootcampjuly2025
 
 jobs:
   build-and-push:
