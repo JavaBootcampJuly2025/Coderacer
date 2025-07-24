@@ -20,11 +20,10 @@ public class EmailVerificationTokenService {
     public void cleanupExpiredTokens() {
         List<EmailVerificationToken> expiredTokens = emailVerificationTokenRepository.findByExpiryDateBefore(LocalDateTime.now());
         for (EmailVerificationToken token : expiredTokens) {
+            emailVerificationTokenRepository.delete(token);
             if (token.getAccount() != null) {
                 accountRepository.delete(token.getAccount());
             }
-
-            emailVerificationTokenRepository.delete(token);
         }
     }
 }
