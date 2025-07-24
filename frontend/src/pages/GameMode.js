@@ -20,7 +20,10 @@ const GameMode = () => {
         testsPassed,
         totalTests,
         isLoading,
-        isSubmitted
+        isSubmitted,
+        expectedOutput,
+        actualOutput,
+        compilationError
     } = useGameModeLogic();
 
     const navigate = useNavigate();
@@ -66,19 +69,43 @@ const GameMode = () => {
                         </div>
                     </div>
 
-                    {/* Right Side - Expected Output, Score, and Controls (1/3 width) */}
                     <div className="right-panel flex flex-col col-span-1 h-full">
-                        {/* Expected Console Output */}
-                        <div className="expected-output-section mb-8 h-64">
-                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Input</h3>
-                            <div className="expected-output-content flex flex-col gap-4 h-full">
-                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
-                                    {exampleInput || 'No example input available for this challenge.'}
-                                </pre>
-                                <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Output</h3>
-                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
-                                    {exampleOutput || 'No example output available for this challenge.'}
-                                </pre>
+                        {/* Console Output Section */}
+                        <div className="expected-output-section mb-8 h-full">
+                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Console Details</h3>
+
+                            <div className="expected-output-content grid grid-cols-2 gap-4 h-full">
+                                {/* Column 1 - Example Input & Output */}
+                                <div className="flex flex-col gap-4">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Example Console Input</h3>
+                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
+                                            {exampleInput || 'No example input available for this challenge.'}
+                                        </pre>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Example Console Output</h3>
+                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
+                                            {exampleOutput || 'No example output available for this challenge.'}
+                                        </pre>
+                                    </div>
+                                </div>
+
+                                {/* Column 2 - Expected & Actual Output */}
+                                <div className="flex flex-col gap-4">
+                                    <div>
+                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Expected Output</h3>
+                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
+                                            {expectedOutput || 'Submit answer to see expected output.'}
+                                        </pre>
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Actual Output</h3>
+                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
+                                            {actualOutput || 'Submit answer to see actual output.'}
+                                        </pre>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -86,14 +113,20 @@ const GameMode = () => {
                         {/* Submission Result - Always visible, static size */}
                         <div className="result-section mt-6 h-40"> {}
                             <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border border-[var(--border-gray)] rounded-2xl shadow-lg h-full flex flex-col`}>
-                                <h3 className={`font-bold mb-2 text-[var(--text)]`}>Your Score</h3> {}
+                                <h3 className={`font-bold mb-2 text-[var(--text)]`}>Results</h3> {}
                                 <div className="flex-1 flex flex-col justify-center">
                                     {isSubmitted ? (
                                         <p className="text-xl text-center text-[var(--accent)] font-semibold">
                                             {testsPassed} / {totalTests} Tests Passed
                                         </p>
+                                    ) : compilationError ? (
+                                        <p className="text-base text-center text-[var(--accent)] font-semibold">
+                                            {compilationError}
+                                        </p>
                                     ) : (
-                                        <p className="text-base text-[var(--text)] text-center">Submit your code to see your score!</p>
+                                        <p className="text-base text-center text-[var(--text)] font-semibold">
+                                            Submit your code to see your results!
+                                        </p>
                                     )}
                                 </div>
                             </div>
