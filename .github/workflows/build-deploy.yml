@@ -8,6 +8,7 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
+  OWNER_NAME: JavaBootcampJuly2025  # Using exact organization name with capital letters
 
 jobs:
   build-and-push:
@@ -50,8 +51,8 @@ jobs:
           target: final-main-app
           push: true
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-app:${{ github.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-app:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ env.OWNER_NAME }}/coderacer-app:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ env.OWNER_NAME }}/coderacer-app:latest
           build-args: |
             APP_PORT=8000
             SQL_DATABASE=${{ secrets.SQL_DATABASE }}
@@ -71,8 +72,8 @@ jobs:
           target: final-runner-service
           push: true
           tags: |
-            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-runner:${{ github.sha }}
-            ${{ env.DOCKER_REGISTRY }}/${{ github.actor }}/coderacer-runner:latest
+            ${{ env.DOCKER_REGISTRY }}/${{ env.OWNER_NAME }}/coderacer-runner:${{ github.sha }}
+            ${{ env.DOCKER_REGISTRY }}/${{ env.OWNER_NAME }}/coderacer-runner:latest
           build-args: |
             APP_PORT=8001
             SQL_DATABASE=${{ secrets.SQL_DATABASE }}
