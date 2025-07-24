@@ -101,9 +101,23 @@ export const getGameplayMetrics = async (id, authToken) => {
     });
     return response.data;
 }
+
+export const getRandomProblemWithDifficulty = async (difficulty) => {
+    const response = await api.get(`/api/problems/random/difficulty/${difficulty}`);
+    return response.data;
+};
   
 // Get top-rated accounts
 export const getTop = async () => {
     const response = await api.get('/api/leaderboard/top');
     return response.data;
 };
+
+export const submitCode = async (id, code) => {
+    const response = await api.post(`/api/test/problem/${id}`, code, {
+        headers: {
+            'Content-Type': 'text/plain',
+        },
+    });
+    return response.data;
+}

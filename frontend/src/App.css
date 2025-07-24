@@ -154,3 +154,12 @@ footer {
 .strong-shadow {
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7); /* More intense and tighter shadow */
 }
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}

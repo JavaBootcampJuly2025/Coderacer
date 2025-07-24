@@ -1,5 +1,5 @@
 import React from 'react';
-import {getRandomLevelWithDifficulty, getRandomLevelWithParameters} from '../services/apiService';
+import {getRandomLevelWithDifficulty, getRandomProblemWithDifficulty} from '../services/apiService';
 import { useNavigate } from 'react-router-dom';
 import LevelSwitch from './ui/LevelSwitch';
 import LanguageGrid from './LanguageGrid';
@@ -47,7 +47,14 @@ const RightPanel = () => {
         }
     };
 
-    const handleThinkerClick = () => navigate('/GameMode');
+    const handleThinkerClick = async () => {
+        try {
+            const problemData = await  getRandomProblemWithDifficulty(selectedDifficulty);
+            navigate("/gamemode", { state: { problem: problemData } });
+        } catch (error) {
+            console.error('Error loading level:', error);
+        }
+    };
 
     const buttons = [
         { label: 'THINKER MODE', onClick: handleThinkerClick },

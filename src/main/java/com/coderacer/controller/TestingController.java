@@ -14,8 +14,8 @@ import java.util.UUID;
 public class TestingController {
 
     private final TestingService testingService;
-    @PreAuthorize("permitAll()")
     @PostMapping("/problem/{problemId}")
+    @PreAuthorize("permitAll()")
     public TestResultDTO testCode(@PathVariable UUID problemId, @RequestBody String code) {
         return testingService.testCode(problemId, code);
     }

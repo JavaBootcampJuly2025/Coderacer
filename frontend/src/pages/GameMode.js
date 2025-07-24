@@ -7,16 +7,20 @@ import { useNavigate } from 'react-router-dom';
 
 const GameMode = () => {
     const {
-        currentPrompt,
+        title,
+        description,
         userCode,
-        expectedOutput,
-        isSubmitted,
-        submissionResult,
+        exampleOutput,
+        exampleInput,
         containerRef,
         handleCodeChange,
         handleSubmit,
         generateNewPrompt,
-        focusContainer
+        focusContainer,
+        testsPassed,
+        totalTests,
+        isLoading,
+        isSubmitted
     } = useGameModeLogic();
 
     const navigate = useNavigate();
@@ -27,6 +31,14 @@ const GameMode = () => {
 
     return (
         <div className="home-wrapper min-h-screen bg-[var(--background)] flex flex-col font-montserrat">
+            {isLoading && (
+                <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="h-16 w-16 border-4 border-[var(--accent)] border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </div>
+            )}
+
             <Header />
             <div className="main-body flex-1 flex flex-col p-6">
                 {/* Main Content Area - Split Layout */}
@@ -35,10 +47,10 @@ const GameMode = () => {
                     <div className="left-panel flex flex-col col-span-2 h-full">
                         {/* Prompt Display Area */}
                         <div className="prompt-section mb-4 h-32">
-                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border border-[var(--border-gray)] rounded-2xl shadow-lg h-full">
-                                <h2 className="text-xl font-bold text-[var(--text)] mb-3">Coding Challenge</h2>
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 strong-shadow border-2 border-[var(--accent)] h-full">
+                                <h2 className="text-xl font-bold text-[var(--text)] mb-3">{title}</h2>
                                 <p className="text-base text-[var(--text)] leading-relaxed overflow-y-auto">
-                                    {currentPrompt}
+                                    {description}
                                 </p>
                             </div>
                         </div>
@@ -50,7 +62,6 @@ const GameMode = () => {
                                 containerRef={containerRef}
                                 handleCodeChange={handleCodeChange}
                                 focusContainer={focusContainer}
-                                isSubmitted={isSubmitted}
                             />
                         </div>
                     </div>
@@ -58,40 +69,29 @@ const GameMode = () => {
                     {/* Right Side - Expected Output, Score, and Controls (1/3 width) */}
                     <div className="right-panel flex flex-col col-span-1 h-full">
                         {/* Expected Console Output */}
-                        <div className="expected-output-section mb-8 h-64"> {}
-                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Expected Console Output</h3>
-                            <div className="expected-output-content h-full">
-                                <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border border-[var(--border-gray)] rounded-2xl shadow-lg h-full overflow-y-auto">
-                                    {expectedOutput || 'No expected output available for this challenge.'}
+                        <div className="expected-output-section mb-8 h-64">
+                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Input</h3>
+                            <div className="expected-output-content flex flex-col gap-4 h-full">
+                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
+                                    {exampleInput || 'No example input available for this challenge.'}
+                                </pre>
+                                <h3 className="text-xl font-bold text-[var(--text)] mb-3">Example Console Output</h3>
+                                <pre className="flex-1 text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto">
+                                    {exampleOutput || 'No example output available for this challenge.'}
                                 </pre>
                             </div>
                         </div>
+
 
                         {/* Submission Result - Always visible, static size */}
                         <div className="result-section mt-6 h-40"> {}
                             <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border border-[var(--border-gray)] rounded-2xl shadow-lg h-full flex flex-col`}>
                                 <h3 className={`font-bold mb-2 text-[var(--text)]`}>Your Score</h3> {}
                                 <div className="flex-1 flex flex-col justify-center">
-                                    {isSubmitted && submissionResult ? (
-                                        <>
-                                            <p className="text-sm text-[var(--text)] mb-2">{submissionResult.message}</p>
-                                            {submissionResult.details && (
-                                                <div className="grid grid-cols-3 gap-2 text-sm text-[var(--text)]">
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Structure</p>
-                                                        <p className="text-base">{submissionResult.details.structureScore}%</p>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Output</p>
-                                                        <p className="text-base">{submissionResult.details.outputScore}%</p>
-                                                    </div>
-                                                    <div className="text-center">
-                                                        <p className="font-bold text-xs">Total</p>
-                                                        <p className="text-base font-bold">{submissionResult.details.totalScore}%</p>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
+                                    {isSubmitted ? (
+                                        <p className="text-xl text-center text-[var(--accent)] font-semibold">
+                                            {testsPassed} / {totalTests} Tests Passed
+                                        </p>
                                     ) : (
                                         <p className="text-base text-[var(--text)] text-center">Submit your code to see your score!</p>
                                     )}
@@ -103,8 +103,8 @@ const GameMode = () => {
                         <div className="action-buttons-right flex flex-col gap-3 flex-1 mt-6"> {/* Added mt-6 for separation from score box */}
                             <button
                                 onClick={handleSubmit}
-                                disabled={!userCode.trim() || isSubmitted}
-                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
+                                disabled={!userCode.trim()}
+                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
                                            disabled:opacity-50 disabled:cursor-not-allowed"
                             >
@@ -113,7 +113,7 @@ const GameMode = () => {
 
                             <button
                                 onClick={generateNewPrompt}
-                                className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
+                                className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
                                            hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
                             >
                                 New Challenge

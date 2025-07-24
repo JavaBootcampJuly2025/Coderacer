@@ -6,7 +6,6 @@ const CodeInputArea = ({
                            containerRef,
                            handleCodeChange,
                            focusContainer,
-                           isSubmitted
                        }) => {
     const {
         expandShortcut,
@@ -228,7 +227,6 @@ const CodeInputArea = ({
                         Shortcuts: Tab for snippets (e.g., 'sout'), Ctrl+D to duplicate, Ctrl+/ to comment
                         </div>
                         </div>
-
                         <div
                         ref={containerRef}
                          className="code-editor-wrapper relative"
@@ -255,7 +253,6 @@ const CodeInputArea = ({
                             onKeyDown={handleKeyDown}
                             onScroll={syncScroll}
                             placeholder="Write your code here..."
-                            disabled={isSubmitted}
                             spellCheck="false"
                             className="absolute top-0 left-0 w-full h-full p-4 rounded-lg resize-none font-mono text-base leading-relaxed focus:outline-none disabled:cursor-not-allowed
                        focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2 focus:ring-offset-[var(--background)]"
