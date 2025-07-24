@@ -57,11 +57,11 @@ const GameMode = () => {
             )}
 
             <Header />
-            <div className="main-body flex-1 flex flex-col p-6">
-                {/* Main Content Area - Split Layout */}
-                <div className="content-grid flex-1 grid grid-cols-3 gap-6 mb-6">
+                <div className="gamemode-body flex-1 flex flex-col p-6">
+                {/* Main Content Area - Proper Side-by-Side Layout */}
+                <div className="gamemode-grid flex-1 flex gap-6 mb-6">
                     {/* Left Side - Prompt and Code Input (2/3 width) */}
-                    <div className="left-panel flex flex-col col-span-2 h-full">
+                    <div className="left-panel flex flex-col flex-[2] h-full">
                         {/* Prompt Display Area */}
                         <div className="prompt-section mb-4 h-32">
                             <div className="bg-[var(--sliderhover)] rounded-lg p-4 strong-shadow border-2 border-[var(--accent)] h-full">
@@ -83,30 +83,32 @@ const GameMode = () => {
                         </div>
                     </div>
 
-                    {/* Right Side - Compact Examples and Enhanced Results (1/3 width) */}
-                    <div className="examples-section mb-4">
-                        {/* Compact Example Input/Output - Horizontal Layout */}
-                        <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow">
-                            <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
-                            <div className="flex gap-2 overflow-hidden">
-                                <div className="flex-1">
-                                    <p className="text-xs font-semibold text-[var(--text)] mb-1">Input:</p>
-                                    <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
-                                        {exampleInput || 'No input'}
-                                    </pre>
-                                </div>
-                                <div className="flex-1">
-                                    <p className="text-xs font-semibold text-[var(--text)] mb-1">Output:</p>
-                                    <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
-                                        {exampleOutput || 'No output'}
-                                    </pre>
+                    {/* Right Side - Examples and Results (1/3 width) */}
+                    <div className="right-panel flex flex-col flex-[1] h-full">
+                        {/* Example Input/Output Section */}
+                        <div className="examples-section mb-4">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow">
+                                <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
+                                <div className="flex gap-2 overflow-hidden">
+                                    <div className="flex-1">
+                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Input:</p>
+                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
+                                            {exampleInput || 'No input'}
+                                        </pre>
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Output:</p>
+                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 max-h-20 overflow-auto whitespace-pre-wrap break-words">
+                                            {exampleOutput || 'No output'}
+                                        </pre>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Enhanced Submission Result Display */}
-                        <div className="result-section flex-1">
-                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border-2 border-[var(--accent)] strong-shadow h-96 flex flex-col">
+                        {/* Results Section */}
+                        <div className="result-section flex-1 mb-4">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border-2 border-[var(--accent)] strong-shadow h-full flex flex-col">
                                 <h3 className="text-lg font-bold text-[var(--text)] mb-3">Results</h3>
 
                                 {isSubmitted && testResult ? (
@@ -162,9 +164,8 @@ const GameMode = () => {
                             </div>
                         </div>
 
-
                         {/* Action Buttons */}
-                        <div className="action-buttons-right flex flex-col gap-3 mt-4">
+                        <div className="action-buttons-right flex flex-col gap-3">
                             <button
                                 onClick={handleSubmit}
                                 disabled={!userCode.trim()}

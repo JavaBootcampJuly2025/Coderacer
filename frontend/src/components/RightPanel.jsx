@@ -32,7 +32,7 @@ const PANEL_CONFIG = {
 };
 
 const RightPanel = () => {
-    const [selectedDifficulty, setSelectedDifficulty] = useState('MEDIUM');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('EASY');
 
     const navigate = useNavigate();
 
@@ -47,7 +47,7 @@ const RightPanel = () => {
 
     const handleThinkerClick = async () => {
         try {
-            const problemData = await  getRandomProblemWithDifficulty(selectedDifficulty);
+            const problemData = await getRandomProblemWithDifficulty(selectedDifficulty);
             navigate("/gamemode", { state: { problem: problemData } });
         } catch (error) {
             console.error('Error loading level:', error);
