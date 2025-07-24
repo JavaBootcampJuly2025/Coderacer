@@ -131,6 +131,7 @@ const useTypingTest = (initialCodeSnippet = '') => {
     };
 
     const calculateAccuracy = () => {
+        if (totalTyped === 0) return 0;
         return Math.max(0, Math.round(((totalTyped - mistakes) / totalTyped) * 100));
     };
 
