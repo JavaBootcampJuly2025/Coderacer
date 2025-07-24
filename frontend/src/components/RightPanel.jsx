@@ -54,9 +54,18 @@ const RightPanel = () => {
         }
     };
 
+    const handleSpeederClick = async () => {
+        try {
+            const levelData = await getRandomLevelWithDifficulty(selectedDifficulty);
+            navigate("/level", { state: { level: levelData } });
+        } catch (error) {
+            console.error('Error loading level:', error);
+        }
+    };
+
     const buttons = [
         { label: 'THINKER MODE', onClick: handleThinkerClick },
-        { label: 'SPEEDER MODE', onClick: handlePlayClick },
+        { label: 'SPEEDER MODE', onClick: handleSpeederClick },
     ];
 
     return (

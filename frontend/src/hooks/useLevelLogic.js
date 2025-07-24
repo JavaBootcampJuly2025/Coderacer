@@ -19,6 +19,10 @@ const useLevelLogic = () => {
         calculateCPM,
         calculateAccuracy,
         focusContainer,
+        words,
+                currentWordIndex,
+                currentWordInput,
+                wordStates,
     } = useTypingTest(useLocation().state?.level.codeSnippet);
 
     const { saveSession } = useLevelContext() || {};
@@ -39,6 +43,10 @@ const useLevelLogic = () => {
         calculateAccuracy,
         focusContainer,
         saveSession: () => saveSession(speedLog, endTime, totalTyped, mistakes, userInput, codeSnippet),
+        words,
+                currentWordIndex,
+                currentWordInput,
+                wordStates,
 };
 };
 

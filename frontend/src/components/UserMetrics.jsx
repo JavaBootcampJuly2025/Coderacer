@@ -19,7 +19,7 @@ const UserMetrics = () => {
     }
 
     return (
-        <div className="w-[320px] h-[300px] bg-[var(--inbetween)] border border-[var(--border-gray)] rounded-2xl shadow-lg flex flex-col">
+        <div className="w-[320px] h-[300px] bg-[var(--inbetween)] border-2 border-[var(--border-gray)] rounded-2xl shadow-lg flex flex-col">
             <div className="bg-gradient-to-r from-[var(--accent)] to-[var(--primary-button)] p-4 rounded-t-2xl">
                 <h3 className="text-base font-bold text-white text-center tracking-wide">
                     📊 YOUR STATS

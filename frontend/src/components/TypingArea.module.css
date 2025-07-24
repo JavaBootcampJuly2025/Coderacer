@@ -20,9 +20,33 @@
     width: 2px;
     height: 32px;
     display: inline-block;
-    vertical-align: 10px;
-    /*animation: blink 1s step-start 0s infinite;/*/
+    vertical-align: -7px;
+    animation: blink 1s step-start 0s infinite;
 }
 @keyframes blink {
     50% { background: transparent; }
+}
+
+.word {
+    display: inline;
+    position: relative;
+}
+
+.incorrectWord {
+    text-decoration: underline;
+    text-decoration-color: #ff4757;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+}
+
+.extraChars {
+    display: inline;
+}
+
+.whitespace {
+    display: inline;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 32px;
+    white-space: pre;
 }
