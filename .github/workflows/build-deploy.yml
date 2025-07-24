@@ -8,7 +8,6 @@ on:
 
 env:
   DOCKER_REGISTRY: ghcr.io
-  REPO_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -24,7 +23,8 @@ jobs:
 
       - name: Set Lowercase Repo Name
         run: |
-          echo "LOWER_REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' :lower:)" >> $GITHUB_ENV
+          REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]' | tr '/' '-')
+          echo "LOWER_REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
 
       - name: Setup JDK 17
         uses: actions/setup-java@v4
