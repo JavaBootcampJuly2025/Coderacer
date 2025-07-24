@@ -1,10 +1,9 @@
-// src/styles/colors.js
 const themes = {
     dark: {
         defaultChar: '#888',
         correctChar: '#87f4ff',
         incorrectChar: '#cd0b0b',
-        unwrittenChar: '#2a6a9f', // Added for unwritten text
+        unwrittenChar: '#2a6a9f',
         caret: '#ffbe26',
         primaryButton: '#284475',
         primaryButtonHover: '#344e7a',
@@ -19,13 +18,14 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#222e45'
+        sliderhover: '#222e45',
+        comment: '#6A737D' // Gray for dark theme
     },
     brown: {
         defaultChar: '#888',
         correctChar: '#e3e1c1',
         incorrectChar: '#cd0b0b',
-        unwrittenChar: '#806850', // Added for unwritten text
+        unwrittenChar: '#806850',
         caret: '#ffbe26',
         primaryButton: '#806850',
         primaryButtonHover: '#8c745f',
@@ -35,18 +35,19 @@ const themes = {
         leaderboardBg: 'rgba(0, 0, 0, 0.25)',
         border: 'rgba(255, 255, 255, 1)',
         footerText: '#ccc',
-        borderGray: '#988a80',
+        borderGray: '#423127',
         inbetween: '#715f4d',
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#50443a'
+        sliderhover: '#50443a',
+        comment: '#9e968c' // Muted brown-gray for brown theme
     },
     mentor: {
         defaultChar: '#888',
         correctChar: '#ffcb25',
         incorrectChar: '#cd0b0b',
-        unwrittenChar: '#395b9f', // Added for unwritten text
+        unwrittenChar: '#395b9f',
         caret: '#ffbe26',
         primaryButton: '#2e5295',
         primaryButtonHover: '#395b9f',
@@ -61,13 +62,14 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.5)',
-        sliderhover: '#212f6a'
+        sliderhover: '#212f6a',
+        comment: '#6973A5' // Soft blue-gray for mentor theme
     },
     light: {
         defaultChar: '#aaa',
         correctChar: '#78095a',
         incorrectChar: '#cd0b0b',
-        unwrittenChar: '#b19bac', // Lighter green for dark theme
+        unwrittenChar: '#b19bac',
         caret: '#293a75',
         primaryButton: '#d5c1e8',
         primaryButtonHover: '#d8c6ea',
@@ -82,7 +84,8 @@ const themes = {
         light: '#164270',
         transparent: 'rgba(0,0,0,0)',
         black: 'rgba(0,0,0,0.22)',
-        sliderhover: '#b598ba'
+        sliderhover: '#b598ba',
+        comment: '#666666' // Dark gray for light theme
     },
 };
 

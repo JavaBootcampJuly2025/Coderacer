@@ -3,7 +3,7 @@
     --default-char: #888;
     --correct-char: #24E5B7;
     --incorrect-char: #cd0b0b;
-    --unwritten-char: #2a6a9f; /* Added for unwritten text */
+    --unwritten-char: #2a6a9f;
     --caret: #ffbe26;
     --primary-button: #174065;
     --primary-button-hover: #1a4971;
@@ -19,6 +19,7 @@
     --transparent: rgba(0,0,0,0);
     --black: rgba(0,0,0,0.5);
     --sliderhover: #293750;
+    --comment: #6A737D; /* Default comment color for dark theme */
 }
 
 .round-button {
