@@ -27,29 +27,28 @@ const UserMetrics = () => {
             </div>
 
             <div className="p-6 flex-1 flex flex-col justify-center space-y-6">
+                <div className="flex flex-col">
+                    <span className="text-sm text-[var(--text)] opacity-80 font-medium">
+                        AVG CPM
+                    </span>
+                    <span className="text-2xl font-bold text-[var(--accent)] font-mono">
+                        {avgCpm ? avgCpm.toFixed(0) : '0'}
+                    </span>
+                </div>
+                <div className="text-2xl"></div>
+            </div>
+                <div className="flex items-center justify-between p-4 bg-[var(--primary-button)] rounded-lg border border-[var(--border-gray)]">
                     <div className="flex flex-col">
                         <span className="text-sm text-[var(--text)] opacity-80 font-medium">
-                            AVG CPM
+                            ACCURACY
                         </span>
                         <span className="text-2xl font-bold text-[var(--accent)] font-mono">
-                            {avgCpm ? avgCpm.toFixed(0) : '0'}
+                            {avgAccuracy ? avgAccuracy.toFixed(1) : '0.0'}%
                         </span>
                     </div>
-                    <div className="text-2xl"></div>
-                    </div>
-                        <div className="flex items-center justify-between p-4 bg-[var(--primary-button)] rounded-lg border border-[var(--border-gray)]">
-                            <div className="flex flex-col">
-                            <span className="text-sm text-[var(--text)] opacity-80 font-medium">
-                                ACCURACY
-                            </span>
-                            <span className="text-2xl font-bold text-[var(--accent)] font-mono">
-                                {avgAccuracy ? avgAccuracy.toFixed(1) : '0.0'}%
-                            </span>
-                            </div>
-                        <div className="text-2xl"></div>
-                    </div>
-                </div>
+                <div className="text-2xl"></div>
             </div>
+        </div>
     );
 };
 
