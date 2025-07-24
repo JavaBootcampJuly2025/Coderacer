@@ -6,6 +6,7 @@ import com.coderacer.enums.Difficulty;
 import com.coderacer.enums.ProgrammingLanguage;
 import com.coderacer.model.Level;
 import com.coderacer.repository.LevelRepository;
+import com.coderacer.repository.LevelSessionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 @Service
 @RequiredArgsConstructor
 public class LevelService {
-
+    private final LevelSessionRepository levelSessionRepository;
     private final LevelRepository levelRepository;
 
     @Transactional(readOnly = true)
@@ -104,6 +105,7 @@ public class LevelService {
         if (!levelRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Level not found: " + id);
         }
+        levelSessionRepository.deleteByLevelId(id);
         levelRepository.deleteById(id);
     }
 }
