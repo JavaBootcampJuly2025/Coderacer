@@ -21,15 +21,47 @@ const GameMode = () => {
         totalTests,
         isLoading,
         isSubmitted,
-        expectedOutput,
-        actualOutput,
-        compilationError
+        testResult // Added to access detailed test results
     } = useGameModeLogic();
 
     const navigate = useNavigate();
 
     const handleBackToHome = () => {
         navigate('/home');
+    };
+
+    const getStatusColor = (status) => {
+        switch (status) {
+            case 'SUCCESS':
+                return 'text-green-500';
+            case 'COMPILATION_ERROR':
+                return 'text-red-500';
+            case 'RUNTIME_ERROR':
+                return 'text-red-500';
+            case 'TIMEOUT':
+                return 'text-yellow-500';
+            case 'OUTPUT_MISMATCH':
+                return 'text-orange-500';
+            default:
+                return 'text-[var(--text)]';
+        }
+    };
+
+    const getStatusText = (status) => {
+        switch (status) {
+            case 'SUCCESS':
+                return 'Success';
+            case 'COMPILATION_ERROR':
+                return 'Compilation Error';
+            case 'RUNTIME_ERROR':
+                return 'Runtime Error';
+            case 'TIMEOUT':
+                return 'Timeout';
+            case 'OUTPUT_MISMATCH':
+                return 'Output Mismatch';
+            default:
+                return 'Unknown';
+        }
     };
 
     return (
@@ -69,71 +101,94 @@ const GameMode = () => {
                         </div>
                     </div>
 
+                    {/* Right Side - Compact Examples and Enhanced Results (1/3 width) */}
                     <div className="right-panel flex flex-col col-span-1 h-full">
-                        {/* Console Output Section */}
-                        <div className="expected-output-section mb-8 h-full">
-                            <h3 className="text-xl font-bold text-[var(--text)] mb-3">Console Details</h3>
-
-                            <div className="expected-output-content grid grid-cols-2 gap-4 h-full">
-                                {/* Column 1 - Example Input & Output */}
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Example Console Input</h3>
-                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
-                                            {exampleInput || 'No example input available for this challenge.'}
+                        {/* Compact Example Input/Output - Horizontal Layout */}
+                        <div className="examples-section mb-4 h-24">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow h-full">
+                                <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
+                                <div className="flex gap-2 h-full overflow-hidden">
+                                    <div className="flex-1">
+                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Input:</p>
+                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 overflow-y-auto h-10">
+                                            {exampleInput || 'No input'}
                                         </pre>
                                     </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Example Console Output</h3>
-                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
-                                            {exampleOutput || 'No example output available for this challenge.'}
-                                        </pre>
-                                    </div>
-                                </div>
-
-                                {/* Column 2 - Expected & Actual Output */}
-                                <div className="flex flex-col gap-4">
-                                    <div>
-                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Expected Output</h3>
-                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
-                                            {expectedOutput || 'Submit answer to see expected output.'}
-                                        </pre>
-                                    </div>
-                                    <div>
-                                        <h3 className="text-xl font-bold text-[var(--text)] mb-2">Actual Output</h3>
-                                        <pre className="text-base text-[var(--text)] font-mono whitespace-pre-wrap p-4 bg-[var(--sliderhover)] rounded-lg border-2 border-[var(--accent)] strong-shadow overflow-y-auto h-40">
-                                            {actualOutput || 'Submit answer to see actual output.'}
+                                    <div className="flex-1">
+                                        <p className="text-xs font-semibold text-[var(--text)] mb-1">Output:</p>
+                                        <pre className="text-xs text-[var(--text)] font-mono bg-[var(--background)] rounded p-1 overflow-y-auto h-10">
+                                            {exampleOutput || 'No output'}
                                         </pre>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
+                        {/* Enhanced Submission Result Display */}
+                        <div className="result-section flex-1">
+                            <div className="bg-[var(--sliderhover)] rounded-lg p-4 border-2 border-[var(--accent)] strong-shadow h-full flex flex-col">
+                                <h3 className="text-lg font-bold text-[var(--text)] mb-3">Results</h3>
 
-                        {/* Submission Result - Always visible, static size */}
-                        <div className="result-section mt-6 h-40"> {}
-                            <div className={`rounded-lg p-4 bg-[var(--sliderhover)] border border-[var(--border-gray)] rounded-2xl shadow-lg h-full flex flex-col`}>
-                                <h3 className={`font-bold mb-2 text-[var(--text)]`}>Results</h3> {}
-                                <div className="flex-1 flex flex-col justify-center">
-                                    {isSubmitted ? (
-                                        <p className="text-xl text-center text-[var(--accent)] font-semibold">
-                                            {testsPassed} / {totalTests} Tests Passed
+                                {isSubmitted && testResult ? (
+                                    <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+                                        {/* Score */}
+                                        <div className="bg-[var(--background)] rounded p-3">
+                                            <p className="text-sm font-semibold text-[var(--text)] mb-1">Score:</p>
+                                            <p className="text-xl font-bold text-[var(--accent)]">
+                                                {testsPassed} / {totalTests} Tests Passed
+                                            </p>
+                                        </div>
+
+                                        {/* Execution Status */}
+                                        <div className="bg-[var(--background)] rounded p-3">
+                                            <p className="text-sm font-semibold text-[var(--text)] mb-1">Status:</p>
+                                            <p className={`text-sm font-bold ${getStatusColor(testResult.executionStatus)}`}>
+                                                {getStatusText(testResult.executionStatus)}
+                                            </p>
+                                        </div>
+
+                                        {/* Actual Output */}
+                                        {testResult.actualOutput && testResult.actualOutput.length > 0 && (
+                                            <div className="bg-[var(--background)] rounded p-3 flex-1">
+                                                <p className="text-sm font-semibold text-[var(--text)] mb-2">Your Output:</p>
+                                                <pre className="text-xs text-[var(--text)] font-mono bg-[var(--sliderhover)] rounded p-2 overflow-y-auto max-h-24 whitespace-pre-wrap">
+                                                    {testResult.actualOutput.join('\n')}
+                                                </pre>
+                                            </div>
+                                        )}
+
+                                        {/* Expected Output */}
+                                        {testResult.expectedOutput && testResult.expectedOutput.length > 0 && (
+                                            <div className="bg-[var(--background)] rounded p-3">
+                                                <p className="text-sm font-semibold text-[var(--text)] mb-2">Expected:</p>
+                                                <pre className="text-xs text-[var(--text)] font-mono bg-[var(--sliderhover)] rounded p-2 overflow-y-auto max-h-16 whitespace-pre-wrap">
+                                                    {testResult.expectedOutput.join('\n')}
+                                                </pre>
+                                            </div>
+                                        )}
+
+                                        {/* Error Message */}
+                                        {testResult.errorMessage && (
+                                            <div className="bg-red-50 border border-red-200 rounded p-3">
+                                                <p className="text-sm font-semibold text-red-700 mb-2">Error:</p>
+                                                <pre className="text-xs text-red-600 font-mono whitespace-pre-wrap overflow-y-auto max-h-20">
+                                                    {testResult.errorMessage}
+                                                </pre>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <div className="flex-1 flex items-center justify-center">
+                                        <p className="text-base text-[var(--text)] text-center">
+                                            Submit your code to see detailed results!
                                         </p>
-                                    ) : compilationError ? (
-                                        <p className="text-base text-center text-[var(--accent)] font-semibold">
-                                            {compilationError}
-                                        </p>
-                                    ) : (
-                                        <p className="text-base text-center text-[var(--text)] font-semibold">
-                                            Submit your code to see your results!
-                                        </p>
-                                    )}
-                                </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {/* Action Buttons - Right Side */}
-                        <div className="action-buttons-right flex flex-col gap-3 flex-1 mt-6"> {/* Added mt-6 for separation from score box */}
+                        {/* Action Buttons */}
+                        <div className="action-buttons-right flex flex-col gap-3 mt-4">
                             <button
                                 onClick={handleSubmit}
                                 disabled={!userCode.trim()}
@@ -151,6 +206,7 @@ const GameMode = () => {
                             >
                                 New Challenge
                             </button>
+
                             <button
                                 onClick={handleBackToHome}
                                 className="w-full px-6 py-3 bg-[var(--background)] border border-[var(--border-gray)] rounded-2xl shadow-lg text-[var(--accent)] font-bold rounded-lg transition-all duration-200
@@ -167,3 +223,4 @@ const GameMode = () => {
 };
 
 export default GameMode;
+
