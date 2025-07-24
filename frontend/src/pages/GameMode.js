@@ -30,23 +30,6 @@ const GameMode = () => {
         navigate('/home');
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'SUCCESS':
-                return 'text-green-500';
-            case 'COMPILATION_ERROR':
-                return 'text-red-500';
-            case 'RUNTIME_ERROR':
-                return 'text-red-500';
-            case 'TIMEOUT':
-                return 'text-yellow-500';
-            case 'OUTPUT_MISMATCH':
-                return 'text-orange-500';
-            default:
-                return 'text-[var(--text)]';
-        }
-    };
-
     const getStatusText = (status) => {
         switch (status) {
             case 'SUCCESS':
@@ -138,7 +121,7 @@ const GameMode = () => {
 
                                         <div className="bg-[var(--background)] rounded p-3">
                                             <p className="text-sm font-semibold text-[var(--text)] mb-1">Status:</p>
-                                            <p className={`text-sm font-bold ${getStatusColor(testResult.executionStatus)}`}>
+                                            <p className={`text-sm font-bold text-[var(--text)]`}>
                                                 {getStatusText(testResult.executionStatus)}
                                             </p>
                                         </div>
@@ -162,18 +145,12 @@ const GameMode = () => {
                                         )}
 
                                         {testResult.errorMessage && (
-                                            <div className="bg-[var(--background)] rounded p-3">
-                                                <p className="text-sm font-semibold text-[var(--text)] mb-2">Error:</p>
-                                                <pre className="text-xs text-[var(--text)] font-mono bg-[var(--sliderhover)] rounded p-2 overflow-y-auto max-h-16 whitespace-pre-wrap">
+                                            <div className="bg-[var(--error-background)] rounded p-3">
+                                                <p className="text-sm font-semibold text-[var(--error)] mb-2">Error:</p>
+                                                <pre className="text-xs text-[var(--error-message)] font-mono bg-[var(--error-box-background)] rounded p-2 overflow-y-auto max-h-16 whitespace-pre-wrap">
                                                     {testResult.errorMessage}
                                                 </pre>
                                             </div>
-                                            // <div className="bg-red-50 border border-red-200 rounded p-3">
-                                            //     <p className="text-sm font-semibold text-red-700 mb-2">Error:</p>
-                                            //     <pre className="text-xs text-red-600 font-mono whitespace-pre-wrap overflow-y-auto max-h-20">
-                                            //         {testResult.errorMessage}
-                                            //     </pre>
-                                            // </div>
                                         )}
                                     </div>
                                 ) : (
