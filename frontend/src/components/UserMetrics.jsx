@@ -27,6 +27,7 @@ const UserMetrics = () => {
             </div>
 
             <div className="p-6 flex-1 flex flex-col justify-center space-y-6">
+                <div className="flex items-center justify-between p-4 bg-[var(--primary-button)] rounded-lg border border-[var(--border-gray)]">
                     <div className="flex flex-col">
                         <span className="text-sm text-[var(--text)] opacity-80 font-medium">
                             AVG CPM
