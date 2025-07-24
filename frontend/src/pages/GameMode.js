@@ -113,7 +113,7 @@ const GameMode = () => {
                             <button
                                 onClick={generateNewPrompt}
                                 className="w-full px-6 py-3 bg-[var(--background)] border-2 border-[var(--accent)] text-[var(--accent)] font-bold rounded-lg transition-all duration-200 shadow-lg
-                                           hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]
+                                           hover:bg-[var(--accent)] hover:text-[var(--background)] hover:border-[var(--accent)]"
                             >
                                 New Challenge
                             </button>
