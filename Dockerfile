@@ -3,7 +3,7 @@
 # ================================
 # Main Application Build Stage
 # ================================
-FROM openjdk:17-jdk-slim AS main-builder
+FROM eclipse-temurin:17-jdk-alpine AS main-builder
 
 WORKDIR /app
 COPY pom.xml .
@@ -17,7 +17,7 @@ RUN mvn clean package -DskipTests
 # ================================
 # Runner Service Build Stage
 # ================================
-FROM openjdk:17-jdk-slim AS runner-builder
+FROM eclipse-temurin:17-jdk-alpine AS runner-builder
 
 WORKDIR /app
 COPY pom.xml .
@@ -31,7 +31,7 @@ RUN mvn clean package -DskipTests
 # ================================
 # Main Application Runtime Stage
 # ================================
-FROM openjdk:17-jre-slim AS final-main-app
+FROM eclipse-temurin:17-jdk-alpine AS final-main-app
 
 WORKDIR /app
 COPY --from=main-builder /app/target/*.jar app.jar
@@ -42,7 +42,7 @@ ENTRYPOINT ["java", "-jar", "app.jar"]
 # ================================
 # Runner Service Runtime Stage
 # ================================
-FROM openjdk:17-jre-slim AS final-runner-service
+FROM eclipse-temurin:17-jdk-alpine AS final-runner-service
 
 WORKDIR /app
 COPY --from=runner-builder /app/target/*.jar runner.jar
