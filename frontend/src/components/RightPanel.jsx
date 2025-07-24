@@ -17,7 +17,7 @@ const PANEL_CONFIG = {
         spacing: '5',
         default: {
             width: '410px',
-            height: '20',
+            height: '16',
             textSize: '26px',
             fontWeight: 'bold',
             font: 'montserrat',
