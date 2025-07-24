@@ -54,9 +54,9 @@ const Header = () => {
     ) : theme === 'dark' ? (
         <MoonIcon className="theme-icon" />
     ) : theme === 'brown' ? (
-        <span className="theme-icon">🌑</span>
+        <span className="theme-icon">💼</span>
     ) : theme === 'mentor' ? (
-        <span className="theme-icon">🎃</span>
+        <span className="theme-icon">🔵</span>
     ) : (
         <SunIcon className="theme-icon" />
     )}
