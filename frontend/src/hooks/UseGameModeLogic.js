@@ -49,7 +49,7 @@ const useGameModeLogic = () => {
             console.error('Error submitting code:', error);
         }
         setIsLoading(false);
-    }, [userCode, testsPassed, totalTests, isLoading]);
+    }, [userCode, currentProblemId]);
 
 
     // Generate a new prompt
@@ -68,7 +68,7 @@ const useGameModeLogic = () => {
             console.error('Error loading level:', error);
         }
         setIsLoading(false);
-    }, [focusContainer, currentProblemId, title, description, exampleOutput, userCode, exampleInput, isLoading]);
+    }, [location.state?.problem.difficulty]);
 
     return {
         title,
