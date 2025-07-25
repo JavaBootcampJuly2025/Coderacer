@@ -123,12 +123,7 @@ const SpeedChart = ({ endTime, speedLog, totalTyped, mistakes, userInput, codeSn
                                 angle: -90,
                                 position: 'insideLeft',
                                 dy: 60,
-                                fill: selectedTheme.text,
-                                style: {
-                                    textAnchor: 'middle',
-                                    transform: 'translateZ(0)',
-                                    backfaceVisibility: 'hidden',
-                                }
+                                fill: selectedTheme.text
                             }}
                             tick={{ 
                                 fill: selectedTheme.text, 
