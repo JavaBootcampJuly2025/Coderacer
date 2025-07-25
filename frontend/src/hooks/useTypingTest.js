@@ -63,10 +63,9 @@ const useTypingTest = (initialCodeSnippet = '') => {
                     return newTotal;
                 });
 
-                // Only check for mistakes if within codeSnippet bounds
-                if (userInput.length < codeSnippet.length) {
-                    const expectedChar = codeSnippet[userInput.length];
-                    const isMistake = charsToAdd !== expectedChar;
+                for(var i = 0; i < charsAdded; i++) {
+                    const expectedChar = codeSnippet[userInput.length + i];
+                    const isMistake = charsToAdd[i] !== expectedChar;
 
                     if (isMistake) {
                         setMistakes((prev) => prev + 1);
@@ -131,7 +130,7 @@ const useTypingTest = (initialCodeSnippet = '') => {
     };
 
     const calculateAccuracy = () => {
-        if (totalTyped === 0) return 100;
+        if (totalTyped === 0) return 0;
         return Math.max(0, Math.round(((totalTyped - mistakes) / totalTyped) * 100));
     };
 
