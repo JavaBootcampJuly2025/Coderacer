@@ -290,7 +290,7 @@ const useTypingTest = (initialCodeSnippet = '') => {
     };
 
     const calculateAccuracy = () => {
-        if (totalTyped === 0) return 100;
+        if (totalTyped === 0) return 0;
         // The `mistakes` state is updated when a word is completed incorrectly.
         // We need to refine `totalTyped` to represent chars attempted, and `mistakes`
         // to be chars incorrect. This current implementation of `mistakes` counts
@@ -352,7 +352,6 @@ const useTypingTest = (initialCodeSnippet = '') => {
         // A common formula for accuracy: (Correct Chars) / (Correct Chars + Incorrect Chars + Skipped Chars + Extra Chars)
         // Let's refine based on the wordStates and currentWordInput
         let totalCorrectChars = 0;
-        let totalIncorrectChars = 0;
         let totalExtraChars = 0;
 
         wordStates.forEach((state, idx) => {
@@ -362,8 +361,6 @@ const useTypingTest = (initialCodeSnippet = '') => {
             for (let i = 0; i < Math.min(originalWord.length, userTypedWord.length); i++) {
                 if (originalWord[i] === userTypedWord[i]) {
                     totalCorrectChars++;
-                } else {
-                    totalIncorrectChars++;
                 }
             }
             if (userTypedWord.length > originalWord.length) {
@@ -371,9 +368,9 @@ const useTypingTest = (initialCodeSnippet = '') => {
             }
         });
 
-        const totalCharsConsidered = totalCorrectChars + totalIncorrectChars + totalExtraChars;
+        const totalCharsConsidered = codeSnippet.length + totalExtraChars;
 
-        return totalCharsConsidered > 0 ? Math.max(0, Math.round((totalCorrectChars / totalCharsConsidered) * 100)) : 100;
+        return totalCharsConsidered > 0 ? Math.max(0, Math.round((totalCorrectChars / totalCharsConsidered) * 100)) : 0;
     };
 
 
