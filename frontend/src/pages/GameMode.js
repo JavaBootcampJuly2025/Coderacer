@@ -86,7 +86,7 @@ const GameMode = () => {
                     {/* Right Side - Compact Examples and Enhanced Results (1/3 width) */}
                     <div className="examples-section mb-4">
                         {/* Compact Example Input/Output - Horizontal Layout */}
-                        <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow">
+                        <div className="bg-[var(--sliderhover)] rounded-lg p-3 border-2 border-[var(--accent)] strong-shadow mb-4">
                             <h3 className="text-sm font-bold text-[var(--text)] mb-2">Examples</h3>
                             <div className="flex gap-2 overflow-hidden">
                                 <div className="flex-1">

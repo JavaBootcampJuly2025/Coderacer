@@ -32,7 +32,7 @@ const PANEL_CONFIG = {
 };
 
 const RightPanel = () => {
-    const [selectedDifficulty, setSelectedDifficulty] = useState('MEDIUM');
+    const [selectedDifficulty, setSelectedDifficulty] = useState('EASY');
 
     const navigate = useNavigate();
 
